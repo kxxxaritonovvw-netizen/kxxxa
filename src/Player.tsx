@@ -39,6 +39,8 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
 
   const { state, toggle, source } = usePlayer(TRACK, mountRef)
   const isSynth = TRACK.source === 'synth'
+  // Обложка есть только у YouTube. Во всех остальных случаях рисуем плейсхолдер.
+  const hasArtwork = TRACK.source === 'youtube'
   const [meta, setMeta] = useState(
     isSynth ? { title: 'Тестовый сигнал', artist: 'Web Audio' } : { title: TRACK.title, artist: TRACK.artist },
   )
@@ -86,18 +88,20 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
           // чёрных полос по краям обложки.
           style={{ transform: 'scale(1.8)' }}
         />
-        {isSynth && (
-          // Без внешнего источника обложки нет — рисуем градиент на акценте,
-          // чтобы проверить посадку блока и радиусы.
+        {!hasArtwork && (
+          // Плейсхолдер обложки: нейтральный серый, без акцента.
+          // Цветное пятно здесь спорило бы с кнопкой и мешало оценивать палитру.
           <div
             className="absolute inset-0"
             style={{
               background:
-                'radial-gradient(120% 120% at 25% 15%, var(--color-accent) 0%, transparent 60%), linear-gradient(160deg, #2a1f5c 0%, #0b0b0f 75%)',
+                'radial-gradient(120% 100% at 30% 10%, rgb(255 255 255 / 0.07) 0%, transparent 55%), linear-gradient(165deg, var(--color-surface-3) 0%, var(--color-surface-1) 70%)',
             }}
           />
         )}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+        {hasArtwork && (
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+        )}
       </div>
 
       <div className="mt-6">

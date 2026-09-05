@@ -20,7 +20,8 @@ const SOURCE = (import.meta.env.VITE_SOURCE as Track['source']) || 'youtube'
 export const TRACK: Track = {
   id: 'bOupGVM9Uvc',
   source: SOURCE,
-  ref: 'bOupGVM9Uvc',
+  // Для youtube — videoId, для audio — путь к файлу в public/.
+  ref: SOURCE === 'audio' ? '/tracks/track.mp3' : 'bOupGVM9Uvc',
   // Заглушки: настоящие название и исполнитель подтягиваются из oEmbed,
   // чтобы не хардкодить метаданные чужого видео.
   title: 'Загрузка…',
