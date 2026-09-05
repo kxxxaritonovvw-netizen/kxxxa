@@ -35,10 +35,18 @@ const ARC_P2 = pointOnArc(ARC_RIGHT_DEG, RING_R)
 // как «слева, через низ, направо».
 const ARC_PATH = `M ${ARC_P1.x} ${ARC_P1.y} A ${RING_R} ${RING_R} 0 0 0 ${ARC_P2.x} ${ARC_P2.y}`
 
-// Ховер-наклон. 10° — примерно как у карточек в Steam: заметно, но диск
-// не превращается в монету на ребре.
-const MAX_TILT_DEG = 10
-const HOVER_SCALE = 1.04
+// Ховер-наклон.
+// PERSPECTIVE влияет на «объёмность» даже сильнее угла: чем ближе точка
+// схода, тем резче расходятся ближний и дальний края. 520px на диске
+// ~270px в поперечнике — уже отчётливый объём, но ещё не рыбий глаз.
+// Потолок держит дуга: диск не должен на неё наезжать, иначе прогресс
+// прячется под обложкой. Ближний край в проекции = r·cos·p/(p − r·sin);
+// при 20°, 520px и скейле 1.03 это ~144px от центра при внутреннем крае
+// дуги на ~155px. Скейл здесь съедает зазор быстрее угла, поэтому усилен
+// именно наклон, а увеличение оставлено сдержанным.
+const PERSPECTIVE_PX = 520
+const MAX_TILT_DEG = 20
+const HOVER_SCALE = 1.03
 
 export function Player() {
   const { state, toggle, source } = usePlayer(TRACK.src)
@@ -110,11 +118,11 @@ export function Player() {
     // к зрителю, противоположный уходит вглубь. Отсюда знаки — отрицательный
     // rotateY тянет правый край вперёд, положительный rotateX — нижний.
     el.style.transform =
-      `perspective(700px) rotateX(${(ny * MAX_TILT_DEG).toFixed(2)}deg) ` +
+      `perspective(${PERSPECTIVE_PX}px) rotateX(${(ny * MAX_TILT_DEG).toFixed(2)}deg) ` +
       `rotateY(${(-nx * MAX_TILT_DEG).toFixed(2)}deg) scale(${HOVER_SCALE})`
     // Тень уезжает против наклона — как будто источник света сверху и диск
     // реально приподнят над фоном.
-    el.style.boxShadow = `${(-nx * 14).toFixed(1)}px ${(20 - ny * 6).toFixed(1)}px 38px rgb(0 0 0 / 0.65)`
+    el.style.boxShadow = `${(-nx * 24).toFixed(1)}px ${(26 - ny * 10).toFixed(1)}px 46px rgb(0 0 0 / 0.7)`
   }
 
   function resetTilt() {
