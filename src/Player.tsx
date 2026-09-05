@@ -38,9 +38,13 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
   const leftRef = useRef<HTMLSpanElement>(null)
 
   const { state, toggle, source } = usePlayer(TRACK, mountRef)
-  const [meta, setMeta] = useState({ title: TRACK.title, artist: TRACK.artist })
+  const isSynth = TRACK.source === 'synth'
+  const [meta, setMeta] = useState(
+    isSynth ? { title: 'Тестовый сигнал', artist: 'Web Audio' } : { title: TRACK.title, artist: TRACK.artist },
+  )
 
   useEffect(() => {
+    if (isSynth) return
     let alive = true
     void fetchMeta(TRACK.ref).then((m) => {
       if (alive && m) setMeta(m)
@@ -48,7 +52,7 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
     return () => {
       alive = false
     }
-  }, [])
+  }, [isSynth])
 
   // Пока играет — крутим rAF и пишем в DOM в обход рендера React.
   useProgress(source, state === 'playing', (time, duration) => {
@@ -82,6 +86,17 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
           // чёрных полос по краям обложки.
           style={{ transform: 'scale(1.8)' }}
         />
+        {isSynth && (
+          // Без внешнего источника обложки нет — рисуем градиент на акценте,
+          // чтобы проверить посадку блока и радиусы.
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                'radial-gradient(120% 120% at 25% 15%, var(--color-accent) 0%, transparent 60%), linear-gradient(160deg, #2a1f5c 0%, #0b0b0f 75%)',
+            }}
+          />
+        )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
       </div>
 
@@ -125,8 +140,9 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
       )}
 
       <p className="text-caption text-text-3 mt-6 text-center">
-        Источник: YouTube IFrame API. Временный — локскрин и фоновое
-        воспроизведение с ним не работают.
+        {isSynth
+          ? 'Источник: Web Audio. Здесь проверяется интерфейс, а не звук — CSP не пускает внешний плеер.'
+          : 'Источник: YouTube IFrame API. Временный — локскрин и фон с ним не работают.'}
       </p>
     </Shell>
   )

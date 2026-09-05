@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PlaybackSource, PlaybackState } from './types'
 import { createYouTubeSource } from './youtube'
 import { createHtmlAudioSource } from './htmlAudio'
+import { createSynthSource } from './synth'
 import type { Track } from '../data/track'
 
 /**
@@ -31,6 +32,8 @@ export function usePlayer(track: Track, containerRef: React.RefObject<HTMLDivEle
       host.style.height = '100%'
       container!.appendChild(host)
       source = createYouTubeSource(track.ref, host)
+    } else if (track.source === 'synth') {
+      source = createSynthSource()
     } else {
       source = createHtmlAudioSource(track.ref)
     }

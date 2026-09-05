@@ -4,17 +4,22 @@
  */
 export type Track = {
   id: string
-  /** youtube — временный источник прототипа, audio — целевой. */
-  source: 'youtube' | 'audio'
+  /** youtube — временный источник прототипа, audio — целевой,
+   *  synth — заглушка для сред, куда внешний звук не пролезает. */
+  source: 'youtube' | 'audio' | 'synth'
   /** videoId для youtube, URL файла для audio. */
   ref: string
   title: string
   artist: string
 }
 
+// Переключается на сборке: VITE_SOURCE=synth npm run build.
+// Нужно для артефакта/песочниц с CSP, где скрипт YouTube не загружается.
+const SOURCE = (import.meta.env.VITE_SOURCE as Track['source']) || 'youtube'
+
 export const TRACK: Track = {
   id: 'bOupGVM9Uvc',
-  source: 'youtube',
+  source: SOURCE,
   ref: 'bOupGVM9Uvc',
   // Заглушки: настоящие название и исполнитель подтягиваются из oEmbed,
   // чтобы не хардкодить метаданные чужого видео.
