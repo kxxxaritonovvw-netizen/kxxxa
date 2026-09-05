@@ -217,7 +217,9 @@
      работает как градиентная лужа под диском, а основную «приподнятость»
      даёт наклон со скейлом. */
   .disc-tilt {
-    transform: perspective(700px);
+    /* Держать в паре с PERSPECTIVE_PX в Player.tsx: это состояние покоя,
+       к которому диск возвращается по уходу курсора. */
+    transform: perspective(520px);
     transform-origin: center;
     box-shadow: 0 10px 26px rgb(0 0 0 / 0.55);
     transition:
