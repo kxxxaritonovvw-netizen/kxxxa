@@ -1,0 +1,227 @@
+/* ============================================================
+   Base layer — сброс + кроссбраузерная база
+   Цель: iOS Safari 16.4+, Chrome Android 110+, Samsung Internet 21+,
+   Firefox Android. Каждое правило чинит конкретный баг.
+
+   ВАЖНО про @layer. Tailwind v4 объявляет порядок
+   `theme, base, components, utilities`. CSS вне слоёв всегда выигрывает
+   у слоёного — независимо от специфичности. Если написать этот reset
+   без обёртки, `* { margin: 0 }` убьёт все mt-*/mb-*, а
+   `button { background: none }` — все bg-*. Поэтому reset живёт
+   в @layer base, а хелперы — в @layer components: утилиты бьют и то, и другое.
+   ============================================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    /* Flex/grid-потомки по умолчанию не сжимаются меньше контента и рвут
+       layout длинным названием трека. min-width: 0 — лекарство. */
+    min-width: 0;
+  }
+
+  html {
+    /* Говорим движку, что страница тёмная: нативные скроллбары, поля ввода
+       и системные меню сразу тёмные. Плюс Samsung Internet перестаёт
+       применять принудительную инверсию поверх наших цветов. */
+    color-scheme: dark;
+
+    /* Safari раздувает шрифты при повороте в альбом. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+
+    /* Гасим pull-to-refresh и «резинку» всего документа. */
+    overscroll-behavior: none;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    /* Ключ к стабильному layout: скролл документа выключен полностью.
+       Это снимает проблему схлопывающейся адресной строки на iOS —
+       оболочка всегда ровно по экрану, без 100vh/100dvh-плясок. */
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 20px;
+
+    /* Светлый текст на тёмном субпиксельным сглаживанием выглядит жирнее,
+       чем задумано. antialiased возвращает нормальный вес. */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+
+    /* Двойной тап зумит и добавляет задержку — плееру не нужно ни то, ни другое. */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+
+    /* Интерфейс не выделяется; где текст надо копировать — класс .selectable. */
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    /* Safari не наследует шрифт в форменных элементах. */
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  button {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  img {
+    /* Долгий тап по обложке не должен предлагать «сохранить изображение». */
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    /* Пока обложка грузится — тёмный плейсхолдер вместо белой вспышки. */
+    background-color: var(--color-surface-2);
+  }
+
+  /* Фокус показываем только при навигации с клавиатуры, не по тапу. */
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+
+@layer components {
+  /* ---------- Оболочка приложения ----------
+     Фиксированный по экрану контейнер, центрированный, не шире 440.
+     На десктопе это колонка по центру — mobile-only не значит «сломано». */
+  .app-shell {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: var(--shell-max);
+    margin-inline: auto;
+    height: 100%;
+    height: 100dvh; /* страховка, если fixed-inset где-то поведёт себя иначе */
+    overflow: hidden;
+    background: var(--color-bg);
+    /* Горизонтальные вырезы в альбомной ориентации */
+    padding-left: var(--safe-l);
+    padding-right: var(--safe-r);
+  }
+
+  /* ---------- Скроллируемая область ---------- */
+  .scroll-y {
+    flex: 1;
+    min-height: 0; /* иначе flex-потомок не скроллится, а растягивает родителя */
+    overflow-y: auto;
+    /* Скролл не «протекает» на родителя на краю списка —
+       критично для шитов и Now Playing поверх медиатеки. */
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+  .scroll-y::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Любая кнопка-иконка обязана иметь зону 44×44, даже если рисунок 20×20. */
+  .tap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--tap-min);
+    min-height: var(--tap-min);
+  }
+
+  /* На мобильном нет :hover — :active это вся обратная связь, что есть. */
+  .pressable {
+    transition:
+      transform var(--duration-fast) var(--ease-out-quart),
+      background-color var(--duration-fast) var(--ease-out-quart),
+      opacity var(--duration-fast) var(--ease-out-quart);
+  }
+  .pressable:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+
+  /* Таймеры: без табличных цифр время дёргается на каждой секунде,
+     потому что «1» уже «8». */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  .truncate-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .selectable {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Safari до сих пор требует префикс. На части Android backdrop-filter
+     не поддержан или очень дорог — там отдаём плотную заливку. */
+  .blur-surface {
+    background: var(--color-surface-2);
+  }
+  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .blur-surface {
+      background: rgb(28 28 35 / 0.72);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      backdrop-filter: blur(20px) saturate(160%);
+    }
+  }
+}
+
+/* Вне слоёв намеренно: !important и так бьёт всё, а правило должно
+   пережить любые утилиты. Длительность 0.01ms, а не 0 — иначе не стреляют
+   onTransitionEnd / onAnimationComplete, на которых держится логика жестов. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
