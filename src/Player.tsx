@@ -3,6 +3,7 @@ import { Shell } from './app/Shell'
 import { usePlayer } from './audio/usePlayer'
 import { formatTime, useProgress } from './audio/useProgress'
 import { TRACK, fetchMeta } from './data/track'
+import { bindMediaSession } from './audio/mediaSession'
 
 function PlayIcon() {
   return (
@@ -55,6 +56,12 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
       alive = false
     }
   }, [isSynth])
+
+  // Локскрин и наушники — только для настоящего аудиоэлемента.
+  useEffect(() => {
+    if (TRACK.source !== 'audio' || !source.current) return
+    return bindMediaSession(source.current, meta)
+  }, [source, meta, state])
 
   // Пока играет — крутим rAF и пишем в DOM в обход рендера React.
   useProgress(source, state === 'playing', (time, duration) => {
@@ -146,7 +153,9 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
       <p className="text-caption text-text-3 mt-6 text-center">
         {isSynth
           ? 'Источник: Web Audio. Здесь проверяется интерфейс, а не звук — CSP не пускает внешний плеер.'
-          : 'Источник: YouTube IFrame API. Временный — локскрин и фон с ним не работают.'}
+          : TRACK.source === 'audio'
+            ? 'Источник: HTMLAudioElement. Файл вшит в страницу, локскрин и наушники работают.'
+            : 'Источник: YouTube IFrame API. Временный — локскрин и фон с ним не работают.'}
       </p>
     </Shell>
   )

@@ -22,10 +22,10 @@ export const TRACK: Track = {
   source: SOURCE,
   // Для youtube — videoId, для audio — путь к файлу в public/.
   ref: SOURCE === 'audio' ? '/tracks/track.mp3' : 'bOupGVM9Uvc',
-  // Заглушки: настоящие название и исполнитель подтягиваются из oEmbed,
-  // чтобы не хардкодить метаданные чужого видео.
-  title: 'Загрузка…',
-  artist: '',
+  // Для youtube название приезжает из oEmbed. Для файла ID3-тегов не было,
+  // поэтому подписи заданы здесь — поправь строкой ниже.
+  title: SOURCE === 'audio' ? 'bazmin' : 'Загрузка…',
+  artist: SOURCE === 'audio' ? 'Без исполнителя' : '',
 }
 
 type OEmbed = { title: string; author_name: string }
