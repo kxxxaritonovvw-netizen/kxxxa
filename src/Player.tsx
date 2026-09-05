@@ -35,20 +35,6 @@ const ARC_P2 = pointOnArc(ARC_RIGHT_DEG, RING_R)
 // как «слева, через низ, направо».
 const ARC_PATH = `M ${ARC_P1.x} ${ARC_P1.y} A ${RING_R} ${RING_R} 0 0 0 ${ARC_P2.x} ${ARC_P2.y}`
 
-function EditIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden>
-      <path
-        d="M4 16.5V20h3.5L18.5 9 15 5.5 4 16.5Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinejoin="round"
-      />
-      <path d="m13.5 7 3.5 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  )
-}
-
 export function Player() {
   const { state, toggle, source } = usePlayer(TRACK.src)
   const playing = state === 'playing'
@@ -155,7 +141,7 @@ export function Player() {
       {/* Таймлайн — дуга только по низу диска, слева направо (не полное
           кольцо). Тонкий видимый штрих + широкая прозрачная «ловилка» под
           пальцем поверх него — 6px обводки не годится как зона тапа. */}
-      <div className="mt-9 flex justify-center">
+      <div className="relative mt-9 flex justify-center">
         <div className="relative" style={{ width: 'min(78vw, 320px)', height: 'min(78vw, 320px)' }}>
           <svg
             ref={svgRef}
@@ -173,7 +159,12 @@ export function Player() {
               strokeWidth={STROKE}
               strokeLinecap="round"
               pathLength={100}
-              strokeDasharray={100}
+              // Не просто `100`: одиночное значение задаёт периодический
+              // паттерн 100 вкл / 100 выкл, и на нулевом прогрессе «вкл»
+              // успевает начаться ровно в конце дуги — round-cap рисует там
+              // паразитную точку, будто playhead уехал в конец. Явный пробел
+              // длиннее самой дуги не даёт паттерну повториться.
+              strokeDasharray="100 200"
               strokeDashoffset={100}
             />
             <path
@@ -189,46 +180,52 @@ export function Player() {
             />
           </svg>
 
-          {/* Сама пластинка — не вращается только эта обёртка, кручение
-              на слое ниже, чтобы значок «сменить обложку» стоял неподвижно. */}
-          <div
-            className="absolute inset-0 m-auto rounded-full"
-            style={{ width: DISC_PCT, height: DISC_PCT }}
+          {/* Сама пластинка. Тап по ней открывает пикер обложки — отдельного
+              значка нет, диск и есть кнопка. */}
+          <button
+            onClick={openPicker}
+            aria-label="Сменить обложку"
+            className="vinyl-spin absolute inset-0 m-auto overflow-hidden rounded-full"
+            style={{
+              width: DISC_PCT,
+              height: DISC_PCT,
+              animationPlayState: playing ? 'running' : 'paused',
+            }}
           >
-            <button
-              onClick={openPicker}
-              aria-label="Сменить обложку"
-              className="vinyl-spin block size-full overflow-hidden rounded-full"
-              style={{ animationPlayState: playing ? 'running' : 'paused' }}
-            >
-              <img src={artworkUrl} alt="" className="pointer-events-none size-full object-cover" />
-              {/* Бороздки винила — тонкие концентрические кольца поверх артворка. */}
-              <div
-                className="pointer-events-none absolute inset-0 rounded-full"
-                style={{
-                  background:
-                    'repeating-radial-gradient(circle at center, transparent 0 6px, rgb(0 0 0 / 0.14) 6px 7px)',
-                }}
-              />
-              {/* Лейбл по центру. */}
-              <div
-                className="bg-bg border-border absolute inset-0 m-auto rounded-full border"
-                style={{ width: '17%', height: '17%' }}
-              />
-            </button>
-            <span className="bg-surface-2 border-border text-text-2 pressable pointer-events-none absolute right-0 bottom-0 flex size-8 items-center justify-center rounded-full border">
-              <EditIcon />
-            </span>
-          </div>
+            <img src={artworkUrl} alt="" className="pointer-events-none size-full object-cover" />
+            {/* Бороздки винила — тонкие концентрические кольца поверх артворка. */}
+            <div
+              className="pointer-events-none absolute inset-0 rounded-full"
+              style={{
+                background:
+                  'repeating-radial-gradient(circle at center, transparent 0 6px, rgb(0 0 0 / 0.14) 6px 7px)',
+              }}
+            />
+            {/* Лейбл по центру. */}
+            <div
+              className="bg-bg border-border absolute inset-0 m-auto rounded-full border"
+              style={{ width: '17%', height: '17%' }}
+            />
+          </button>
+        </div>
+
+        {/* Тайминги прижаты базовой линией к нижней границе дуги.
+            Нижний край дуги вместе с обводкой приходится ровно на низ
+            viewBox (178 + 175 + 6/2 = 356), то есть на низ этой обёртки,
+            поэтому bottom: 0 ставит на эту линию низ строки — а нужна
+            базовая линия. Разница — глубина нижних выносных: при
+            line-height: 1 это ≈0.13em, у всего системного стека
+            (SF / Roboto / Segoe) соотношение практически одинаковое. */}
+        <div
+          className="text-caption text-text-3 tnum absolute inset-x-0 bottom-0 flex justify-between"
+          style={{ lineHeight: 1, transform: 'translateY(0.13em)' }}
+        >
+          <span ref={timeRef}>0:00</span>
+          <span ref={totalRef}>0:00</span>
         </div>
       </div>
 
-      <div className="text-caption text-text-3 tnum mt-6 flex justify-between">
-        <span ref={timeRef}>0:00</span>
-        <span ref={totalRef}>0:00</span>
-      </div>
-
-      <div className="mt-5">
+      <div className="mt-8 text-center">
         <p className="text-title truncate-1">{TRACK.title}</p>
         <p className="text-meta text-text-2 truncate-1 mt-0.5">{TRACK.artist}</p>
       </div>
@@ -240,13 +237,13 @@ export function Player() {
       <button
         onClick={toggle}
         disabled={state === 'error'}
-        className="pressable disabled:text-text-disabled mt-[50px] block text-[56px] leading-none font-bold tracking-tight"
+        className="pressable disabled:text-text-disabled mt-[50px] block w-full text-center text-[56px] leading-none font-bold tracking-tight"
       >
         {playing ? 'Stop' : 'Play'}
       </button>
 
       {state === 'error' && (
-        <p className="text-meta text-danger mt-4">Источник не отвечает.</p>
+        <p className="text-meta text-danger mt-4 text-center">Источник не отвечает.</p>
       )}
     </Shell>
   )
