@@ -35,6 +35,11 @@ const ARC_P2 = pointOnArc(ARC_RIGHT_DEG, RING_R)
 // как «слева, через низ, направо».
 const ARC_PATH = `M ${ARC_P1.x} ${ARC_P1.y} A ${RING_R} ${RING_R} 0 0 0 ${ARC_P2.x} ${ARC_P2.y}`
 
+// Ховер-наклон. 10° — примерно как у карточек в Steam: заметно, но диск
+// не превращается в монету на ребре.
+const MAX_TILT_DEG = 10
+const HOVER_SCALE = 1.04
+
 export function Player() {
   const { state, toggle, source } = usePlayer(TRACK.src)
   const playing = state === 'playing'
@@ -43,6 +48,12 @@ export function Player() {
   const objectUrlRef = useRef<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const discRef = useRef<HTMLButtonElement>(null)
+  // Габариты диска кэшируем на входе курсора: во-первых, не дёргаем layout
+  // на каждом mousemove, во-вторых, при наведении диск масштабируется —
+  // и читать его прямоугольник уже наклонённым значило бы считать угол
+  // от «плывущей» системы координат.
+  const discRectRef = useRef<DOMRect | null>(null)
   const svgRef = useRef<SVGSVGElement>(null)
   const progressRef = useRef<SVGPathElement>(null)
   const timeRef = useRef<HTMLSpanElement>(null)
@@ -74,6 +85,47 @@ export function Player() {
     if (!source.current) return
     return bindMediaSession(source.current, { ...TRACK, artwork: artworkUrl })
   }, [source, artworkUrl, state])
+
+  // Наклон диска под курсором. Пишем в DOM напрямую, минуя состояние React:
+  // mousemove сыплется десятками кадров в секунду, и setState на каждый
+  // перерисовывал бы весь экран.
+  function handleDiscEnter(e: React.PointerEvent<HTMLButtonElement>) {
+    if (e.pointerType !== 'mouse') return
+    discRectRef.current = e.currentTarget.getBoundingClientRect()
+  }
+
+  function handleDiscMove(e: React.PointerEvent<HTMLButtonElement>) {
+    // Только мышь: на тач-устройствах ховера нет, а pointermove там означает
+    // палец на экране — диск дёргался бы при каждом касании.
+    if (e.pointerType !== 'mouse') return
+    const el = discRef.current
+    const rect = discRectRef.current ?? el?.getBoundingClientRect()
+    if (!el || !rect) return
+
+    // Позиция курсора в диапазоне -1..1 от центра диска.
+    const nx = Math.max(-1, Math.min(1, (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2)))
+    const ny = Math.max(-1, Math.min(1, (e.clientY - (rect.top + rect.height / 2)) / (rect.height / 2)))
+
+    // Диск наклоняется НАВСТРЕЧУ курсору: край под указателем приподнимается
+    // к зрителю, противоположный уходит вглубь. Отсюда знаки — отрицательный
+    // rotateY тянет правый край вперёд, положительный rotateX — нижний.
+    el.style.transform =
+      `perspective(700px) rotateX(${(ny * MAX_TILT_DEG).toFixed(2)}deg) ` +
+      `rotateY(${(-nx * MAX_TILT_DEG).toFixed(2)}deg) scale(${HOVER_SCALE})`
+    // Тень уезжает против наклона — как будто источник света сверху и диск
+    // реально приподнят над фоном.
+    el.style.boxShadow = `${(-nx * 14).toFixed(1)}px ${(20 - ny * 6).toFixed(1)}px 38px rgb(0 0 0 / 0.65)`
+  }
+
+  function resetTilt() {
+    const el = discRef.current
+    if (!el) return
+    discRectRef.current = null
+    // Пустая строка возвращает значения из CSS-класса, а не «ноль»:
+    // покоящийся наклон и базовая тень описаны в .disc-tilt.
+    el.style.transform = ''
+    el.style.boxShadow = ''
+  }
 
   function applyProgress(time: number, duration: number) {
     const ratio = duration > 0 ? Math.min(1, Math.max(0, time / duration)) : 0
@@ -181,31 +233,38 @@ export function Player() {
           </svg>
 
           {/* Сама пластинка. Тап по ней открывает пикер обложки — отдельного
-              значка нет, диск и есть кнопка. */}
+              значка нет, диск и есть кнопка.
+              Внешний слой — наклон под курсором, вложенный — вращение. */}
           <button
+            ref={discRef}
             onClick={openPicker}
+            onPointerEnter={handleDiscEnter}
+            onPointerMove={handleDiscMove}
+            onPointerLeave={resetTilt}
+            onPointerCancel={resetTilt}
             aria-label="Сменить обложку"
-            className="vinyl-spin absolute inset-0 m-auto overflow-hidden rounded-full"
-            style={{
-              width: DISC_PCT,
-              height: DISC_PCT,
-              animationPlayState: playing ? 'running' : 'paused',
-            }}
+            className="disc-tilt absolute inset-0 m-auto rounded-full"
+            style={{ width: DISC_PCT, height: DISC_PCT }}
           >
-            <img src={artworkUrl} alt="" className="pointer-events-none size-full object-cover" />
-            {/* Бороздки винила — тонкие концентрические кольца поверх артворка. */}
-            <div
-              className="pointer-events-none absolute inset-0 rounded-full"
-              style={{
-                background:
-                  'repeating-radial-gradient(circle at center, transparent 0 6px, rgb(0 0 0 / 0.14) 6px 7px)',
-              }}
-            />
-            {/* Лейбл по центру. */}
-            <div
-              className="bg-bg border-border absolute inset-0 m-auto rounded-full border"
-              style={{ width: '17%', height: '17%' }}
-            />
+            <span
+              className="vinyl-spin relative block size-full overflow-hidden rounded-full"
+              style={{ animationPlayState: playing ? 'running' : 'paused' }}
+            >
+              <img src={artworkUrl} alt="" className="pointer-events-none size-full object-cover" />
+              {/* Бороздки винила — тонкие концентрические кольца поверх артворка. */}
+              <span
+                className="pointer-events-none absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    'repeating-radial-gradient(circle at center, transparent 0 6px, rgb(0 0 0 / 0.14) 6px 7px)',
+                }}
+              />
+              {/* Лейбл по центру. */}
+              <span
+                className="bg-bg border-border absolute inset-0 m-auto rounded-full border"
+                style={{ width: '17%', height: '17%' }}
+              />
+            </span>
           </button>
         </div>
 
