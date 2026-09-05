@@ -1,4 +1,5 @@
 import type { PlaybackSource, PlaybackState } from './types'
+import { levelToGain, loadVolume } from './volume'
 
 /**
  * Один HTMLAudioElement на всё приложение, живёт вне React.
@@ -11,6 +12,13 @@ export function createHtmlAudioSource(src: string): PlaybackSource {
   const el = new Audio()
   el.preload = 'metadata'
   el.src = src
+
+  // Сохранённую громкость ставим здесь, а не в компоненте: элемент
+  // создаётся раньше UI, и первый play() не должен успеть прозвучать
+  // на полной громкости, если в прошлый раз её убавили.
+  const saved = loadVolume()
+  el.volume = levelToGain(saved.level)
+  el.muted = saved.muted
 
   const listeners = new Set<(s: PlaybackState) => void>()
   const emit = (s: PlaybackState) => listeners.forEach((l) => l(s))
@@ -28,6 +36,14 @@ export function createHtmlAudioSource(src: string): PlaybackSource {
     pause: () => el.pause(),
     seek: (s) => {
       el.currentTime = s
+    },
+    setVolume: (level) => {
+      el.volume = levelToGain(level)
+    },
+    setMuted: (muted) => {
+      // Отдельный флаг, а не volume = 0: mute сохраняет уровень, к которому
+      // возвращаемся, и его же показывает MediaSession на локскрине.
+      el.muted = muted
     },
     position: () => ({
       time: el.currentTime,
