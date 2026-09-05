@@ -14,7 +14,9 @@ import { readdirSync } from 'node:fs'
 import { join } from 'node:path'
 
 const MP3 = process.argv[2] ?? 'public/tracks/track.mp3'
+const COVER = process.argv[3] ?? 'public/tracks/cover.svg'
 const hasTrack = existsSync(MP3)
+const hasCover = existsSync(COVER)
 const source = hasTrack ? 'audio' : 'synth'
 const OUT = 'dist-artifact'
 
@@ -39,6 +41,16 @@ if (hasTrack) {
   console.log(`Трек вшит: ${mb.toFixed(1)} МБ → ${(dataUri.length / 1024 / 1024).toFixed(1)} МБ base64`)
 }
 
+if (hasCover) {
+  // Обложка — тоже public-путь, у артефакта нет статик-сервера для его отдачи.
+  const mime = COVER.endsWith('.svg') ? 'image/svg+xml' : 'image/jpeg'
+  const dataUri = `data:${mime};base64,${readFileSync(COVER).toString('base64')}`
+  const before = js.length
+  js = js.replaceAll('/tracks/cover.svg', dataUri)
+  if (js.length === before) throw new Error('Не нашёл путь к обложке в бандле — проверь track.ts')
+  console.log(`Обложка вшита: ${COVER}`)
+}
+
 /* Обёртка артефакта ставит свой reset ВНЕ каскадных слоёв: color-scheme: light,
    светлый фон, 14px на body. Неслоёный CSS бьёт слоёный независимо от
    специфичности, поэтому наш @layer base там проигрывает. Пере-объявляем
@@ -47,7 +59,9 @@ const override = `
 html { color-scheme: dark; }
 html, body, #root { height: 100%; margin: 0; overflow: hidden; }
 body {
-  background: #0b0b0f;
+  /* Серый фон окружения — совпадает с --color-preview-bg. Сам каркас
+     красит себя изнутри бандла (.app-shell { background: var(--color-bg) }). */
+  background: #333338;
   color: rgb(255 255 255 / 0.95);
   font-size: 15px;
   line-height: 20px;

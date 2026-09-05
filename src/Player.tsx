@@ -32,16 +32,21 @@ function Spinner() {
   )
 }
 
-export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
+export function Player() {
   const mountRef = useRef<HTMLDivElement>(null)
   const fillRef = useRef<HTMLDivElement>(null)
+  const thumbRef = useRef<HTMLDivElement>(null)
   const timeRef = useRef<HTMLSpanElement>(null)
   const leftRef = useRef<HTMLSpanElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
+  // Пока идёт драг, rAF-колбэк из useProgress не должен перетирать позицию
+  // пальца — иначе полоска дёргается между реальным временем и жестом.
+  const draggingRef = useRef(false)
+  const [dragging, setDragging] = useState(false)
 
   const { state, toggle, source } = usePlayer(TRACK, mountRef)
   const isSynth = TRACK.source === 'synth'
-  // Обложка есть только у YouTube. Во всех остальных случаях рисуем плейсхолдер.
-  const hasArtwork = TRACK.source === 'youtube'
+  const hasArtwork = Boolean(TRACK.artwork)
   const [meta, setMeta] = useState(
     isSynth ? { title: 'Тестовый сигнал', artist: 'Web Audio' } : { title: TRACK.title, artist: TRACK.artist },
   )
@@ -63,38 +68,79 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
     return bindMediaSession(source.current, meta)
   }, [source, meta, state])
 
-  // Пока играет — крутим rAF и пишем в DOM в обход рендера React.
-  useProgress(source, state === 'playing', (time, duration) => {
-    const pct = duration > 0 ? (time / duration) * 100 : 0
-    if (fillRef.current) fillRef.current.style.transform = `scaleX(${pct / 100})`
+  /** Одна точка правды для отрисовки прогресса — использует и rAF, и драг. */
+  function applyProgress(time: number, duration: number) {
+    const pct = duration > 0 ? Math.min(1, Math.max(0, time / duration)) : 0
+    if (fillRef.current) fillRef.current.style.transform = `scaleX(${pct})`
+    if (thumbRef.current) thumbRef.current.style.left = `${pct * 100}%`
     if (timeRef.current) timeRef.current.textContent = formatTime(time)
     if (leftRef.current) leftRef.current.textContent = `-${formatTime(Math.max(0, duration - time))}`
+  }
+
+  // Пока играет — крутим rAF и пишем в DOM в обход рендера React.
+  useProgress(source, state === 'playing', (time, duration) => {
+    if (draggingRef.current) return
+    applyProgress(time, duration)
   })
+
+  function ratioFromPointer(e: React.PointerEvent) {
+    const el = trackRef.current
+    if (!el) return 0
+    const rect = el.getBoundingClientRect()
+    return Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width))
+  }
+
+  function handlePointerDown(e: React.PointerEvent) {
+    const el = trackRef.current
+    const s = source.current
+    if (!el || !s) return
+    el.setPointerCapture(e.pointerId)
+    draggingRef.current = true
+    setDragging(true)
+    const { duration } = s.position()
+    applyProgress(ratioFromPointer(e) * duration, duration)
+  }
+
+  function handlePointerMove(e: React.PointerEvent) {
+    if (!draggingRef.current) return
+    const s = source.current
+    if (!s) return
+    const { duration } = s.position()
+    applyProgress(ratioFromPointer(e) * duration, duration)
+  }
+
+  function handlePointerUp(e: React.PointerEvent) {
+    if (!draggingRef.current) return
+    const s = source.current
+    draggingRef.current = false
+    setDragging(false)
+    if (!s) return
+    const { duration } = s.position()
+    s.seek(ratioFromPointer(e) * duration)
+  }
 
   const busy = state === 'loading'
   const playing = state === 'playing'
 
   return (
-    <Shell
-      header={
-        <div className="flex items-center justify-between py-4">
-          <span className="text-caption text-text-3 uppercase">Играет сейчас</span>
-          <button onClick={onOpenSpecimen} className="text-caption text-text-3 pressable uppercase">
-            База →
-          </button>
-        </div>
-      }
-    >
+    <Shell>
       {/* Обложка. Внутрь YT подставляет свой iframe — контейнером владеет
           не React, поэтому здесь только рамка и кадрирование. */}
-      <div className="bg-surface-1 border-border relative aspect-square overflow-hidden rounded-lg border">
+      <div className="bg-surface-1 border-border relative mt-4 aspect-square overflow-hidden rounded-lg border">
         <div
           ref={mountRef}
           className="pointer-events-none absolute inset-0 [&_iframe]:size-full"
           // Видео 16:9 в квадрате: масштабируем до заполнения, чтобы не было
           // чёрных полос по краям обложки.
-          style={{ transform: 'scale(1.8)' }}
+          style={{ transform: TRACK.source === 'youtube' ? 'scale(1.8)' : undefined }}
         />
+        {hasArtwork && (
+          <img
+            src={TRACK.artwork}
+            alt=""
+            className="absolute inset-0 size-full object-cover"
+          />
+        )}
         {!hasArtwork && (
           // Плейсхолдер обложки: нейтральный серый, без акцента.
           // Цветное пятно здесь спорило бы с кнопкой и мешало оценивать палитру.
@@ -106,7 +152,7 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
             }}
           />
         )}
-        {hasArtwork && (
+        {TRACK.source === 'youtube' && (
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
         )}
       </div>
@@ -116,17 +162,38 @@ export function Player({ onOpenSpecimen }: { onOpenSpecimen: () => void }) {
         <p className="text-title text-text-2 truncate-1 mt-1">{meta.artist || '—'}</p>
       </div>
 
-      {/* Прогресс. Полоска анимируется через transform: scaleX — это
-          composited-свойство, оно не вызывает layout на каждом кадре. */}
+      {/* Прогресс. Полоска и точка позиции анимируются напрямую через ref —
+          composited-свойства, layout не пересчитывается на каждом кадре. */}
       <div className="mt-7">
-        <div className="bg-surface-3 h-1 overflow-hidden rounded-full">
+        <div
+          ref={trackRef}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          className="relative -mx-1 flex items-center px-1 py-3"
+          style={{ touchAction: 'none' }}
+        >
+          <div className="bg-surface-3 h-1 w-full overflow-hidden rounded-full">
+            <div
+              ref={fillRef}
+              className="bg-accent h-full origin-left rounded-full"
+              style={{ transform: 'scaleX(0)' }}
+            />
+          </div>
           <div
-            ref={fillRef}
-            className="bg-accent h-full origin-left rounded-full"
-            style={{ transform: 'scaleX(0)' }}
+            ref={thumbRef}
+            className="bg-accent pointer-events-none absolute rounded-full shadow-[0_1px_4px_rgb(0_0_0_/_0.4)] transition-[width,height] duration-100"
+            style={{
+              left: '0%',
+              top: '50%',
+              width: dragging ? 16 : 12,
+              height: dragging ? 16 : 12,
+              transform: 'translate(-50%, -50%)',
+            }}
           />
         </div>
-        <div className="text-caption text-text-3 tnum mt-2 flex justify-between">
+        <div className="text-caption text-text-3 tnum -mt-1 flex justify-between">
           <span ref={timeRef}>0:00</span>
           <span ref={leftRef}>-0:00</span>
         </div>

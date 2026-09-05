@@ -11,6 +11,8 @@ export type Track = {
   ref: string
   title: string
   artist: string
+  /** Путь к обложке. Нет своего изображения — используем плейсхолдер. */
+  artwork?: string
 }
 
 // Переключается на сборке: VITE_SOURCE=synth npm run build.
@@ -24,8 +26,11 @@ export const TRACK: Track = {
   ref: SOURCE === 'audio' ? '/tracks/track.mp3' : 'bOupGVM9Uvc',
   // Для youtube название приезжает из oEmbed. Для файла ID3-тегов не было,
   // поэтому подписи заданы здесь — поправь строкой ниже.
-  title: SOURCE === 'audio' ? 'bazmin' : 'Загрузка…',
-  artist: SOURCE === 'audio' ? 'Без исполнителя' : '',
+  title: SOURCE === 'audio' ? 'Базовый минимум' : 'Загрузка…',
+  artist: SOURCE === 'audio' ? 'SABI, MIA BOYKA' : '',
+  // Собран по описанию присланного скриншота — сам файл обложки не дошёл
+  // как вложение, только как картинка в переписке. Пришли файлом — заменю.
+  artwork: SOURCE === 'audio' ? '/tracks/cover.svg' : undefined,
 }
 
 type OEmbed = { title: string; author_name: string }

@@ -51,7 +51,9 @@
   }
 
   body {
-    background: var(--color-bg);
+    /* Серый, не --color-bg: это фон окружения предпросмотра, а не интерфейса.
+       Сам интерфейс красит себя через .app-shell ниже. */
+    background: var(--color-preview-bg);
     color: var(--color-text);
     font-family: var(--font-sans);
     font-size: var(--text-body);
@@ -139,6 +141,8 @@
     height: 100dvh; /* страховка, если fixed-inset где-то поведёт себя иначе */
     overflow: hidden;
     background: var(--color-bg);
+    /* Отрыв от серого фона превью на широких экранах, где видны оба поля. */
+    box-shadow: 0 24px 64px rgb(0 0 0 / 0.45);
     /* Горизонтальные вырезы в альбомной ориентации */
     padding-left: var(--safe-l);
     padding-right: var(--safe-r);
