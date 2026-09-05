@@ -222,6 +222,49 @@
       backdrop-filter: blur(20px) saturate(160%);
     }
   }
+
+  /* ---------- Эквалайзер ----------
+     Второй, декоративный «таймлайн» под основным прогресс-баром: столбики
+     пляшут, пока трек играет, и оседают в спокойную линию на паузе.
+     Каждый столбик — своя длительность/задержка/пик через CSS-переменные,
+     заданные инлайном из JS: так один @keyframes даёт живой, не синхронный
+     рисунок без хранения состояния в React. */
+  .eq {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 3px;
+  }
+  .eq-bar {
+    flex: 1;
+    min-width: 2px;
+    max-width: 5px;
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    transform-origin: bottom;
+    transform: scaleY(0.16);
+    transition: transform 260ms var(--ease-out-quart);
+  }
+  /* Анимация включается только пока реально играет — на паузе бары не
+     замирают на случайной фазе, а плавно оседают через transition выше. */
+  .eq[data-playing='true'] .eq-bar {
+    animation-name: eq-bounce;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-duration: var(--eq-duration, 900ms);
+    animation-delay: var(--eq-delay, 0ms);
+  }
+}
+
+@keyframes eq-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.16);
+  }
+  50% {
+    transform: scaleY(var(--eq-peak, 1));
+  }
 }
 
 /* Вне слоёв намеренно: !important и так бьёт всё, а правило должно
@@ -235,5 +278,14 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* Бары эквалайзера — чисто декоративная бесконечная анимация без колбэков,
+     в отличие от остального сайта их можно просто выключить, а не сжать
+     до 0.01ms: тик по каждому кадру на infinite-анимации иначе читается
+     как мерцание, а не как «движение выключено». */
+  .eq-bar {
+    animation: none !important;
+    transform: scaleY(0.4) !important;
   }
 }
