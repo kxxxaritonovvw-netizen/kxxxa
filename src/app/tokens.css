@@ -1,0 +1,74 @@
+/* ============================================================
+   Design tokens — тёмная тема, единственная.
+   ============================================================ */
+
+@theme {
+  /* ---------- Поверхности ----------
+     Не чистый #000: на OLED смазывается при скролле, и белый текст
+     на нём даёт гало. Три ступени светлоты = элевация вместо теней —
+     тени на тёмном фоне не читаются. */
+  --color-bg: #0b0b0f;
+  --color-surface-1: #141419;
+  --color-surface-2: #1c1c23;
+  --color-surface-3: #26262f;
+
+  --color-border: rgb(255 255 255 / 0.08);
+  --color-border-strong: rgb(255 255 255 / 0.14);
+
+  /* Альфа, не сплошной hex: текст лежит и на канвасе, и на артворке —
+     альфа держит вес одинаковым везде. Контраст посчитан на --color-bg,
+     все три уровня проходят WCAG AA 4.5:1. */
+  --color-text: rgb(255 255 255 / 0.95);
+  --color-text-2: rgb(255 255 255 / 0.64);
+  --color-text-3: rgb(255 255 255 / 0.48);
+  --color-text-disabled: rgb(255 255 255 / 0.3);
+
+  --color-accent: #7c5cff;
+  --color-accent-soft: rgb(124 92 255 / 0.16);
+  --color-on-accent: #ffffff;
+  --color-danger: #ff5c5c;
+
+  /* Фон окружения превью — вокруг рамки устройства, отдельно от --color-bg,
+     иначе рамка растворяется в фоне на широких экранах. */
+  --color-preview-bg: #333338;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Шкала фиксирована для 360–440: экран шире — не значит дальше от глаза. */
+  --text-caption: 11px;
+  --text-caption--line-height: 14px;
+  --text-caption--letter-spacing: 0.02em;
+  --text-meta: 13px;
+  --text-meta--line-height: 18px;
+  --text-body: 15px;
+  --text-body--line-height: 20px;
+  --text-title: 17px;
+  --text-title--line-height: 22px;
+  --text-title--letter-spacing: -0.01em;
+  --text-heading: 22px;
+  --text-heading--line-height: 28px;
+
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+
+  --ease-out-quart: cubic-bezier(0.2, 0, 0, 1);
+  --duration-fast: 140ms;
+  --duration-base: 220ms;
+}
+
+:root {
+  /* Брейкпоинтов нет: 80px разницы между 360 и 440 — не другой макет.
+     16px на 360, 22px на 440, линейно между. */
+  --gutter: clamp(16px, 7.5vw - 11px, 22px);
+  --shell-max: 440px;
+  --tap-min: 44px;
+
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+}
