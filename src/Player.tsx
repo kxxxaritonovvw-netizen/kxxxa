@@ -3,6 +3,7 @@ import { Shell } from './app/Shell'
 import { usePlayer } from './audio/usePlayer'
 import { formatTime, useProgress } from './audio/useProgress'
 import { bindMediaSession } from './audio/mediaSession'
+import { VolumeControl } from './components/VolumeControl'
 import { TRACK } from './data/track'
 
 // Геометрия таймлайна в единицах viewBox — фиксированная, сам SVG
@@ -300,6 +301,13 @@ export function Player() {
       >
         {playing ? 'Stop' : 'Play'}
       </button>
+
+      {/* Громкость прижата вправо: поповер выезжает вверх и накрывает
+          правый край кнопки Play, где нет текста — по центру он бы лёг
+          прямо на надпись. */}
+      <div className="mt-4 flex justify-end">
+        <VolumeControl source={source} />
+      </div>
 
       {state === 'error' && (
         <p className="text-meta text-danger mt-4 text-center">Источник не отвечает.</p>

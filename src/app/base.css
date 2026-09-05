@@ -232,3 +232,92 @@
     transform: rotate(360deg);
   }
 }
+
+@layer components {
+  /* ---------- Громкость ----------
+     Иконка, из которой вверх выезжает вертикальный ползунок на 120px.
+
+     Поповер примыкает к кнопке снизу через собственный padding, а не
+     через отступ снаружи: визуальный зазор нужен, но разрыв в зоне
+     ховера закрывал бы поповер ровно в тот момент, когда мышь до него
+     тянется. Так курсор всё время остаётся внутри .volume. */
+  .volume {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .volume-popover {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    padding-bottom: 6px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(4px);
+    transition:
+      opacity var(--duration-fast) var(--ease-out-quart),
+      transform var(--duration-fast) var(--ease-out-quart);
+  }
+
+  .volume[data-open] .volume-popover {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .volume-pill {
+    display: flex;
+    justify-content: center;
+    padding: 12px 10px;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+  }
+
+  /* 6px, а не 4: полоска — она же зона захвата, и по ней попадают пальцем.
+     Фон — альфа, а не --color-surface-3: ступени поверхностей рассчитаны
+     на --color-bg, а внутри пилюли (surface-2) между ними почти нет
+     разницы — незаполненная часть сливалась с подложкой. */
+  .volume-track {
+    position: relative;
+    width: 6px;
+    background: rgb(255 255 255 / 0.18);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    /* Драг по вертикали иначе перехватит скролл контейнера. */
+    touch-action: none;
+  }
+
+  .volume-fill {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    background: var(--color-accent);
+    border-radius: var(--radius-full);
+  }
+
+  /* Центр бегунка совпадает с уровнем, поэтому на краях он наполовину
+     выходит за трек — так клик в любую точку 120px даёт ровно ту
+     громкость, на которую смотришь. */
+  .volume-thumb {
+    position: absolute;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    margin-bottom: -7px;
+    background: var(--color-text);
+    border-radius: var(--radius-full);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
+  }
+
+  .volume-button {
+    color: var(--color-text-2);
+    transition: color var(--duration-fast) var(--ease-out-quart);
+  }
+  .volume-button:hover,
+  .volume[data-open] .volume-button {
+    color: var(--color-text);
+  }
+}
