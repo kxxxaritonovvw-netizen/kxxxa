@@ -1,0 +1,234 @@
+/* ============================================================
+   Base layer — сброс + кроссбраузерная база.
+   Цель: iOS Safari 16.4+, Chrome Android 110+, Samsung Internet 21+,
+   Firefox Android.
+
+   ВАЖНО про @layer: CSS вне слоёв всегда выигрывает у слоёного —
+   независимо от специфичности. Reset живёт в @layer base, хелперы —
+   в @layer components: утилиты Tailwind бьют и то, и другое.
+   ============================================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    /* Flex/grid-потомки по умолчанию не сжимаются меньше контента и рвут
+       layout длинным названием трека. */
+    min-width: 0;
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overscroll-behavior: none;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #root {
+    /* #root центрирует .app-shell по обеим осям — оболочка теперь коробка
+       фиксированного размера (рамка устройства), а не растянутая на весь
+       вьюпорт. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  body {
+    /* Серый, не --color-bg: это фон окружения превью, а не интерфейса.
+       Сам интерфейс красит себя через .app-shell ниже. */
+    background: var(--color-preview-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-synthesis: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    border-radius: 0;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  button {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  img,
+  svg,
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  img {
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none;
+    background-color: var(--color-surface-2);
+  }
+
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+
+@layer components {
+  /* ---------- Оболочка приложения ----------
+     Коробка фиксированного размера — рамка устройства для превью.
+     Ширина ограничена 440 (mobile-only), высота — 912, но не больше
+     реального вьюпорта: на маленьком телефоне коробка сжимается
+     под экран вместо обрезки контента снизу. */
+  .app-shell {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: var(--shell-max);
+    height: min(912px, 100dvh);
+    overflow: hidden;
+    background: var(--color-bg);
+    box-shadow: 0 24px 64px rgb(0 0 0 / 0.45);
+    padding-left: var(--safe-l);
+    padding-right: var(--safe-r);
+  }
+
+  .scroll-y {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+  }
+  .scroll-y::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--tap-min);
+    min-height: var(--tap-min);
+  }
+
+  .pressable {
+    transition:
+      transform var(--duration-fast) var(--ease-out-quart),
+      opacity var(--duration-fast) var(--ease-out-quart);
+  }
+  .pressable:active {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  .truncate-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Вращение пластинки — декоративная бесконечная анимация без колбэков:
+     сжатие до 0.01ms читалось бы как мерцание, а не как «движение
+     выключено», поэтому глушим её отдельно и полностью. */
+  .vinyl-spin {
+    animation: none !important;
+  }
+
+  /* Наклон под курсором тоже выключаем. !important нужен, потому что угол
+     пишется инлайном из JS, а инлайн иначе сильнее любого правила. */
+  .disc-tilt {
+    transform: none !important;
+  }
+}
+
+@layer components {
+  /* ---------- Пластинка ----------
+     Вращается, пока играет; на паузе останавливается на текущем угле —
+     CSS-анимация сама держит фазу через animation-play-state, откатывать
+     угол вручную не нужно. */
+  .vinyl-spin {
+    animation: vinyl-spin 5.2s linear infinite;
+  }
+
+  /* ---------- Наклон диска под курсором ----------
+     Ховер как на карточках Steam: диск доворачивается в 3D к курсору,
+     чуть приподнимается и роняет тень.
+
+     Наклон живёт отдельным слоем НАД вращением: и то, и другое пишет
+     в transform, а на одном элементе CSS-анимация всегда перебивает
+     инлайновый стиль — угол наклона просто не доехал бы.
+
+     Тень на почти чёрном канвасе физически не может быть контрастной:
+     затемнять #0b0b0f почти некуда. Поэтому она большая и мягкая —
+     работает как градиентная лужа под диском, а основную «приподнятость»
+     даёт наклон со скейлом. */
+  .disc-tilt {
+    transform: perspective(700px);
+    transform-origin: center;
+    box-shadow: 0 10px 26px rgb(0 0 0 / 0.55);
+    transition:
+      transform 140ms var(--ease-out-quart),
+      box-shadow 220ms var(--ease-out-quart);
+    will-change: transform;
+  }
+}
+
+@keyframes vinyl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
