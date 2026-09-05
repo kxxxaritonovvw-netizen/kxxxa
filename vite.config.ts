@@ -9,15 +9,13 @@ export default defineConfig({
   build: {
     // Safari 16.4 — нижняя граница поддержки (dvh, :has, backdrop-filter без багов)
     target: ['safari16', 'chrome110', 'firefox115'],
-    // Не esbuild: его CSS-минификатор выбрасывает второй блок @layer base,
-    // и весь наш reset исчезает из прода, оставаясь в dev. Lightning CSS
-    // сливает одноимённые слои корректно и заодно ставит вендорные префиксы.
+    // Только минификатор. Не путать с css.transformer: тот прогоняет CSS
+    // через полный конвейер Lightning CSS с явными targets и в наших сборках
+    // ломает @layer — эмулирует его через пустой :is(), который не матчит
+    // вообще ничего. Итог: весь @layer base пропадал молча (в том числе
+    // это же и объясняло нецентрированный #root — правило было в бандле,
+    // но не применялось). Один только cssMinify такого не делает и заодно
+    // чинит исходный баг esbuild, который выбрасывал второй блок @layer base.
     cssMinify: 'lightningcss',
-  },
-  css: {
-    transformer: 'lightningcss',
-    lightningcss: {
-      targets: { safari: (16 << 16) | (4 << 8), chrome: 110 << 16, firefox: 115 << 16 },
-    },
   },
 })
