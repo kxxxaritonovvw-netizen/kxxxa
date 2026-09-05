@@ -5,7 +5,7 @@ import { formatTime, useProgress } from './audio/useProgress'
 import { bindMediaSession } from './audio/mediaSession'
 import { TRACK } from './data/track'
 
-// Геометрия кольца-таймлайна в единицах viewBox — фиксированная, сам SVG
+// Геометрия таймлайна в единицах viewBox — фиксированная, сам SVG
 // растягивается CSS-размером снаружи, вектор (и толщина обводки) масштабируется
 // вместе с ним пропорционально.
 const VB = 356
@@ -14,8 +14,26 @@ const DISC_R = 150
 const RING_R = 175
 const STROKE = 6
 const HIT_STROKE = 34 // невидимая, но широкая зона захвата пальцем
-const CIRCUMFERENCE = 2 * Math.PI * RING_R
 const DISC_PCT = `${((DISC_R * 2) / VB) * 100}%`
+
+// Таймлайн — не полное кольцо, а дуга только по низу диска, слева направо.
+// Угол 0° — «восток» (математическая ось X), 90° — «юг» (вниз, экранные
+// координаты Y растут вниз). Лево — 160° (чуть ниже горизонтали диска),
+// право — 20°, дуга между ними проходит через самый низ (90°).
+const ARC_LEFT_DEG = 160
+const ARC_RIGHT_DEG = 20
+const ARC_SPAN_DEG = ARC_LEFT_DEG - ARC_RIGHT_DEG
+
+function pointOnArc(deg: number, r: number) {
+  const rad = (deg * Math.PI) / 180
+  return { x: CENTER + r * Math.cos(rad), y: CENTER + r * Math.sin(rad) }
+}
+const ARC_P1 = pointOnArc(ARC_LEFT_DEG, RING_R)
+const ARC_P2 = pointOnArc(ARC_RIGHT_DEG, RING_R)
+// sweep-flag=0: дуга короче 180° и идёт в сторону убывания угла — на экране
+// это движение против часовой стрелки, именно то, что визуально читается
+// как «слева, через низ, направо».
+const ARC_PATH = `M ${ARC_P1.x} ${ARC_P1.y} A ${RING_R} ${RING_R} 0 0 0 ${ARC_P2.x} ${ARC_P2.y}`
 
 function EditIcon() {
   return (
@@ -40,7 +58,7 @@ export function Player() {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const svgRef = useRef<SVGSVGElement>(null)
-  const progressRef = useRef<SVGCircleElement>(null)
+  const progressRef = useRef<SVGPathElement>(null)
   const timeRef = useRef<HTMLSpanElement>(null)
   const totalRef = useRef<HTMLSpanElement>(null)
   const draggingRef = useRef(false)
@@ -74,7 +92,9 @@ export function Player() {
   function applyProgress(time: number, duration: number) {
     const ratio = duration > 0 ? Math.min(1, Math.max(0, time / duration)) : 0
     if (progressRef.current) {
-      progressRef.current.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - ratio))
+      // pathLength=100 на самом path — офсет считается в «процентах» дуги,
+      // не в реальных единицах длины, поэтому формула не зависит от радиуса.
+      progressRef.current.style.strokeDashoffset = String(100 * (1 - ratio))
     }
     if (timeRef.current) timeRef.current.textContent = formatTime(time)
     if (totalRef.current) totalRef.current.textContent = formatTime(duration)
@@ -87,19 +107,24 @@ export function Player() {
 
   // Угол считаем от центра рендер-прямоугольника SVG, а не от viewBox —
   // так работает независимо от того, во сколько раз браузер отмасштабировал
-  // векторные единицы под реальный размер кольца.
+  // векторные единицы под реальный размер дуги.
   function ratioFromPointer(e: React.PointerEvent) {
     const el = svgRef.current
     if (!el) return 0
     const rect = el.getBoundingClientRect()
-    const cx = rect.left + rect.width / 2
-    const cy = rect.top + rect.height / 2
-    let angle = Math.atan2(e.clientY - cy, e.clientX - cx) + Math.PI / 2
-    if (angle < 0) angle += Math.PI * 2
-    return angle / (Math.PI * 2)
+    const dx = e.clientX - (rect.left + rect.width / 2)
+    const dy = e.clientY - (rect.top + rect.height / 2)
+    const deg = (Math.atan2(dy, dx) * 180) / Math.PI
+    if (deg <= ARC_LEFT_DEG && deg >= ARC_RIGHT_DEG) {
+      return (ARC_LEFT_DEG - deg) / ARC_SPAN_DEG
+    }
+    // Палец соскользнул выше дуги (во время активного драга — курсор не
+    // ограничен хитбоксом). Решаем по горизонтали, чтобы не «перескакивало»
+    // на другой конец: слева от центра — начало, справа — конец.
+    return dx < 0 ? 0 : 1
   }
 
-  function handlePointerDown(e: React.PointerEvent<SVGCircleElement>) {
+  function handlePointerDown(e: React.PointerEvent<SVGPathElement>) {
     const s = source.current
     if (!s) return
     e.currentTarget.setPointerCapture(e.pointerId)
@@ -107,14 +132,14 @@ export function Player() {
     const { duration } = s.position()
     applyProgress(ratioFromPointer(e) * duration, duration)
   }
-  function handlePointerMove(e: React.PointerEvent<SVGCircleElement>) {
+  function handlePointerMove(e: React.PointerEvent<SVGPathElement>) {
     if (!draggingRef.current) return
     const s = source.current
     if (!s) return
     const { duration } = s.position()
     applyProgress(ratioFromPointer(e) * duration, duration)
   }
-  function handlePointerUp(e: React.PointerEvent<SVGCircleElement>) {
+  function handlePointerUp(e: React.PointerEvent<SVGPathElement>) {
     if (!draggingRef.current) return
     draggingRef.current = false
     const s = source.current
@@ -127,9 +152,9 @@ export function Player() {
     <Shell>
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
 
-      {/* Кольцо-таймлайн вокруг пластинки. Тонкий видимый штрих + широкая
-          прозрачная «ловилка» под пальцем поверх него — 6px обводки достаточно
-          глазу, но никуда не годится как зона тапа. */}
+      {/* Таймлайн — дуга только по низу диска, слева направо (не полное
+          кольцо). Тонкий видимый штрих + широкая прозрачная «ловилка» под
+          пальцем поверх него — 6px обводки не годится как зона тапа. */}
       <div className="mt-9 flex justify-center">
         <div className="relative" style={{ width: 'min(78vw, 320px)', height: 'min(78vw, 320px)' }}>
           <svg
@@ -139,31 +164,20 @@ export function Player() {
             height="100%"
             style={{ touchAction: 'none' }}
           >
-            <circle
-              cx={CENTER}
-              cy={CENTER}
-              r={RING_R}
-              fill="none"
-              stroke="var(--color-surface-3)"
-              strokeWidth={STROKE}
-            />
-            <circle
+            <path d={ARC_PATH} fill="none" stroke="var(--color-surface-3)" strokeWidth={STROKE} strokeLinecap="round" />
+            <path
               ref={progressRef}
-              cx={CENTER}
-              cy={CENTER}
-              r={RING_R}
+              d={ARC_PATH}
               fill="none"
               stroke="var(--color-accent)"
               strokeWidth={STROKE}
               strokeLinecap="round"
-              strokeDasharray={CIRCUMFERENCE}
-              strokeDashoffset={CIRCUMFERENCE}
-              transform={`rotate(-90 ${CENTER} ${CENTER})`}
+              pathLength={100}
+              strokeDasharray={100}
+              strokeDashoffset={100}
             />
-            <circle
-              cx={CENTER}
-              cy={CENTER}
-              r={RING_R}
+            <path
+              d={ARC_PATH}
               fill="none"
               stroke="transparent"
               strokeWidth={HIT_STROKE}
