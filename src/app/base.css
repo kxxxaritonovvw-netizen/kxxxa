@@ -275,10 +275,14 @@
     box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
   }
 
+  /* 6px, а не 4: полоска — она же зона захвата, и по ней попадают пальцем.
+     Фон — альфа, а не --color-surface-3: ступени поверхностей рассчитаны
+     на --color-bg, а внутри пилюли (surface-2) между ними почти нет
+     разницы — незаполненная часть сливалась с подложкой. */
   .volume-track {
     position: relative;
-    width: 4px;
-    background: var(--color-surface-3);
+    width: 6px;
+    background: rgb(255 255 255 / 0.18);
     border-radius: var(--radius-full);
     cursor: pointer;
     /* Драг по вертикали иначе перехватит скролл контейнера. */
@@ -299,10 +303,10 @@
   .volume-thumb {
     position: absolute;
     left: 50%;
-    width: 12px;
-    height: 12px;
-    margin-left: -6px;
-    margin-bottom: -6px;
+    width: 14px;
+    height: 14px;
+    margin-left: -7px;
+    margin-bottom: -7px;
     background: var(--color-text);
     border-radius: var(--radius-full);
     box-shadow: 0 2px 6px rgb(0 0 0 / 0.5);
