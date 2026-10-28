@@ -5,7 +5,6 @@ const routes = new Map([
   ['/', ['index.html', 'text/html; charset=utf-8']],
   ['/index.html', ['index.html', 'text/html; charset=utf-8']],
   ['/assets/favicon.svg', ['assets/favicon.svg', 'image/svg+xml']],
-  ['/assets/signature.svg', ['assets/signature.svg', 'image/svg+xml']],
   ['/assets/badge-front.png', ['assets/badge-front.png', 'image/png']],
   ['/assets/badge-back.png', ['assets/badge-back.png', 'image/png']],
   ['/badge.js', ['badge.js', 'text/javascript; charset=utf-8']],
