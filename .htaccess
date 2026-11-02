@@ -1,0 +1,7 @@
+# Pages must always be rechecked so a deploy shows up at once; CSS, JS and images
+# carry ?v=<content hash> links (tools/version-assets.py), so they can stay cached.
+<IfModule mod_headers.c>
+  <FilesMatch "\.html?$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
