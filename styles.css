@@ -70,7 +70,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   box-shadow: inset 0 0 48px #201729;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 /* Chromium: real refraction from the SVG filter built in glass.js */
 .pill-name.is-liquid { backdrop-filter: url(#liquid-glass); }
@@ -88,32 +87,13 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .pill-name-bar { position: relative; height: 44px; }
-.name-swap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.name, .signature {
-  position: absolute;
-  transition: translate 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s;
-}
 .name {
+  position: absolute;
   left: calc(50% + 0.5px);
   top: calc(50% - 12px);
   transform: translateX(-50%);
   font: 500 16px/24px var(--font-ui);
   white-space: nowrap;
-}
-.signature {
-  left: 50%;
-  top: 6px;
-  width: auto;
-  height: 32px;
-  transform: translateX(-50%);
-  translate: 0 44px;
-  opacity: 0;
-}
-/* Hover: the pill grows 4% from its centre, the name flies up and the signature rolls in from below */
-@media (hover: hover) {
-  .pill-name:not(.is-open):hover { transform: translateX(-50%) scale(1.04); }
-  .pill-name:not(.is-open):hover .name { translate: 0 -44px; opacity: 0; }
-  .pill-name:not(.is-open):hover .signature { translate: 0 0; opacity: 1; }
 }
 /* Both icons sit in a 28px box, 8px from the top, bottom and their side of the pill */
 .burger {
@@ -192,7 +172,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name.is-open .burger span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu, .menu-list li, .menu-links, .burger span, .pill-name, .name, .signature { transition: none; }
+  .menu, .menu-list li, .menu-links, .burger span { transition: none; }
 }
 
 /* Background glow, anchored to the page centre as in the 1920px frame */
