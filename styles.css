@@ -125,8 +125,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   width: 20px;
   padding: 0;
 }
-.burger span { height: 1.5px; background: #d9d9d9; }
-.telegram { position: absolute; right: 19.5px; top: 17.5px; }
+.burger span { height: 1.5px; background: #72747b; }
+.telegram { position: absolute; right: 15.5px; top: 17.5px; }
 
 /* Not enough room for the centred name pill: side pills become icons, name pill fills the gap */
 @container header (max-width: 760px) {
@@ -204,17 +204,18 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .glow-shape > img { position: absolute; left: -16.46%; top: -11.95%; width: 132.92%; height: 123.9%; }
 
 /* Hero */
-.hero { position: relative; padding-top: clamp(140px, 15.7cqw, 301px); }
+/* Figma 1440: headline top at 229px, artwork top at 600px; spacing shrinks on narrower screens */
+.hero { position: relative; padding-top: clamp(140px, 15.9cqw, 229px); }
 .hero-title {
-  max-width: 1080px;
+  max-width: 1061px;
   margin: 0 auto;
   padding: 0 16px;
-  font: 400 clamp(28px, 4cqw, 56px) / 1 var(--font-display);
+  font: 400 clamp(28px, 3.34cqw, 48px) / 1 var(--font-ui);
   text-align: center;
   color: transparent;
   background-image:
-    linear-gradient(-29.92deg, rgba(255, 255, 255, 0) 8.13%, rgba(237, 223, 248, 0.767) 23.2%, #a885c4 34.08%, #faa3d8 38.22%, rgba(255, 255, 255, 0) 79.2%),
-    linear-gradient(90deg, #cdbcd8, #cdbcd8);
+    linear-gradient(-18.51deg, rgba(255, 255, 255, 0) 8.13%, rgba(237, 223, 248, 0.767) 23.2%, #a885c4 34.08%, #faa3d8 38.22%, rgba(255, 255, 255, 0) 79.2%),
+    linear-gradient(90deg, #81728b, #81728b);
   -webkit-background-clip: text;
   background-clip: text;
 }
@@ -227,8 +228,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   left: 50%;
   width: clamp(560px, 100%, 1308px);
   height: calc(728px * var(--vs));
-  margin-top: clamp(48px, 6.8cqw, 131px);
-  transform: translateX(-50%);
+  margin-top: clamp(48px, 19.1cqw, 275px);
+  /* In Figma the composition sits 31px right of the page centre */
+  transform: translateX(calc(-50% + 31px * var(--vs)));
 }
 .visual-stage {
   position: absolute;
