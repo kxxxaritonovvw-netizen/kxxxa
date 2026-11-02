@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" />
-    <link rel="stylesheet" href="styles.css?v=1b7c3e35" />
+    <link rel="stylesheet" href="styles.css?v=3ab3d621" />
   </head>
   <body>
     <div class="page">
@@ -24,8 +24,12 @@
               <button class="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu">
                 <span></span><span></span><span></span>
               </button>
-              <p class="name">Aleksey Kharitonov</p>
-              <a class="telegram" href="#" aria-label="Telegram"></a>
+              <div class="name-swap">
+                <p class="name">Aleksey Kharitonov</p>
+                <span class="name name-about" aria-hidden="true">About</span>
+                <span class="name name-tg" aria-hidden="true">t.me/kxaritonovvw</span>
+              </div>
+              <a class="telegram" href="https://t.me/kxaritonovvw" target="_blank" rel="noopener" aria-label="Telegram"></a>
             </div>
             <nav class="menu" id="menu" aria-label="Разделы" inert>
               <div class="menu-inner">
@@ -35,7 +39,7 @@
                   <li><a href="#about">Обо мне</a></li>
                 </ul>
                 <div class="menu-links">
-                  <a href="#">Telegram</a>
+                  <a href="https://t.me/kxaritonovvw" target="_blank" rel="noopener">Telegram</a>
                   <a href="#">CV</a>
                 </div>
               </div>
