@@ -98,9 +98,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   position: absolute;
   top: 24px;
   left: calc(50% - 22px);
-  width: 400px;
+  width: 360px;
   transform: translateX(-50%);
-  border-radius: 26px;
+  border-radius: 22px;
   background: rgba(24, 26, 31, 0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -121,28 +121,43 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   mask-composite: exclude;
   pointer-events: none;
 }
-.pill-name-bar { position: relative; height: 52px; }
+.pill-name-bar { position: relative; height: 44px; }
 .name {
   position: absolute;
   left: calc(50% + 0.5px);
   top: calc(50% - 12px);
   transform: translateX(-50%);
-  font: 500 20px/24px var(--font-ui);
+  font: 500 16px/24px var(--font-ui);
   white-space: nowrap;
 }
+/* Both icons sit in a 28px box, 8px from the top, bottom and their side of the pill */
 .burger {
   position: absolute;
-  left: 22px;
-  top: calc(50% + 0.25px);
-  transform: translateY(-50%);
+  left: 8px;
+  top: 8px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
-  width: 20px;
+  width: 28px;
+  height: 28px;
   padding: 0;
 }
-.burger span { height: 1.5px; background: #72747b; }
-.telegram { position: absolute; right: 16px; top: 18px; }
+.burger span { width: 20px; height: 1.5px; background: #72747b; }
+/* Solid circle with the Telegram plane cut out of it */
+.telegram {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #72747b;
+  -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 16px no-repeat, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: url(assets/telegram.svg?v=681a7269) center / 16px no-repeat exclude, linear-gradient(#000 0 0);
+}
 
 /* Not enough room for the centred name pill: side pills become icons, name pill fills the gap */
 @container header (max-width: 760px) {
@@ -155,7 +170,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 @container header (max-width: 480px) {
   .header-inner { padding: 16px 16px 0; }
   .telegram { display: none; }
-  .name { left: 52px; transform: none; font-size: 16px; }
+  .name { left: 52px; transform: none; }
 }
 
 /* Menu that unfolds down from the name pill */
