@@ -98,10 +98,12 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   transition: translate 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s cubic-bezier(0.65, 0, 0.35, 1), filter 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 /* Leaving text blurs and fades out, arriving text does the reverse */
-.name-about, .name-tg { translate: 0 44px; opacity: 0; filter: blur(4px); }
-/* Hovering an icon rolls the name up and its label in from below */
+.name-menu, .name-tg { translate: 0 44px; opacity: 0; filter: blur(4px); }
+/* Hovering an icon rolls the name up and its label in from below; "Menu" stays while the menu is open */
+.pill-name.is-open p.name,
 .pill-name:not(.is-open):has(.burger:hover, .telegram:hover) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
-.pill-name:not(.is-open):has(.burger:hover) .name-about,
+.pill-name.is-open .name-menu,
+.pill-name:not(.is-open):has(.burger:hover) .name-menu,
 .pill-name:not(.is-open):has(.telegram:hover) .name-tg { translate: 0 0; opacity: 1; filter: none; }
 /* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
 .pill-name::after {
@@ -114,6 +116,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   transition: background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1);
   pointer-events: none;
 }
+.pill-name.is-open::after,
 .pill-name:not(.is-open):has(.burger:hover)::after { background-color: rgba(250, 163, 216, 0.05); }
 .pill-name:not(.is-open):has(.telegram:hover)::after { background-color: rgba(42, 171, 238, 0.05); }
 /* Both icons sit in a 28px box, 8px from the top, bottom and their side of the pill */
