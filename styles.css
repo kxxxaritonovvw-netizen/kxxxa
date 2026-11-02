@@ -70,7 +70,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   box-shadow: inset 0 0 48px #201729;
+  transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1) 0.25s;
 }
+/* Opening: the pill first widens by 200px, then the menu unfolds; closing runs the other way round */
+.pill-name.is-open { width: min(560px, 100% - 32px); transition-delay: 0s; }
 /* Chromium: real refraction from the SVG filter built in glass.js */
 .pill-name.is-liquid { backdrop-filter: url(#liquid-glass); }
 /* Faint glass rim, a touch brighter where the Figma light (−45°) hits */
@@ -159,9 +162,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .menu {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: grid-template-rows 0.4s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.pill-name.is-open .menu { grid-template-rows: 1fr; }
+.pill-name.is-open .menu { grid-template-rows: 1fr; transition-delay: 0.3s; }
 .menu-inner { overflow: hidden; }
 .menu-list {
   margin: 0;
@@ -190,7 +193,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   transform: translateY(-8px);
   transition: opacity 0.25s, transform 0.25s;
 }
-.pill-name.is-open .menu-list li, .pill-name.is-open .menu-links { opacity: 1; transform: none; transition-delay: 0.1s; }
+.pill-name.is-open .menu-list li, .pill-name.is-open .menu-links { opacity: 1; transform: none; transition-delay: 0.55s; }
 
 .burger span { transition: transform 0.25s, opacity 0.2s, background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
 .pill-name.is-open .burger span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
@@ -198,7 +201,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name.is-open .burger span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu, .menu-list li, .menu-links, .burger span, .name, .pill-name::after { transition: none; }
+  .pill-name, .menu, .menu-list li, .menu-links, .burger span, .name, .pill-name::after { transition: none; }
 }
 
 /* Background glow, anchored to the page centre as in the 1920px frame */

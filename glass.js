@@ -78,7 +78,14 @@ if (glass && isChromium) {
     image.setAttribute('href', canvas.toDataURL());
   }
 
+  // While the pill animates its size, stretch the last map and redraw it once the size settles
+  let redraw;
   drawMap();
-  new ResizeObserver(drawMap).observe(glass);
+  new ResizeObserver(() => {
+    image.setAttribute('width', glass.offsetWidth);
+    image.setAttribute('height', glass.offsetHeight);
+    clearTimeout(redraw);
+    redraw = setTimeout(drawMap, 100);
+  }).observe(glass);
   glass.classList.add('is-liquid');
 }
