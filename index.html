@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aleksey Kharitonov — Product Designer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="viewport">
+      <div class="canvas">
+        <div class="scroll">
+          <div class="scroll-size">
+            <div class="stage">
+              <div class="glow" aria-hidden="true">
+                <div class="glow-shape"><img src="assets/glow.svg" alt="" /></div>
+              </div>
+
+              <section class="screen" id="home" aria-label="Главная">
+                <div class="pig" aria-hidden="true">
+                  <div class="pig-base masked"><img src="assets/pig.png" alt="" /></div>
+                  <div class="rot pig-group"><div class="masked"><img src="assets/pig-group-1.svg" alt="" /></div></div>
+                  <div class="rot pig-group lighter"><div class="masked"><img src="assets/pig-group-2.svg" alt="" /></div></div>
+                  <div class="rot pig-e3"><div class="masked"><img src="assets/pig-ellipse-3.svg" alt="" /></div></div>
+                  <div class="rot pig-e4"><div class="masked"><img src="assets/pig-ellipse-4.svg" alt="" /></div></div>
+                  <div class="rot pig-e5 lighter"><div class="masked"><img src="assets/pig-ellipse-5.svg" alt="" /></div></div>
+                  <div class="rot pig-e6 lighter"><div class="masked"><img src="assets/pig-ellipse-6.svg" alt="" /></div></div>
+                  <div class="pig-ear pig-ear-left masked lighter"><img src="assets/pig-ear-left.svg" alt="" /></div>
+                  <div class="pig-ear pig-ear-right masked lighter"><img src="assets/pig-ear-right.svg" alt="" /></div>
+                </div>
+
+                <div class="rot cashback" aria-hidden="true">
+                  <div class="cashback-box">
+                    <div class="rot cb-light-1"><div><img src="assets/cb-rect.svg" alt="" /></div></div>
+                    <div class="rot cb-light-2 lighter"><div><img src="assets/cb-ellipse-1.svg" alt="" /></div></div>
+                    <div class="rot cb-sun-1 lighter"><div class="sun"><img src="assets/sunshine.png" alt="" /></div></div>
+                    <div class="rot cb-sun-2 lighter"><div class="sun"><img src="assets/sunshine.png" alt="" /></div></div>
+                    <div class="rot cb-light-3"><div><img src="assets/cb-ellipse-2.svg" alt="" /></div></div>
+                    <img class="cb-img cash-bg" src="assets/cash-bg.png" alt="" />
+                    <img class="cb-img cash-text" src="assets/cash-text.png" alt="" />
+                    <img class="cb-img back-bg" src="assets/back-bg.png" alt="" />
+                    <img class="cb-img back-text" src="assets/back-text.png" alt="" />
+                  </div>
+                </div>
+
+                <div class="rot tickets">
+                  <div class="tickets-card">
+                    <div class="tickets-glow"><img src="assets/tickets-glow.svg" alt="" /></div>
+                    <div class="tickets-head">
+                      <p class="tickets-title">Мои билеты</p>
+                      <div class="tickets-badge">
+                        <span class="tickets-label">Накоплено</span>
+                        <span class="tickets-count">
+                          <img src="assets/ticket.svg" width="16" height="16" alt="" />
+                          <span>245</span>
+                          <img src="assets/chevron-right.svg" width="16" height="16" alt="" />
+                        </span>
+                      </div>
+                    </div>
+                    <div class="tickets-foot">
+                      <div class="trophy">
+                        <div class="rot trophy-inner"><img src="assets/trophy.png" alt="" /></div>
+                      </div>
+                      <p class="tickets-note">Так держать! Ты в <span class="gradient">топ 3.4%</span>  по числу билетов!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <img class="phone" src="assets/phone.png" alt="Экран профиля в мобильном приложении" />
+
+                <h1 class="hero">
+                  <span>Designer building products</span>
+                  <span>with purpose and sweet over details</span>
+                </h1>
+              </section>
+
+              <section class="screen" id="work" aria-labelledby="work-title">
+                <h2 class="screen-title" id="work-title">Selected work</h2>
+                <p class="screen-note">Здесь будут кейсы</p>
+              </section>
+
+              <section class="screen" id="about" aria-labelledby="about-title">
+                <h2 class="screen-title" id="about-title">About &amp; contact</h2>
+                <p class="screen-note">Здесь будет рассказ о себе и контакты</p>
+              </section>
+            </div>
+          </div>
+        </div>
+
+        <!-- Header stays in place while the canvas scrolls -->
+        <div class="chrome">
+          <a class="pill pill-city" href="#" aria-label="Тбилиси">
+            <img class="flag" src="assets/flag-ge.svg" width="24" height="24" alt="" />
+            <span class="pill-city-text">Tbilisi</span>
+          </a>
+
+          <header class="pill-name">
+            <div class="pill-name-bar">
+              <button class="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu">
+                <span></span><span></span><span></span>
+              </button>
+              <p class="name">Aleksey Kharitonov</p>
+              <a class="telegram" href="#" aria-label="Telegram">
+                <img src="assets/telegram.svg" width="24" height="24" alt="" />
+              </a>
+            </div>
+            <nav class="menu" id="menu" aria-label="Разделы" inert>
+              <div class="menu-inner">
+                <ul class="menu-list">
+                  <li><a href="#home">Главная</a></li>
+                  <li><a href="#work">Кейсы</a></li>
+                  <li><a href="#about">Обо мне</a></li>
+                </ul>
+                <div class="menu-links">
+                  <a href="#">Telegram</a>
+                  <a href="#">CV</a>
+                </div>
+              </div>
+            </nav>
+          </header>
+
+          <a class="pill pill-cv" href="#">
+            <span class="cv-icon cv-1"><img src="assets/cv-1.svg" alt="" /></span>
+            <span class="cv-icon cv-2"><img src="assets/cv-2.svg" alt="" /></span>
+            <span class="cv-icon cv-3"><img src="assets/cv-3.svg" alt="" /></span>
+            <span class="pill-cv-text">CV</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <script src="scale.js"></script>
+    <script src="menu.js"></script>
+  </body>
+</html>
