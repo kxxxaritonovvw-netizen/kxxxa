@@ -128,7 +128,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name.is-open::after,
 .pill-name:not(.is-open):has(.burger:hover)::after { background-color: rgba(250, 163, 216, 0.05); }
 .pill-name:not(.is-open):has(.telegram:hover)::after { background-color: rgba(42, 171, 238, 0.05); }
-/* Both icons sit in a 28px box, 8px from the top, bottom and their side of the pill */
+/* Burger: a 28px box 8px from the top, bottom and left; its lines start 12px from the edge */
 .burger {
   position: absolute;
   left: 8px;
@@ -143,17 +143,19 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   padding: 0;
 }
 .burger span { width: 20px; height: 1.5px; background: #72747b; }
-/* The Telegram plane on its own, painted with the background colour so hover can recolour it */
+/* The Telegram plane on its own, painted with the background colour so hover can recolour it.
+   The glyph fills its box almost edge to edge, so the box sits 10px in: the plane itself then
+   ends 12px from the pill's edge, like the burger lines, and is centred vertically */
 .telegram {
   position: absolute;
-  right: 8px;
-  top: 8px;
-  width: 28px;
-  height: 28px;
+  right: 10px;
+  top: 9px;
+  width: 26px;
+  height: 26px;
   background: #72747b;
   transition: background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-  -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 28px no-repeat;
-  mask: url(assets/telegram.svg?v=681a7269) center / 28px no-repeat;
+  -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
+  mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
 }
 .burger:hover span, .telegram:hover { background-color: #eeeaf1; }
 
