@@ -1,8 +1,7 @@
-// Burger menu: unfolds the name pill and scrolls the canvas to the chosen screen.
+// Burger menu: unfolds the name pill and scrolls to the chosen section.
 const pill = document.querySelector('.pill-name');
 const burger = pill.querySelector('.burger');
 const menu = pill.querySelector('.menu');
-const scroller = document.querySelector('.scroll');
 
 function setOpen(open) {
   pill.classList.toggle('is-open', open);
@@ -28,8 +27,7 @@ menu.querySelectorAll('a[href^="#"]').forEach((link) => {
   if (!target) return;
   link.addEventListener('click', (event) => {
     event.preventDefault();
-    const scale = parseFloat(getComputedStyle(scroller).getPropertyValue('--scale')) || 1;
-    scroller.scrollTo({ top: target.offsetTop * scale, behavior: 'smooth' });
+    target.scrollIntoView({ behavior: 'smooth' });
     setOpen(false);
   });
 });
