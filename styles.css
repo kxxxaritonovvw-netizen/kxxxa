@@ -75,11 +75,16 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   -webkit-backdrop-filter: blur(4px);
   /* Inner glow from Figma, plus a soft drop shadow */
   box-shadow: inset 0 0 48px #201729, 0 2px 6px rgba(0, 0, 0, 0.16), 0 10px 32px rgba(0, 0, 0, 0.28);
-  transition: width 0.3s var(--menu-ease) 0.1s;
+  transition: width 0.3s var(--menu-ease) 0.1s, background-color 0.4s var(--menu-ease);
   contain: layout style;
 }
-/* Opening: the pill widens by 200px while the menu starts to unfold; closing runs the other way round */
-.pill-name.is-open { width: min(560px, 100% - 32px); transition: width 0.36s var(--menu-ease); }
+/* Opening: the pill widens by 200px while the menu starts to unfold; closing runs the other way round.
+   The open pill gets a denser fill and stronger glass (glass.js); the rim stays as it is */
+.pill-name.is-open {
+  width: min(560px, 100% - 32px);
+  background-color: rgba(24, 26, 31, 0.56);
+  transition: width 0.36s var(--menu-ease), background-color 0.4s var(--menu-ease);
+}
 /* Chromium: real refraction from the SVG filter built in glass.js */
 .pill-name.is-liquid { backdrop-filter: url(#liquid-glass); }
 /* Glass rim, brighter where the light (−45°) hits */
@@ -110,10 +115,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .name-menu, .name-tg { translate: 0 44px; opacity: 0; filter: blur(4px); }
 /* Hovering an icon rolls the name up and its label in from below; "Menu" stays while the menu is open */
 .pill-name.is-open p.name,
-.pill-name:not(.is-open):has(.burger:hover, .telegram:hover) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .telegram:hover, .telegram:focus-visible) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 .pill-name.is-open .name-menu,
-.pill-name:not(.is-open):has(.burger:hover) .name-menu,
-.pill-name:not(.is-open):has(.telegram:hover) .name-tg { translate: 0 0; opacity: 1; filter: none; }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible) .name-menu,
+.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible) .name-tg { translate: 0 0; opacity: 1; filter: none; }
 /* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
 .pill-name::after {
   content: "";
@@ -126,8 +131,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .pill-name.is-open::after,
-.pill-name:not(.is-open):has(.burger:hover)::after { background-color: rgba(250, 163, 216, 0.05); }
-.pill-name:not(.is-open):has(.telegram:hover)::after { background-color: rgba(42, 171, 238, 0.05); }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible)::after { background-color: rgba(250, 163, 216, 0.05); }
+.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible)::after { background-color: rgba(42, 171, 238, 0.05); }
 /* Burger: a 28px box 8px from the top, bottom and left; its lines start 12px from the edge */
 .burger {
   position: absolute;
@@ -152,12 +157,19 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   top: 9px;
   width: 26px;
   height: 26px;
+}
+/* The plane is drawn on an inner layer, so the mask doesn't cut off the focus ring */
+.telegram::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   background: #72747b;
   transition: background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1);
   -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
   mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
 }
-.burger:hover span, .telegram:hover { background-color: #eeeaf1; }
+.burger:hover span, .burger:focus-visible span,
+.telegram:hover::before, .telegram:focus-visible::before { background-color: #eeeaf1; }
 
 /* Narrow screens: no room for the Figma offset, centre the pill */
 @container header (max-width: 440px) {
@@ -179,7 +191,11 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 .menu-list a {
   display: block;
-  padding: 12px 0;
+  /* Hug the text with some padding for the focus ring, without moving the text */
+  width: fit-content;
+  margin: 0 -12px;
+  padding: 12px;
+  border-radius: 14px;
   font: 500 24px/28px var(--font-ui);
   color: #cdbcd8;
   transition: color 0.2s;
@@ -192,7 +208,19 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   font: 400 16px/20px var(--font-ui);
   color: var(--text-medium);
 }
+.menu-links a { margin: -4px -8px; padding: 4px 8px; border-radius: 8px; }
 .menu-links a:hover, .menu-links a:focus-visible { color: var(--text); }
+
+/* Keyboard focus: a thin light ring with a small gap, following each element's rounding */
+.page :focus-visible {
+  outline: 1.5px solid rgba(238, 234, 241, 0.7);
+  outline-offset: 2px;
+}
+.page :focus:not(:focus-visible) { outline: none; }
+.burger { border-radius: 10px; }
+.telegram { border-radius: 9px; }
+.telegram:focus-visible { outline-offset: 3px; }
+.menu-list a:focus-visible, .menu-links a:focus-visible { outline-offset: 0; }
 .menu-list li, .menu-links {
   opacity: 0;
   transform: translateY(-8px);

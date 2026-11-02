@@ -4,9 +4,11 @@ const glass = document.querySelector('.pill-name');
 const isChromium = navigator.userAgentData?.brands.some((b) => b.brand === 'Chromium');
 
 if (glass && isChromium) {
-  const DEPTH = 18; // px from the edge over which the glass bends the backdrop, a narrow lens-like rim
+  const DEPTH = 32; // px from the edge over which the glass bends the backdrop, a wide lens
   const STRENGTH = 42; // px the backdrop is pulled in at the very edge
+  const OPEN_STRENGTH = 90; // stronger bend while the menu is open
   const DISPERSION = 0.5; // red and blue bend a little more and less than green
+  const OPEN_DISPERSION = 0.15; // the open bend is so strong that a wide split ghosts the text
   const FROST = 1.5; // blur stdDeviation
 
   const svgNS = 'http://www.w3.org/2000/svg';
@@ -18,7 +20,7 @@ if (glass && isChromium) {
       <feImage result="map" preserveAspectRatio="none" />
       ${['r', 'g', 'b'].map((channel, i) => `
         <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G"
-          scale="${STRENGTH * (1 + DISPERSION * (1 - i))}" result="d-${channel}" />
+          result="d-${channel}" />
         <feColorMatrix in="d-${channel}" type="matrix" result="c-${channel}"
           values="${[0, 1, 2].map((row) => [0, 1, 2, 3, 4].map((col) => +(row === i && col === i)).join(' ')).join(' ')} 0 0 0 1 0" />`).join('')}
       <feComposite in="c-r" in2="c-g" operator="arithmetic" k2="1" k3="1" result="rg" />
@@ -27,7 +29,15 @@ if (glass && isChromium) {
     </filter>`;
   document.body.append(svg);
   const image = svg.querySelector('feImage');
+  const maps = svg.querySelectorAll('feDisplacementMap');
   const canvas = document.createElement('canvas');
+
+  // open: 0 for the closed pill, 1 for the open one; bend and colour split follow it
+  function setOpenness(open) {
+    const strength = STRENGTH + (OPEN_STRENGTH - STRENGTH) * open;
+    const dispersion = DISPERSION + (OPEN_DISPERSION - DISPERSION) * open;
+    maps.forEach((map, i) => map.setAttribute('scale', strength * (1 + dispersion * (1 - i))));
+  }
 
   // Displacement map: red/green hold the x/y offset, sampling the backdrop from further in near the rim
   function drawMap() {
@@ -41,6 +51,8 @@ if (glass && isChromium) {
     const data = ctx.createImageData(w, h);
     const hx = w / 2 - r;
     const hy = h / 2 - r;
+    // The bend must fade out before the middle, or the pull flips sharply there and tears the backdrop
+    const depth = Math.min(DEPTH, w / 2, h / 2);
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         const px = x + 0.5 - w / 2;
@@ -63,8 +75,8 @@ if (glass && isChromium) {
           inside = r - qy;
           ny = Math.sign(py);
         }
-        const t = Math.min(Math.max(inside / DEPTH, 0), 1);
-        const pull = (1 - t) ** 2;
+        const t = Math.min(Math.max(inside / depth, 0), 1);
+        const pull = (1 - t) ** 1.5;
         const i = (y * w + x) * 4;
         data.data[i] = 128 - 127 * nx * pull;
         data.data[i + 1] = 128 - 127 * ny * pull;
@@ -83,5 +95,28 @@ if (glass && isChromium) {
     clearTimeout(redraw);
     redraw = setTimeout(drawMap, 120);
   }).observe(glass);
+  // Opening the menu eases into the open glass and closing eases back, in step with the pill
+  let openness = 0;
+  let tween;
+  setOpenness(openness);
+  new MutationObserver(() => {
+    const target = glass.classList.contains('is-open') ? 1 : 0;
+    if (target === openness) return;
+    cancelAnimationFrame(tween);
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setOpenness((openness = target));
+      return;
+    }
+    const from = openness;
+    const start = performance.now();
+    const step = (now) => {
+      const t = Math.min((now - start) / 400, 1);
+      openness = from + (target - from) * (1 - (1 - t) ** 3);
+      setOpenness(openness);
+      if (t < 1) tween = requestAnimationFrame(step);
+    };
+    tween = requestAnimationFrame(step);
+  }).observe(glass, { attributes: true, attributeFilter: ['class'] });
+
   glass.classList.add('is-liquid');
 }
