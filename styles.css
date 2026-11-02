@@ -100,12 +100,13 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   left: calc(50% - 22px);
   width: 400px;
   transform: translateX(-50%);
-  border: 0.5px solid rgba(255, 255, 255, 0.09);
   border-radius: 30px;
-  background: var(--pill-bg);
+  background: rgba(24, 26, 31, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   box-shadow: inset 0 0 48px #201729;
 }
-.pill-name-bar { position: relative; height: 59px; }
+.pill-name-bar { position: relative; height: 60px; }
 .name {
   position: absolute;
   left: calc(50% + 0.5px);
@@ -116,7 +117,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 .burger {
   position: absolute;
-  left: 21.5px;
+  left: 22px;
   top: calc(50% + 0.25px);
   transform: translateY(-50%);
   display: flex;
@@ -126,7 +127,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   padding: 0;
 }
 .burger span { height: 1.5px; background: #72747b; }
-.telegram { position: absolute; right: 15.5px; top: 17.5px; }
+.telegram { position: absolute; right: 16px; top: 18px; }
 
 /* Not enough room for the centred name pill: side pills become icons, name pill fills the gap */
 @container header (max-width: 760px) {
