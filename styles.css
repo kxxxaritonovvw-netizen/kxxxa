@@ -95,13 +95,14 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   transform: translateX(-50%);
   font: 500 16px/24px var(--font-ui);
   white-space: nowrap;
-  transition: translate 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: translate 0.5s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.5s cubic-bezier(0.65, 0, 0.35, 1), filter 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.name-about, .name-tg { translate: 0 44px; opacity: 0; }
+/* Leaving text blurs and fades out, arriving text does the reverse */
+.name-about, .name-tg { translate: 0 44px; opacity: 0; filter: blur(4px); }
 /* Hovering an icon rolls the name up and its label in from below */
-.pill-name:not(.is-open):has(.burger:hover, .telegram:hover) p.name { translate: 0 -44px; opacity: 0; }
+.pill-name:not(.is-open):has(.burger:hover, .telegram:hover) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 .pill-name:not(.is-open):has(.burger:hover) .name-about,
-.pill-name:not(.is-open):has(.telegram:hover) .name-tg { translate: 0 0; opacity: 1; }
+.pill-name:not(.is-open):has(.telegram:hover) .name-tg { translate: 0 0; opacity: 1; filter: none; }
 /* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
 .pill-name::after {
   content: "";
@@ -139,10 +140,12 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   height: 28px;
   border-radius: 50%;
   background: #72747b;
+  transition: background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1);
   -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 16px no-repeat, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: url(assets/telegram.svg?v=681a7269) center / 16px no-repeat exclude, linear-gradient(#000 0 0);
 }
+.burger:hover span, .telegram:hover { background-color: #eeeaf1; }
 
 /* Narrow screens: no room for the Figma offset, centre the pill */
 @container header (max-width: 440px) {
@@ -186,7 +189,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 .pill-name.is-open .menu-list li, .pill-name.is-open .menu-links { opacity: 1; transform: none; transition-delay: 0.1s; }
 
-.burger span { transition: transform 0.25s, opacity 0.2s; }
+.burger span { transition: transform 0.25s, opacity 0.2s, background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
 .pill-name.is-open .burger span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .pill-name.is-open .burger span:nth-child(2) { opacity: 0; }
 .pill-name.is-open .burger span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
