@@ -7,6 +7,8 @@
   --font-body: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --font-display: "Cinzel", Georgia, serif;
   --font-condensed: "PF Din Text Comp Pro", "Arial Narrow", "Helvetica Neue", sans-serif;
+  /* Menu open/close: quick start and finish, slower in the middle */
+  --menu-ease: cubic-bezier(0.15, 0.6, 0.85, 0.4);
   /* Demo only: backdrop around the framed site */
   --demo-bg: #2c2c2e;
   --demo-gap: 40px;
@@ -70,7 +72,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   box-shadow: inset 0 0 48px #201729;
-  transition: width 0.4s cubic-bezier(0.65, 0, 0.35, 1) 0.25s;
+  transition: width 0.32s var(--menu-ease) 0.2s;
 }
 /* Opening: the pill first widens by 200px, then the menu unfolds; closing runs the other way round */
 .pill-name.is-open { width: min(560px, 100% - 32px); transition-delay: 0s; }
@@ -162,9 +164,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .menu {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: grid-template-rows 0.32s var(--menu-ease);
 }
-.pill-name.is-open .menu { grid-template-rows: 1fr; transition-delay: 0.3s; }
+.pill-name.is-open .menu { grid-template-rows: 1fr; transition-delay: 0.24s; }
 .menu-inner { overflow: hidden; }
 .menu-list {
   margin: 0;
@@ -191,11 +193,11 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .menu-list li, .menu-links {
   opacity: 0;
   transform: translateY(-8px);
-  transition: opacity 0.25s, transform 0.25s;
+  transition: opacity 0.2s var(--menu-ease), transform 0.2s var(--menu-ease);
 }
-.pill-name.is-open .menu-list li, .pill-name.is-open .menu-links { opacity: 1; transform: none; transition-delay: 0.55s; }
+.pill-name.is-open .menu-list li, .pill-name.is-open .menu-links { opacity: 1; transform: none; transition-delay: 0.44s; }
 
-.burger span { transition: transform 0.25s, opacity 0.2s, background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
+.burger span { transition: transform 0.2s var(--menu-ease), opacity 0.16s var(--menu-ease), background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
 .pill-name.is-open .burger span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .pill-name.is-open .burger span:nth-child(2) { opacity: 0; }
 .pill-name.is-open .burger span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
