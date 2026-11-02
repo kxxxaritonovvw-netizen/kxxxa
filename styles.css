@@ -175,7 +175,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   margin: 0;
   padding: 8px 24px 0;
   list-style: none;
-  border-top: 0.5px solid rgba(255, 255, 255, 0.09);
 }
 .menu-list a {
   display: block;
