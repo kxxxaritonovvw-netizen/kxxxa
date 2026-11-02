@@ -143,19 +143,17 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   padding: 0;
 }
 .burger span { width: 20px; height: 1.5px; background: #72747b; }
-/* Solid circle with the Telegram plane cut out of it */
+/* The Telegram plane on its own, painted with the background colour so hover can recolour it */
 .telegram {
   position: absolute;
   right: 8px;
   top: 8px;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
   background: #72747b;
   transition: background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-  -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 16px no-repeat, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: url(assets/telegram.svg?v=681a7269) center / 16px no-repeat exclude, linear-gradient(#000 0 0);
+  -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 28px no-repeat;
+  mask: url(assets/telegram.svg?v=681a7269) center / 28px no-repeat;
 }
 .burger:hover span, .telegram:hover { background-color: #eeeaf1; }
 
