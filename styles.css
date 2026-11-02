@@ -324,4 +324,13 @@ html.demo .screen { min-height: var(--demo-h); }
   text-align: center;
   color: #cdbcd8;
 }
+.screen-text {
+  max-width: 760px;
+  margin: 32px auto 0;
+  font: 400 clamp(18px, 1.67cqw, 24px) / 1.45 var(--font-ui);
+  text-align: center;
+  text-wrap: balance;
+  color: var(--text-medium);
+}
+.screen-text em { font-style: normal; color: #cdbcd8; }
 .screen-note { margin-top: 24px; font: 400 20px/24px var(--font-ui); text-align: center; color: var(--text-medium); }
