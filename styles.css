@@ -236,8 +236,8 @@ html.demo .main::-webkit-scrollbar { display: none; }
   top: 0;
   width: 728px;
   height: 728px;
-  -webkit-mask: url(assets/pig-mask.png) 0 0 / 728px 728px no-repeat;
-  mask: url(assets/pig-mask.png) 0 0 / 728px 728px no-repeat alpha;
+  -webkit-mask: url(assets/pig-mask.png?v=10a216fe) 0 0 / 728px 728px no-repeat;
+  mask: url(assets/pig-mask.png?v=10a216fe) 0 0 / 728px 728px no-repeat alpha;
 }
 .pig > img { width: 100%; height: 100%; object-fit: cover; }
 /* Figma's render of the sticker with its baked-in black converted to transparency */
