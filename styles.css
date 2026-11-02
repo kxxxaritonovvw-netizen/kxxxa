@@ -240,8 +240,8 @@ html.demo .main::-webkit-scrollbar { display: none; }
   mask: url(assets/pig-mask.png) 0 0 / 728px 728px no-repeat alpha;
 }
 .pig > img { width: 100%; height: 100%; object-fit: cover; }
-/* Figma's render of the sticker has black baked in; screen drops the black and keeps the glow */
-.cashback { position: absolute; left: 589px; top: 27px; width: 581.418px; height: 424.151px; mix-blend-mode: screen; }
+/* Figma's render of the sticker with its baked-in black converted to transparency */
+.cashback { position: absolute; left: 589px; top: 27px; width: 581.418px; height: 424.151px; }
 
 /* "My tickets" card */
 .rot { position: absolute; display: flex; align-items: center; justify-content: center; }
