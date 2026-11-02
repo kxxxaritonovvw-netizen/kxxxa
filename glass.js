@@ -1,13 +1,13 @@
-// Liquid glass on the name pill, after the Figma Glass effect (refraction 1, depth 40, dispersion 0.29, frost 4).
+// Liquid glass on the name pill, started from the Figma Glass effect and pushed further so it reads on the dark page.
 // Only Chromium can run an SVG filter as a backdrop-filter; other browsers keep the plain blur from styles.css.
 const glass = document.querySelector('.pill-name');
 const isChromium = navigator.userAgentData?.brands.some((b) => b.brand === 'Chromium');
 
 if (glass && isChromium) {
-  const DEPTH = 40; // px from the edge over which the glass bends the backdrop
-  const STRENGTH = 26; // px the backdrop is pulled in at the very edge (refraction 1)
-  const DISPERSION = 0.29; // red and blue bend a little more and less than green
-  const FROST = 2; // blur stdDeviation, Figma frost 4
+  const DEPTH = 18; // px from the edge over which the glass bends the backdrop, a narrow lens-like rim
+  const STRENGTH = 42; // px the backdrop is pulled in at the very edge
+  const DISPERSION = 0.5; // red and blue bend a little more and less than green
+  const FROST = 1.5; // blur stdDeviation
 
   const svgNS = 'http://www.w3.org/2000/svg';
   const svg = document.createElementNS(svgNS, 'svg');
