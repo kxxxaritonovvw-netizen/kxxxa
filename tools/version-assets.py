@@ -9,7 +9,7 @@ import pathlib
 import re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-HTML_REF = re.compile(r'((?:src|href)=")(?!https?:|//|#|data:|mailto:)([^"?#]+)(?:\?v=[0-9a-f]+)?(")')
+HTML_REF = re.compile(r'((?:src|srcset|href)=")(?!https?:|//|#|data:|mailto:)([^"?#]+)(?:\?v=[0-9a-f]+)?(")')
 CSS_REF = re.compile(r'(url\()(?!https?:|//|data:)([^)?#]+)(?:\?v=[0-9a-f]+)?(\))')
 
 

@@ -22,7 +22,7 @@ document.addEventListener('click', (event) => {
   if (!pill.contains(event.target)) setOpen(false);
 });
 
-menu.querySelectorAll('a[href^="#"]').forEach((link) => {
+menu.querySelectorAll('a[href^="#"]:not([href="#"])').forEach((link) => {
   const target = document.querySelector(link.getAttribute('href'));
   if (!target) return;
   link.addEventListener('click', (event) => {

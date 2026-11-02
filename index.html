@@ -12,8 +12,10 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" />
-    <link rel="stylesheet" href="styles.css?v=2adf76bd" />
+    <!-- Cinzel is only used below the fold, so its stylesheet loads without blocking the first paint -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" /></noscript>
+    <link rel="stylesheet" href="styles.css?v=47466749" />
   </head>
   <body>
     <div class="page">
@@ -62,9 +64,9 @@
           <!-- Artwork keeps the Figma composition (1308×728) and is scaled to its width by layout.js -->
           <div class="visual">
             <div class="visual-stage">
-              <img class="phone" src="assets/phone.png?v=8d937502" alt="Экран профиля в мобильном приложении" />
-              <div class="pig" aria-hidden="true"><img src="assets/pig.png?v=e4bfbe2a" alt="" /></div>
-              <img class="cashback" src="assets/cashback.png?v=76b92630" alt="" />
+              <picture><source srcset="assets/phone.avif?v=765020df" type="image/avif" /><img class="phone" src="assets/phone.png?v=00d33ee0" alt="Экран профиля в мобильном приложении" decoding="async" /></picture>
+              <div class="pig" aria-hidden="true"><picture><source srcset="assets/pig.avif?v=c9f15f82" type="image/avif" /><img src="assets/pig.png?v=e4bfbe2a" alt="" decoding="async" /></picture></div>
+              <picture><source srcset="assets/cashback.avif?v=70f45863" type="image/avif" /><img class="cashback" src="assets/cashback.png?v=76b92630" alt="" decoding="async" /></picture>
 
               <div class="rot tickets">
                 <div class="tickets-card">
@@ -81,7 +83,7 @@
                   </div>
                   <div class="tickets-foot">
                     <div class="trophy">
-                      <div class="rot trophy-inner"><img src="assets/trophy.png?v=a5af2e25" alt="" /></div>
+                      <div class="rot trophy-inner"><picture><source srcset="assets/trophy.avif?v=b0be2d79" type="image/avif" /><img src="assets/trophy.png?v=d7983a4f" alt="" decoding="async" /></picture></div>
                     </div>
                     <p class="tickets-note">Так держать! Ты в <span class="gradient">топ 3.4%</span>  по числу билетов!</p>
                   </div>
@@ -108,7 +110,7 @@
       </main>
     </div>
     <script src="layout.js?v=dfa92b2a"></script>
-    <script src="menu.js?v=e5ef2330"></script>
+    <script src="menu.js?v=2a764095"></script>
     <script src="glass.js?v=fc61c6c8"></script>
   </body>
 </html>
