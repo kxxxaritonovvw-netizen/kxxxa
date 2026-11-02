@@ -102,6 +102,19 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name:not(.is-open):has(.burger:hover, .telegram:hover) p.name { translate: 0 -44px; opacity: 0; }
 .pill-name:not(.is-open):has(.burger:hover) .name-about,
 .pill-name:not(.is-open):has(.telegram:hover) .name-tg { translate: 0 0; opacity: 1; }
+/* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
+.pill-name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background-color: transparent;
+  transition: background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  pointer-events: none;
+}
+.pill-name:not(.is-open):has(.burger:hover)::after { background-color: rgba(250, 163, 216, 0.08); }
+.pill-name:not(.is-open):has(.telegram:hover)::after { background-color: rgba(42, 171, 238, 0.08); }
 /* Both icons sit in a 28px box, 8px from the top, bottom and their side of the pill */
 .burger {
   position: absolute;
@@ -179,7 +192,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name.is-open .burger span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
 @media (prefers-reduced-motion: reduce) {
-  .menu, .menu-list li, .menu-links, .burger span, .name { transition: none; }
+  .menu, .menu-list li, .menu-links, .burger span, .name, .pill-name::after { transition: none; }
 }
 
 /* Background glow, anchored to the page centre as in the 1920px frame */
