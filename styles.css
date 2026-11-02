@@ -23,11 +23,20 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .page { position: relative; background: var(--bg); }
 .main { position: relative; overflow-x: clip; container-type: inline-size; }
 
-/* Demo: the site sits in a rounded frame on a grey backdrop and scrolls inside it */
+/* Demo: the site renders on a simulated screen (1440×900 by default, ?demo=WxH to change),
+   scaled down by layout.js to fit the window, on a grey backdrop */
+html.demo {
+  --demo-w: 1440px;
+  --demo-h: 900px;
+  --demo-scale: 1;
+}
 html.demo, html.demo body { height: 100%; overflow: hidden; background: var(--demo-bg); }
+html.demo body { display: grid; place-items: center; }
 html.demo .page {
-  position: fixed;
-  inset: var(--demo-gap);
+  flex: none;
+  width: var(--demo-w);
+  height: var(--demo-h);
+  zoom: var(--demo-scale);
   overflow: hidden;
   border-radius: 12px;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 24px 80px rgba(0, 0, 0, 0.5);
@@ -36,6 +45,7 @@ html.demo .header { position: absolute; }
 html.demo .main { position: absolute; inset: 0; overflow-x: hidden; overflow-y: auto; scrollbar-width: none; }
 html.demo .main::-webkit-scrollbar { display: none; }
 @media (max-width: 600px) { html.demo { --demo-gap: 12px; } }
+html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 
 /* Header */
 .header {
@@ -306,7 +316,7 @@ html.demo .main::-webkit-scrollbar { display: none; }
   min-height: 100svh;
   padding: clamp(120px, 12cqw, 220px) 16px;
 }
-html.demo .screen { min-height: calc(100vh - var(--demo-gap) * 2); }
+html.demo .screen { min-height: var(--demo-h); }
 .screen-title {
   font: 400 clamp(32px, 4cqw, 56px) / 1 var(--font-display);
   text-align: center;
