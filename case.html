@@ -10,47 +10,23 @@
         document.documentElement.classList.add('demo');
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=2cb1aafc" />
+    <link rel="stylesheet" href="styles.css?v=b6664372" />
   </head>
   <body>
     <div class="page">
+      <!-- On a case the Winline logo takes the name pill's place; the header only holds the close button -->
       <header class="header">
         <div class="header-inner">
-          <div class="pill-name">
-            <span class="pill-glow" aria-hidden="true"></span>
-            <div class="pill-name-bar">
-              <button class="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu">
-                <span></span><span></span><span></span>
-              </button>
-              <div class="name-swap">
-                <p class="name">Aleksey Kharitonov</p>
-                <span class="name name-menu" aria-hidden="true">Menu</span>
-                <span class="name name-tg" aria-hidden="true">t.me/kxaritonovvw</span>
-              </div>
-              <a class="telegram" href="https://t.me/kxaritonovvw" target="_blank" rel="noopener" aria-label="Telegram"></a>
-            </div>
-            <nav class="menu" id="menu" aria-label="Разделы" inert>
-              <div class="menu-inner">
-                <ul class="menu-list">
-                  <li><a href="./">Главная</a></li>
-                  <li><a href="./#work">Кейсы</a></li>
-                  <li><a href="case.html" aria-current="page">Winline</a></li>
-                  <li><a href="./#about">Обо мне</a></li>
-                </ul>
-                <div class="menu-links">
-                  <a href="https://t.me/kxaritonovvw" target="_blank" rel="noopener">Telegram</a>
-                  <a href="#">CV</a>
-                </div>
-              </div>
-            </nav>
-          </div>
+          <a class="case-close" href="./#work" aria-label="Закрыть кейс" data-magnet>
+            <span aria-hidden="true"></span><span aria-hidden="true"></span>
+          </a>
         </div>
       </header>
 
             <main class="main case">
         <!-- Winline logo tilted to face down, shining gold light down the page.
              Everything here moves by transform and opacity only, so the animation never repaints -->
-        <div class="case-hero" aria-label="Winline">
+        <section class="case-hero" aria-label="Winline">
           <div class="case-beam" aria-hidden="true"></div>
           <div class="case-logo" aria-hidden="true">
             <!-- Nested turns: the mouse (case.js), the slow sway, the opening tilt -->
@@ -68,13 +44,22 @@
               </div>
             </div>
           </div>
-        </div>
+          <div class="case-intro">
+            <p class="case-intro-title">Здесь плавающая сетка интерфейсов</p>
+            <p class="case-intro-text">Я могу каждому кейсу уникальный стиль задать и это будет ВАААААУ эффект</p>
+          </div>
+        </section>
+
+        <!-- Screens of the product: one wide card, then two halves -->
+        <section class="case-grid" aria-label="Интерфейсы">
+          <div class="case-card case-card-wide"></div>
+          <div class="case-card"></div>
+          <div class="case-card"></div>
+        </section>
       </main>
     </div>
     <script src="layout.js?v=6ce77353"></script>
-    <script src="menu.js?v=085d380f"></script>
-    <script src="cursor.js?v=74cb3a79"></script>
-    <script src="glass.js?v=a67ba951"></script>
+    <script src="cursor.js?v=b2760011"></script>
     <script src="case.js?v=75290118"></script>
   </body>
 </html>
