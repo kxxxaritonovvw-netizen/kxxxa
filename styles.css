@@ -478,13 +478,13 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   height: 2px;
   translate: -50% -0.5px;
   border-radius: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 110, 36, 0.95) 22%, #ffe2b8 50%, rgba(255, 110, 36, 0.95) 78%, transparent);
-  box-shadow: 0 0 10px 1px rgba(255, 130, 44, 0.8), 0 0 36px 6px rgba(255, 96, 24, 0.4);
+  background: linear-gradient(90deg, transparent, rgb(var(--glow) / 0.95) 22%, var(--edge-hot) 50%, rgb(var(--glow) / 0.95) 78%, transparent);
+  box-shadow: 0 0 10px 1px rgb(var(--glow) / 0.8), 0 0 36px 6px rgb(var(--glow-edge) / 0.4);
 }
 .case-card-wide::after {
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(ellipse 45% 40% at 50% 0, rgba(255, 112, 36, 0.24), rgba(255, 80, 20, 0.07) 60%, transparent);
+  background: radial-gradient(ellipse 45% 40% at 50% 0, rgb(var(--glow) / 0.24), rgb(var(--glow-edge) / 0.07) 60%, transparent);
 }
 
 /* Narrow screens centre the pill, so the logo follows */
@@ -497,14 +497,14 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   .case-intro-text { max-width: none; }
 }
 
-/* The logo: the Winline pill over a stack of orange metal pills that give it thickness.
+/* The logo: its face over a stack of metal copies of its outline that give it thickness.
    Three nested turns: the mouse (case.js), the slow sway, and the opening tilt from facing you to facing down */
 .case-logo {
   position: absolute;
   left: var(--logo-x);
   top: var(--logo-top);
   width: var(--logo-w);
-  aspect-ratio: 100 / 24;
+  aspect-ratio: var(--logo-ratio);
   translate: -50% 0;
 }
 .case-logo, .case-logo-turn, .case-logo-sway, .case-logo-tilt { transform-style: preserve-3d; }
@@ -514,28 +514,27 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 @keyframes case-tilt { from { transform: none; } }
 @keyframes case-sway { 25% { transform: rotateY(7deg); } 75% { transform: rotateY(-7deg); } }
 
-/* Each layer sits 0.5px further back (9px in all); their rims make the side wall: orange metal
-   with a polished line a few pixels in, darkening towards the back */
+/* Each layer sits --depth-step further back; their rims make the side wall: metal in the theme's
+   colour with a polished line a few layers in, darkening towards the back */
 .case-layer {
   --shine: max(0, 1 - max(var(--i) - 4, 4 - var(--i)) / 2);
-  border-radius: 999px;
-  transform: translateZ(calc(var(--i) * -0.5px));
-  background: color-mix(in oklab, color-mix(in oklab, #ffb27a calc(var(--shine) * 100%), #e8600f), #3a1200 calc(var(--i) * 2.8%));
+  transform: translateZ(calc(var(--i) * var(--depth-step) * -1));
+  background: color-mix(in oklab, color-mix(in oklab, var(--wall-shine) calc(var(--shine) * 100%), var(--wall)), var(--wall-dark) calc(var(--i) * 2.8%));
 }
+/* The halo is a copy of the face that glows around its outline */
 .case-logo-halo {
-  border-radius: 999px;
-  box-shadow: 0 0 18px rgba(255, 196, 110, 0.5);
+  filter: drop-shadow(0 0 9px rgb(var(--halo) / 0.6));
   animation: case-fade 1.6s cubic-bezier(0.33, 0, 0.2, 1) 1.3s backwards;
 }
-.case-logo-face { background: url(assets/winline.svg?v=46f1b8ae) center / contain no-repeat; }
+.case-logo-face, .case-logo-halo { background: center / contain no-repeat; }
 @keyframes case-fade { from { opacity: 0; } }
 
 /* Metal over the rim and the dot, and a soft reflection over the whole face. The bands are drawn once
    on a wide strip that repeats every three logo widths; moving the strip makes them slide (--u is one logo width):
    the <b> follows the tilt and the sway, the <i> follows the mouse (case.js) */
 .case-logo-metal, .case-logo-gloss { overflow: hidden; }
-.case-logo-metal { transform: translateZ(0.1px); -webkit-mask: url(assets/winline-rim.svg?v=d70d9c32) center / contain no-repeat; mask: url(assets/winline-rim.svg?v=d70d9c32) center / contain no-repeat; }
-.case-logo-gloss { transform: translateZ(0.2px); border-radius: 999px; }
+.case-logo-metal { transform: translateZ(0.1px); }
+.case-logo-gloss { transform: translateZ(0.2px); }
 .case-sheen, .case-sheen b { position: absolute; inset: 0; }
 .case-sheen b {
   --u: calc(100% / 9);
@@ -549,7 +548,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --start: -0.3;
   --end: -1.3;
   --swing: 0.58;
-  background: linear-gradient(115deg, #6e2200, #ff6a13 14%, #ffd9b0 22%, #ff7a1f 30%, #a33a00 44%, #ff8a3d 58%, #fff0dc 64%, #ff6a13 72%, #5a1a00) 0 0 / calc(100% / 3) 100% repeat-x;
+  background: var(--metal) 0 0 / calc(100% / 3) 100% repeat-x;
 }
 .case-logo-gloss b {
   --start: -0.2;
@@ -568,7 +567,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
    the reveal and the shimmer move only transform and opacity */
 .case-beam {
   position: absolute;
-  inset: calc(var(--logo-top) + var(--logo-w) * 0.12) 0 clamp(-560px, -38cqw, -240px);
+  inset: calc(var(--logo-top) + var(--logo-w) / var(--logo-ratio) / 2) 0 clamp(-560px, -38cqw, -240px);
   transform-origin: var(--logo-x) 0;
   -webkit-mask: linear-gradient(transparent, #000 60px);
   mask: linear-gradient(transparent, #000 60px);
@@ -576,23 +575,44 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .case-beam > span { position: absolute; inset: 0; }
-/* A wide warm glow under the rays */
+/* A wide glow under the rays; a second one in the theme's other colour fades in and out over it */
+.case-beam-base::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse calc(var(--beam-w) * 0.6) 55% at var(--logo-x) 0, rgb(var(--glow-2) / 0.38), rgb(var(--glow-2) / 0.12) 55%, transparent);
+  animation: case-glow 7s ease-in-out infinite alternate;
+}
+@keyframes case-glow { from { opacity: 0; } }
 .case-beam-base {
   background:
-    radial-gradient(ellipse calc(var(--beam-w) * 0.5) 50% at var(--logo-x) 0, rgba(255, 120, 40, 0.42), rgba(255, 88, 24, 0.16) 55%, transparent),
-    radial-gradient(ellipse calc(var(--beam-w) * 1.4) 90% at var(--logo-x) 0, rgba(214, 70, 24, 0.2), rgba(120, 36, 20, 0.07) 55%, transparent);
+    radial-gradient(ellipse calc(var(--beam-w) * 0.5) 50% at var(--logo-x) 0, rgb(var(--glow) / 0.42), rgb(var(--glow) / 0.15) 55%, transparent),
+    radial-gradient(ellipse calc(var(--beam-w) * 1.4) 90% at var(--logo-x) 0, rgb(var(--glow-edge) / 0.2), rgb(var(--glow-edge) / 0.06) 55%, transparent);
 }
-/* One ray: a soft vertical stripe --w wide, --x off the logo's centre, in colour --c at strength --a,
-   brightest just under the logo and fading out further down. Each drifts and flickers on its own period --d */
+/* One ray: a soft vertical stripe --w wide, --x off the logo's centre, at strength --a, brightest just under
+   the logo and fading out further down. Each drifts and flickers on its own period --d, and inside it a band of
+   its two colours --c and --c2 flows down on period --f, so the light shimmers through them */
 .case-beam .case-ray {
   left: calc(var(--logo-x) + var(--x) - var(--w) / 2);
   right: auto;
   width: var(--w);
-  background: linear-gradient(90deg, transparent, rgba(var(--c), var(--a)) 50%, transparent);
-  /* Strong down to the first card, then gone soon after */
-  -webkit-mask: linear-gradient(#000, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.5) 48%, transparent 62%);
-  mask: linear-gradient(#000, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.5) 48%, transparent 62%);
+  overflow: hidden;
+  /* Soft sides, and strong down to the first card, then gone soon after */
+  -webkit-mask: linear-gradient(90deg, transparent, #000 50%, transparent), linear-gradient(#000, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.5) 48%, transparent 62%);
+  -webkit-mask-composite: source-in;
+  mask: linear-gradient(90deg, transparent, #000 50%, transparent), linear-gradient(#000, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.5) 48%, transparent 62%);
+  mask-composite: intersect;
   animation: case-ray var(--d) ease-in-out infinite alternate;
+}
+/* Three copies of the colour band, so moving down by one keeps it seamless */
+.case-ray::before {
+  --c1: rgba(var(--c), var(--a));
+  --c3: rgba(var(--c2), var(--a));
+  content: "";
+  position: absolute;
+  inset: -200% 0 0;
+  background: linear-gradient(var(--c1), var(--c3) 16.67%, var(--c1) 33.33%, var(--c3) 50%, var(--c1) 66.67%, var(--c3) 83.33%, var(--c1));
+  animation: case-flow var(--f) linear infinite;
 }
 .case-beam .case-ray:nth-child(odd) { animation-direction: alternate-reverse; }
 @keyframes case-ray {
@@ -600,13 +620,54 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   50% { opacity: 1; }
   to { transform: translateX(12px) scaleX(1.15); opacity: 0.8; }
 }
+@keyframes case-flow { to { transform: translateY(33.333%); } }
 /* Fine dots over the light, as on a screen up close */
 .case-beam-dots {
-  background: radial-gradient(circle, rgba(255, 196, 140, 0.32) 0.7px, transparent 1.1px) 0 0 / 4px 4px;
+  background: radial-gradient(circle, rgb(var(--dots) / 0.32) 0.7px, transparent 1.1px) 0 0 / 4px 4px;
   -webkit-mask: radial-gradient(ellipse calc(var(--beam-w) * 0.55) 55% at var(--logo-x) 0, #000, transparent);
   mask: radial-gradient(ellipse calc(var(--beam-w) * 0.55) 55% at var(--logo-x) 0, #000, transparent);
 }
 @keyframes case-beam { from { opacity: 0; transform: scale(0.2); } }
+
+/* Case themes: the logo and the colours of its metal and light. A colour given as "r g b" is used
+   at several strengths. Winline is orange; Chexx is violet and pink */
+.case-winline {
+  --logo-ratio: 100 / 24;
+  --depth-step: 0.5px;
+  --wall: #e8600f;
+  --wall-shine: #ffb27a;
+  --wall-dark: #3a1200;
+  --metal: linear-gradient(115deg, #6e2200, #ff6a13 14%, #ffd9b0 22%, #ff7a1f 30%, #a33a00 44%, #ff8a3d 58%, #fff0dc 64%, #ff6a13 72%, #5a1a00);
+  --halo: 255 196 110;
+  --glow: 255 112 36;
+  --glow-edge: 214 70 24;
+  --glow-2: 255 176 64;
+  --dots: 255 196 140;
+  --edge-hot: #ffe2b8;
+}
+.case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
+/* The pill's outline is a plain rounded box, cheaper than a mask */
+.case-winline .case-layer, .case-winline .case-logo-gloss { border-radius: 999px; }
+.case-winline .case-logo-metal { -webkit-mask: url(assets/winline-rim.svg?v=d70d9c32) center / contain no-repeat; mask: url(assets/winline-rim.svg?v=d70d9c32) center / contain no-repeat; }
+
+.case-chexx {
+  --logo-ratio: 180 / 17.6;
+  --depth-step: 0.35px;
+  --wall: #7b4dff;
+  --wall-shine: #d9c9ff;
+  --wall-dark: #14072e;
+  --metal: linear-gradient(115deg, #5a0030, #ff045c 14%, #ffd1ea 22%, #ff3bb9 30%, #8a0048 44%, #ff5ccb 58%, #fff0fa 64%, #ff045c 72%, #40002a);
+  --halo: 196 140 255;
+  --glow: 150 72 255;
+  --glow-edge: 110 36 214;
+  --glow-2: 255 59 185;
+  --dots: 214 180 255;
+  --edge-hot: #f1ddff;
+}
+.case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
+/* Letters, not a box: the thickness and the reflection follow the logo's outline */
+.case-chexx .case-layer, .case-chexx .case-logo-gloss { -webkit-mask: url(assets/chexx-shape.svg?v=53995e2d) center / contain no-repeat; mask: url(assets/chexx-shape.svg?v=53995e2d) center / contain no-repeat; }
+.case-chexx .case-logo-metal { -webkit-mask: url(assets/chexx-mark.svg?v=e3079f4a) center / contain no-repeat; mask: url(assets/chexx-mark.svg?v=e3079f4a) center / contain no-repeat; }
 
 @media (prefers-reduced-motion: reduce) {
   .case-hero * { animation: none !important; }

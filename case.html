@@ -3,18 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Кейс — Aleksey Kharitonov</title>
+    <title>Winline — Aleksey Kharitonov</title>
     <script>
       // Local preview (or ?demo) shows the site framed on a grey backdrop; production is the plain page.
       if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || new URLSearchParams(location.search).has('demo')) {
         document.documentElement.classList.add('demo');
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=1814ced7" />
+    <link rel="stylesheet" href="styles.css?v=51508a2d" />
   </head>
   <body>
     <div class="page">
-      <!-- On a case the Winline logo takes the name pill's place; the header only holds the close button -->
+      <!-- On a case its logo takes the name pill's place; the header only holds the close button -->
       <header class="header">
         <div class="header-inner">
           <a class="case-close" href="./#work" aria-label="Закрыть кейс" data-magnet>
@@ -23,17 +23,17 @@
         </div>
       </header>
 
-            <main class="main case">
+            <main class="main case case-winline">
         <!-- Winline logo tilted to face down, shining gold light down the page.
              Everything here moves by transform and opacity only, so the animation never repaints -->
         <section class="case-hero" aria-label="Winline">
           <!-- Light from the logo: a warm base glow, shimmering rays and a fine dot texture -->
           <div class="case-beam" aria-hidden="true">
             <span class="case-beam-base"></span>
-            <span class="case-ray" style="--x: -40px; --w: 240px; --c: 255, 78, 20; --a: 0.55; --d: 9s"></span>
-            <span class="case-ray" style="--x: -6px; --w: 120px; --c: 255, 120, 40; --a: 0.85; --d: 7s"></span>
-            <span class="case-ray" style="--x: 30px; --w: 44px; --c: 255, 190, 84; --a: 0.9; --d: 5.5s"></span>
-            <span class="case-ray" style="--x: 58px; --w: 24px; --c: 226, 222, 110; --a: 0.8; --d: 6.5s"></span>
+            <span class="case-ray" style="--x: -40px; --w: 240px; --c: 255, 78, 20; --c2: 255, 150, 50; --a: 0.55; --d: 9s; --f: 9s"></span>
+            <span class="case-ray" style="--x: -6px; --w: 120px; --c: 255, 120, 40; --c2: 255, 200, 96; --a: 0.85; --d: 7s; --f: 6s"></span>
+            <span class="case-ray" style="--x: 30px; --w: 44px; --c: 255, 190, 84; --c2: 255, 112, 36; --a: 0.9; --d: 5.5s; --f: 5s"></span>
+            <span class="case-ray" style="--x: 58px; --w: 24px; --c: 226, 222, 110; --c2: 255, 168, 70; --a: 0.8; --d: 6.5s; --f: 7s"></span>
             <span class="case-beam-dots"></span>
           </div>
           <div class="case-logo" aria-hidden="true">
