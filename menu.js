@@ -22,6 +22,20 @@ document.addEventListener('click', (event) => {
   if (!pill.contains(event.target)) setOpen(false);
 });
 
+// Hover light on the pill follows the mouse, at most once a frame
+const glow = pill.querySelector('.pill-glow');
+let glowX = null;
+pill.addEventListener('pointermove', (event) => {
+  if (event.pointerType !== 'mouse') return;
+  if (glowX === null) requestAnimationFrame(() => {
+    // The rect is in screen px; scale back to the pill's own px in case the page is scaled (demo frame)
+    const rect = pill.getBoundingClientRect();
+    glow.style.setProperty('--glow-x', `${((glowX - rect.left) * pill.offsetWidth) / rect.width}px`);
+    glowX = null;
+  });
+  glowX = event.clientX;
+});
+
 menu.querySelectorAll('a[href^="#"]:not([href="#"])').forEach((link) => {
   const target = document.querySelector(link.getAttribute('href'));
   if (!target) return;

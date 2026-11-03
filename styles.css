@@ -101,6 +101,29 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .pill-name-bar { position: relative; height: 44px; }
+/* A thin slanted streak of light crosses the whole pill under the mouse (menu.js sets --glow-x) */
+.pill-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  pointer-events: none;
+}
+.pill-glow::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -18px;
+  width: 36px;
+  height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(238, 234, 241, 0.05), transparent);
+  translate: var(--glow-x, 0) 0;
+  rotate: 20deg;
+}
+.pill-name:hover .pill-glow { opacity: 1; }
+@media (hover: none) { .pill-glow { display: none; } }
 .name-swap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .name {
   position: absolute;
