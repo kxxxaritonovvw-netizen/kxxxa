@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chexx — Aleksey Kharitonov</title>
+    <script>
+      // Local preview (or ?demo) shows the site framed on a grey backdrop; production is the plain page.
+      if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) || new URLSearchParams(location.search).has('demo')) {
+        document.documentElement.classList.add('demo');
+      }
+    </script>
+    <link rel="stylesheet" href="styles.css?v=05a82ba0" />
+  </head>
+  <body>
+    <div class="page">
+      <!-- On a case its logo takes the name pill's place; the header only holds the close button -->
+      <header class="header">
+        <div class="header-inner">
+          <a class="case-close" href="./#work" aria-label="Закрыть кейс" data-magnet>
+            <span aria-hidden="true"></span><span aria-hidden="true"></span>
+          </a>
+        </div>
+      </header>
+
+            <main class="main case case-chexx">
+        <!-- Chexx logo tilted to face down, shining violet light down the page.
+             Everything here moves by transform and opacity only, so the animation never repaints -->
+        <section class="case-hero" aria-label="Chexx">
+          <!-- Light from the logo: a warm base glow, shimmering rays and a fine dot texture -->
+          <div class="case-beam" aria-hidden="true">
+            <span class="case-beam-base"></span>
+            <span class="case-ray" style="--x: -40px; --w: 240px; --c: 110, 44, 255; --c2: 196, 60, 255; --a: 0.55; --d: 9s; --f: 9s"></span>
+            <span class="case-ray" style="--x: -6px; --w: 120px; --c: 168, 72, 255; --c2: 255, 59, 185; --a: 0.85; --d: 7s; --f: 6s"></span>
+            <span class="case-ray" style="--x: 30px; --w: 44px; --c: 255, 59, 185; --c2: 150, 84, 255; --a: 0.85; --d: 5.5s; --f: 5s"></span>
+            <span class="case-ray" style="--x: 58px; --w: 24px; --c: 255, 163, 212; --c2: 196, 170, 255; --a: 0.8; --d: 6.5s; --f: 7s"></span>
+            <span class="case-beam-dots"></span>
+          </div>
+          <div class="case-logo" aria-hidden="true">
+            <!-- Nested turns: the mouse (case.js), the slow sway, the opening tilt -->
+            <div class="case-logo-turn">
+              <div class="case-logo-sway">
+                <div class="case-logo-tilt">
+                  <span class="case-layer" style="--i: 18"></span><span class="case-layer" style="--i: 17"></span><span class="case-layer" style="--i: 16"></span><span class="case-layer" style="--i: 15"></span><span class="case-layer" style="--i: 14"></span><span class="case-layer" style="--i: 13"></span>
+                  <span class="case-layer" style="--i: 12"></span><span class="case-layer" style="--i: 11"></span><span class="case-layer" style="--i: 10"></span><span class="case-layer" style="--i: 9"></span><span class="case-layer" style="--i: 8"></span><span class="case-layer" style="--i: 7"></span>
+                  <span class="case-layer" style="--i: 6"></span><span class="case-layer" style="--i: 5"></span><span class="case-layer" style="--i: 4"></span><span class="case-layer" style="--i: 3"></span><span class="case-layer" style="--i: 2"></span><span class="case-layer" style="--i: 1"></span>
+                  <span class="case-logo-halo"></span>
+                  <span class="case-logo-face"></span>
+                  <span class="case-logo-metal"><i class="case-sheen"><b></b></i></span>
+                  <span class="case-logo-gloss"><i class="case-sheen"><b></b></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="case-intro">
+            <p class="case-intro-title">Здесь плавающая сетка интерфейсов</p>
+            <p class="case-intro-text">Я могу каждому кейсу уникальный стиль задать и это будет ВАААААУ эффект</p>
+          </div>
+        </section>
+
+        <!-- Screens of the product: one wide card, then two halves -->
+        <section class="case-grid" aria-label="Интерфейсы">
+          <div class="case-card case-card-wide"></div>
+          <div class="case-card"></div>
+          <div class="case-card"></div>
+        </section>
+      </main>
+    </div>
+    <script src="layout.js?v=6ce77353"></script>
+    <script src="cursor.js?v=b2760011"></script>
+    <script src="case.js?v=75290118"></script>
+  </body>
+</html>
