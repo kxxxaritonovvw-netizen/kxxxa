@@ -409,6 +409,7 @@ html.demo .case { min-height: var(--demo-h); }
 @property --tilt { syntax: "<number>"; inherits: true; initial-value: 0; }
 @property --lit { syntax: "<number>"; inherits: true; initial-value: 0; }
 @property --sway { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --grow { syntax: "<number>"; inherits: true; initial-value: 0; }
 .case-hero {
   --logo-w: clamp(260px, 34cqw, 480px);
   --logo-top: clamp(140px, 14cqw, 200px);
@@ -421,14 +422,16 @@ html.demo .case { min-height: var(--demo-h); }
   perspective: 900px;
   perspective-origin: 50% var(--logo-top);
   animation: case-tilt 1.8s cubic-bezier(0.65, 0, 0.35, 1) 0.4s both, case-lit 1.6s cubic-bezier(0.33, 0, 0.2, 1) 1.3s both,
-    case-sway 9s ease-in-out 2.2s infinite;
+    case-grow 4s cubic-bezier(0.4, 0, 0.2, 1) 1.4s both, case-sway 9s ease-in-out 2.2s infinite;
 }
 @keyframes case-tilt { from { --tilt: 0; } to { --tilt: 38; } }
 @keyframes case-lit { from { --lit: 0; } to { --lit: 1; } }
+/* The light spreads out from the logo in a widening circle */
+@keyframes case-grow { from { --grow: 0; } to { --grow: 1; } }
 /* Once settled, the logo slowly turns from side to side so its depth and the metal show */
 @keyframes case-sway { 0%, 100% { --sway: 0; } 25% { --sway: 7; } 75% { --sway: -7; } }
 @media (prefers-reduced-motion: reduce) {
-  .case-hero { animation: none; --tilt: 38; --lit: 1; }
+  .case-hero { animation: none; --tilt: 38; --lit: 1; --grow: 1; }
 }
 /* The logo: the Winline pill over a stack of orange metal pills that give it thickness */
 .case-logo {
@@ -454,7 +457,7 @@ html.demo .case { min-height: var(--demo-h); }
 .case-logo span[style="--i: 7"], .case-logo span[style="--i: 8"], .case-logo span[style="--i: 9"] { --wall: #ffb27a; }
 .case-logo .case-logo-face {
   background: url(assets/winline.svg?v=46f1b8ae) center / contain no-repeat;
-  box-shadow: 0 0 32px rgba(255, 106, 19, calc(var(--lit) * 0.55));
+  box-shadow: 0 0 32px rgba(255, 196, 110, calc(var(--lit) * 0.5));
 }
 /* Orange metal over the rim and the dot: bright bands slide across as the light moves */
 .case-logo .case-logo-metal {
@@ -475,20 +478,34 @@ html.demo .case { min-height: var(--demo-h); }
 /* Light from the logo's edges, widening to the bottom of the page */
 .case-beam {
   position: absolute;
-  inset: calc(var(--logo-top) + var(--logo-w) * 0.12) 0 0;
-  filter: blur(40px);
+  /* Starts 160px above the light, so the blur can spread upwards without being cut by the mask */
+  inset: calc(var(--logo-top) + var(--logo-w) * 0.12 - 160px) 0 0;
+  filter: blur(72px);
   opacity: var(--lit);
+  /* A soft-edged circle around the logo's centre that widens as --grow runs from 0 to 1 */
+  --reveal: radial-gradient(circle at 50% 160px,
+    #000 calc(var(--grow) * 180% - 80%),
+    rgba(0, 0, 0, 0.75) calc(var(--grow) * 180% - 60%),
+    rgba(0, 0, 0, 0.4) calc(var(--grow) * 180% - 40%),
+    rgba(0, 0, 0, 0.12) calc(var(--grow) * 180% - 20%),
+    transparent calc(var(--grow) * 180%));
+  -webkit-mask: var(--reveal);
+  mask: var(--reveal);
   pointer-events: none;
 }
 .case-beam span {
   position: absolute;
-  inset: 0;
+  inset: 160px 0 0;
   --top: calc(50% - var(--logo-w) / 2);
   clip-path: polygon(var(--top) 0, calc(100% - var(--top)) 0, 92% 100%, 8% 100%);
-  /* A gentle falloff: warm near the logo, easing out long before the bottom */
+  /* Fades in over the first 120px, so the light has no hard top edge beside the logo */
+  -webkit-mask: linear-gradient(transparent, #000 120px);
+  mask: linear-gradient(transparent, #000 120px);
+  /* Gold light: pale champagne at the logo, warming to amber as it fades out down the page */
   background:
-    radial-gradient(70% 45% at 50% 0, rgba(255, 150, 80, 0.22), transparent),
-    linear-gradient(180deg, rgba(255, 120, 50, 0.26), rgba(255, 110, 40, 0.16) 30%, rgba(255, 100, 30, 0.08) 60%, rgba(255, 100, 30, 0.02) 90%, transparent);
+    radial-gradient(70% 45% at 50% 0, rgba(255, 214, 130, 0.26), transparent),
+    linear-gradient(90deg, rgba(220, 130, 40, 0.05), rgba(255, 210, 120, 0.07) 50%, rgba(220, 130, 40, 0.05)),
+    linear-gradient(180deg, rgba(255, 198, 100, 0.28), rgba(242, 164, 64, 0.17) 30%, rgba(214, 128, 46, 0.08) 60%, rgba(180, 96, 32, 0.02) 90%, transparent);
 }
 
 /* Further screens */
