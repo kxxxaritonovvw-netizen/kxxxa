@@ -421,3 +421,21 @@ html.demo .screen { min-height: var(--demo-h); }
 }
 .screen-text em { font-style: normal; color: #cdbcd8; }
 .screen-note { margin-top: 24px; font: 400 20px/24px var(--font-ui); text-align: center; color: var(--text-medium); }
+
+/* Round cursor (cursor.js): a 6px light dot instead of the system pointer, for a mouse only */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+.cursor-dot {
+  position: fixed;
+  left: -3px;
+  top: -3px;
+  z-index: 1000;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ededed;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  will-change: transform;
+}
+.cursor-dot.is-visible { opacity: 1; }
