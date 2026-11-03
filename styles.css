@@ -226,6 +226,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   transition: color 0.2s;
 }
 .menu-list a:hover, .menu-list a:focus-visible { color: #faa3d8; }
+/* The page you are on */
+.menu-list a[aria-current="page"] { color: #faa3d8; }
 .menu-links {
   display: flex;
   gap: 24px;
@@ -388,6 +390,96 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Inner page: black, with the case logo hanging like a lamp under the header */
+.case { min-height: 100svh; }
+html.demo .case { min-height: var(--demo-h); }
+/* On load the logo faces the viewer, then tips forward to face the page and the light comes on.
+   --tilt and --lit are animated; --mx/--my follow the mouse (case.js) and turn the logo a little */
+@property --tilt { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --lit { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --sway { syntax: "<number>"; inherits: true; initial-value: 0; }
+.case-hero {
+  --logo-w: clamp(260px, 34cqw, 480px);
+  --logo-top: clamp(140px, 14cqw, 200px);
+  --mx: 0;
+  --my: 0;
+  /* Where the light falls on the metal: moves as the logo tips and turns */
+  --shine: calc(var(--tilt) / 38 + var(--sway) / 12 + var(--mx) * 0.5 + var(--my) * 0.25);
+  position: relative;
+  min-height: inherit;
+  perspective: 900px;
+  perspective-origin: 50% var(--logo-top);
+  animation: case-tilt 1.8s cubic-bezier(0.65, 0, 0.35, 1) 0.4s both, case-lit 1.6s cubic-bezier(0.33, 0, 0.2, 1) 1.3s both,
+    case-sway 9s ease-in-out 2.2s infinite;
+}
+@keyframes case-tilt { from { --tilt: 0; } to { --tilt: 38; } }
+@keyframes case-lit { from { --lit: 0; } to { --lit: 1; } }
+/* Once settled, the logo slowly turns from side to side so its depth and the metal show */
+@keyframes case-sway { 0%, 100% { --sway: 0; } 25% { --sway: 7; } 75% { --sway: -7; } }
+@media (prefers-reduced-motion: reduce) {
+  .case-hero { animation: none; --tilt: 38; --lit: 1; }
+}
+/* The logo: the Winline pill over a stack of orange metal pills that give it thickness */
+.case-logo {
+  position: absolute;
+  left: 50%;
+  top: var(--logo-top);
+  width: var(--logo-w);
+  aspect-ratio: 100 / 24;
+  transform: translateX(-50%) rotateX(calc(var(--tilt) * -1deg + var(--my) * -4deg)) rotateY(calc(var(--sway) * 1deg + var(--mx) * 10deg));
+  transform-style: preserve-3d;
+}
+.case-logo span {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  /* Each layer sits 0.5px further back (18px in all). Together their rims make the side wall:
+     bright metal at the front with a polished line, darkening towards the back */
+  transform: translateZ(calc(var(--i) * -0.5px));
+  background: color-mix(in oklab, var(--wall), #3a1200 calc(var(--i) * 1.4%));
+  --wall: #e8600f;
+}
+.case-logo span[style="--i: 1"], .case-logo span[style="--i: 2"] { --wall: #ff9a52; }
+.case-logo span[style="--i: 7"], .case-logo span[style="--i: 8"], .case-logo span[style="--i: 9"] { --wall: #ffb27a; }
+.case-logo .case-logo-face {
+  background: url(assets/winline.svg?v=46f1b8ae) center / contain no-repeat;
+  box-shadow: 0 0 32px rgba(255, 106, 19, calc(var(--lit) * 0.55));
+}
+/* Orange metal over the rim and the dot: bright bands slide across as the light moves */
+.case-logo .case-logo-metal {
+  transform: translateZ(0.1px);
+  border-radius: 0;
+  -webkit-mask: url(assets/winline-rim.svg?v=d70d9c32) center / contain no-repeat;
+  mask: url(assets/winline-rim.svg?v=d70d9c32) center / contain no-repeat;
+  background: linear-gradient(115deg, #6e2200, #ff6a13 14%, #ffd9b0 22%, #ff7a1f 30%, #a33a00 44%, #ff8a3d 58%, #fff0dc 64%, #ff6a13 72%, #5a1a00) 0 0 / 300% 100%;
+  background-position-x: calc((0.15 + var(--shine) * 0.5) * 100%);
+}
+/* A soft reflection sweeping over the whole face */
+.case-logo .case-logo-gloss {
+  transform: translateZ(0.2px);
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 236, 220, 0.16) 50%, transparent 58%) 0 0 / 300% 100%;
+  background-position-x: calc((0.1 + var(--shine) * 0.6) * 100%);
+  /* No blend mode here: it would flatten the 3D stack and hide the logo's thickness */
+}
+/* Light from the logo's edges, widening to the bottom of the page */
+.case-beam {
+  position: absolute;
+  inset: calc(var(--logo-top) + var(--logo-w) * 0.12) 0 0;
+  filter: blur(40px);
+  opacity: var(--lit);
+  pointer-events: none;
+}
+.case-beam span {
+  position: absolute;
+  inset: 0;
+  --top: calc(50% - var(--logo-w) / 2);
+  clip-path: polygon(var(--top) 0, calc(100% - var(--top)) 0, 92% 100%, 8% 100%);
+  /* A gentle falloff: warm near the logo, easing out long before the bottom */
+  background:
+    radial-gradient(70% 45% at 50% 0, rgba(255, 150, 80, 0.22), transparent),
+    linear-gradient(180deg, rgba(255, 120, 50, 0.26), rgba(255, 110, 40, 0.16) 30%, rgba(255, 100, 30, 0.08) 60%, rgba(255, 100, 30, 0.02) 90%, transparent);
 }
 
 /* Further screens */

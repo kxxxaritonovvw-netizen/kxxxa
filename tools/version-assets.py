@@ -18,6 +18,9 @@ def stamp(path, pattern):
 
     def replace(match):
         target = (path.parent / match.group(2)).resolve()
+        # Links between pages stay clean: pages are never cached (.htaccess)
+        if target.suffix == '.html':
+            return f'{match.group(1)}{match.group(2)}{match.group(3)}'
         if not target.is_file():
             return match.group(0)
         digest = hashlib.sha1(target.read_bytes()).hexdigest()[:8]
@@ -31,6 +34,7 @@ def stamp(path, pattern):
 
 
 # The stylesheet first: its own hash depends on the stamps inside it
-changed = [name for name, pattern in (('styles.css', CSS_REF), ('index.html', HTML_REF)) if stamp(ROOT / name, pattern)]
+pages = [('styles.css', CSS_REF)] + [(page.name, HTML_REF) for page in sorted(ROOT.glob('*.html'))]
+changed = [name for name, pattern in pages if stamp(ROOT / name, pattern)]
 for name in changed:
     print(f'version-assets: updated {name}')
