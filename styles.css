@@ -1,3 +1,12 @@
+/* Cinzel (latin) for the section titles, served from this site instead of Google Fonts */
+@font-face {
+  font-family: "Cinzel";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(assets/fonts/cinzel-latin.woff2?v=f3c0a081) format("woff2");
+}
+
 :root {
   --bg: #000;
   --card-bg: #181b25;
@@ -328,8 +337,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   top: 0;
   width: 728px;
   height: 728px;
-  -webkit-mask: url(assets/pig-mask.avif?v=9b43cae4) 0 0 / 728px 728px no-repeat;
-  mask: url(assets/pig-mask.avif?v=9b43cae4) 0 0 / 728px 728px no-repeat alpha;
+  -webkit-mask: url(assets/pig-mask.avif?v=f682299f) 0 0 / 728px 728px no-repeat;
+  mask: url(assets/pig-mask.avif?v=f682299f) 0 0 / 728px 728px no-repeat alpha;
 }
 .pig img { width: 100%; height: 100%; object-fit: cover; }
 /* Figma's render of the sticker with its baked-in black converted to transparency */
@@ -504,3 +513,21 @@ html.demo .screen { min-height: var(--demo-h); }
 }
 .screen-text em { font-style: normal; color: #cdbcd8; }
 .screen-note { margin-top: 24px; font: 400 20px/24px var(--font-ui); text-align: center; color: var(--text-medium); }
+
+/* Round cursor (cursor.js): a 6px light dot instead of the system pointer, for a mouse only */
+html.has-cursor, html.has-cursor * { cursor: none !important; }
+.cursor-dot {
+  position: fixed;
+  left: -3px;
+  top: -3px;
+  z-index: 1000;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ededed;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  will-change: transform;
+}
+.cursor-dot.is-visible { opacity: 1; }
