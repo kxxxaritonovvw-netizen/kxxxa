@@ -121,8 +121,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   background: linear-gradient(90deg, transparent, rgba(238, 234, 241, 0.05), transparent);
   translate: var(--glow-x, 0) 0;
   rotate: 20deg;
+  /* Its own layer: moving it does not repaint the pill or rerun the glass filter */
+  will-change: translate;
 }
-.pill-name:hover .pill-glow { opacity: 1; }
+.pill-name:not(.is-open):hover .pill-glow { opacity: 1; }
 @media (hover: none) { .pill-glow { display: none; } }
 .name-swap { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .name {

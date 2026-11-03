@@ -26,7 +26,7 @@ document.addEventListener('click', (event) => {
 const glow = pill.querySelector('.pill-glow');
 let glowX = null;
 pill.addEventListener('pointermove', (event) => {
-  if (event.pointerType !== 'mouse') return;
+  if (event.pointerType !== 'mouse' || pill.classList.contains('is-open')) return;
   if (glowX === null) requestAnimationFrame(() => {
     // The rect is in screen px; scale back to the pill's own px in case the page is scaled (demo frame)
     const rect = pill.getBoundingClientRect();

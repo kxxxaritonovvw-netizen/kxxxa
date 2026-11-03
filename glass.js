@@ -29,22 +29,18 @@ if (glass && isChromium) {
     </filter>`;
   document.body.append(svg);
   const image = svg.querySelector('feImage');
-  const maps = svg.querySelectorAll('feDisplacementMap');
+  const displacements = svg.querySelectorAll('feDisplacementMap');
   const canvas = document.createElement('canvas');
 
   // open: 0 for the closed pill, 1 for the open one; bend and colour split follow it
   function setOpenness(open) {
     const strength = STRENGTH + (OPEN_STRENGTH - STRENGTH) * open;
     const dispersion = DISPERSION + (OPEN_DISPERSION - DISPERSION) * open;
-    maps.forEach((map, i) => map.setAttribute('scale', strength * (1 + dispersion * (1 - i))));
+    displacements.forEach((map, i) => map.setAttribute('scale', strength * (1 + dispersion * (1 - i))));
   }
 
   // Displacement map: red/green hold the x/y offset, sampling the backdrop from further in near the rim
-  function drawMap() {
-    const w = glass.offsetWidth;
-    const h = glass.offsetHeight;
-    if (!w || !h) return;
-    const r = Math.min(parseFloat(getComputedStyle(glass).borderTopLeftRadius) || 0, w / 2, h / 2);
+  function drawMap(w, h, r) {
     canvas.width = w;
     canvas.height = h;
     const ctx = canvas.getContext('2d');
@@ -85,23 +81,66 @@ if (glass && isChromium) {
       }
     }
     ctx.putImageData(data, 0, 0);
-    image.setAttribute('href', canvas.toDataURL());
+    // toBlob encodes off the main thread, so a new map never stalls a frame
+    return new Promise((resolve) => canvas.toBlob((blob) => resolve(URL.createObjectURL(blob))));
   }
 
-  // The map has no fixed size, so it stretches over the pill while it animates; redraw once the size settles
+  // Maps are cached by size, so opening and closing swap ready images instead of drawing new ones
+  const maps = new Map();
+  const radius = () => parseFloat(getComputedStyle(glass).borderTopLeftRadius) || 0;
+  function mapFor(w, h) {
+    const key = `${w}x${h}`;
+    if (!maps.has(key)) {
+      if (maps.size >= 8) {
+        const [oldKey, oldMap] = maps.entries().next().value;
+        oldMap.then(URL.revokeObjectURL);
+        maps.delete(oldKey);
+      }
+      maps.set(key, drawMap(w, h, Math.min(radius(), w / 2, h / 2)));
+    }
+    return maps.get(key);
+  }
+  let shown = '';
+  function showMap(w, h) {
+    if (!w || !h) return;
+    const key = `${w}x${h}`;
+    shown = key;
+    mapFor(w, h).then((url) => {
+      if (shown === key) image.setAttribute('href', url);
+    });
+  }
+  // The size the pill settles at once open: 200px wider, with the menu below the bar
+  const menuInner = glass.querySelector('.menu-inner');
+  const openSize = () => [
+    Math.round(Math.min(560, glass.parentElement.clientWidth - 32)),
+    glass.querySelector('.pill-name-bar').offsetHeight + (menuInner?.scrollHeight || 0),
+  ];
+  const closedSize = () => [
+    Math.round(Math.min(360, glass.parentElement.clientWidth - 32)),
+    glass.querySelector('.pill-name-bar').offsetHeight,
+  ];
+
+  // The map has no fixed size, so it stretches over the pill while it animates; once the size settles,
+  // the map for that size is shown (from the cache when it was drawn ahead)
   let redraw;
-  drawMap();
+  showMap(glass.offsetWidth, glass.offsetHeight);
   new ResizeObserver(() => {
     clearTimeout(redraw);
-    redraw = setTimeout(drawMap, 120);
+    redraw = setTimeout(() => showMap(glass.offsetWidth, glass.offsetHeight), 120);
   }).observe(glass);
+  // Draw the open map while the page is idle, so the first open is as smooth as the rest
+  (window.requestIdleCallback || setTimeout)(() => mapFor(...openSize()));
   // Opening the menu eases into the open glass and closing eases back, in step with the pill
   let openness = 0;
+  let goal = 0; // where the tween is heading; a quick reopen or close must turn it round mid-way
   let tween;
   setOpenness(openness);
   new MutationObserver(() => {
     const target = glass.classList.contains('is-open') ? 1 : 0;
-    if (target === openness) return;
+    if (target === goal) return;
+    goal = target;
+    // Switch to the target map as the motion starts, while it is fast, so nothing pops once it settles
+    showMap(...(target ? openSize() : closedSize()));
     cancelAnimationFrame(tween);
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setOpenness((openness = target));
