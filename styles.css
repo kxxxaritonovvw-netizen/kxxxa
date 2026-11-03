@@ -88,14 +88,12 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   contain: layout style;
 }
 /* Opening: the pill widens by 200px while the menu starts to unfold; closing runs the other way round.
-   The open pill gets a denser fill and stronger glass (glass.js); the rim stays as it is */
+   The open pill gets a denser fill; the rim stays as it is */
 .pill-name.is-open {
   width: min(560px, 100% - 32px);
   background-color: rgba(24, 26, 31, 0.56);
   transition: width 0.36s var(--menu-ease), background-color 0.4s var(--menu-ease);
 }
-/* Chromium: real refraction from the SVG filter built in glass.js */
-.pill-name.is-liquid { backdrop-filter: url(#liquid-glass); }
 /* Glass rim, brighter where the light (−45°) hits */
 .pill-name::before {
   content: "";
@@ -130,7 +128,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   background: linear-gradient(90deg, transparent, rgba(238, 234, 241, 0.05), transparent);
   translate: var(--glow-x, 0) 0;
   rotate: 20deg;
-  /* Its own layer: moving it does not repaint the pill or rerun the glass filter */
+  /* Its own layer: moving it does not repaint the pill or rerun its blur */
   will-change: translate;
 }
 .pill-name:not(.is-open):hover .pill-glow { opacity: 1; }
