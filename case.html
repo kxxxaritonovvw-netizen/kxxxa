@@ -10,7 +10,7 @@
         document.documentElement.classList.add('demo');
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=b6664372" />
+    <link rel="stylesheet" href="styles.css?v=1814ced7" />
   </head>
   <body>
     <div class="page">
@@ -27,7 +27,15 @@
         <!-- Winline logo tilted to face down, shining gold light down the page.
              Everything here moves by transform and opacity only, so the animation never repaints -->
         <section class="case-hero" aria-label="Winline">
-          <div class="case-beam" aria-hidden="true"></div>
+          <!-- Light from the logo: a warm base glow, shimmering rays and a fine dot texture -->
+          <div class="case-beam" aria-hidden="true">
+            <span class="case-beam-base"></span>
+            <span class="case-ray" style="--x: -40px; --w: 240px; --c: 255, 78, 20; --a: 0.55; --d: 9s"></span>
+            <span class="case-ray" style="--x: -6px; --w: 120px; --c: 255, 120, 40; --a: 0.85; --d: 7s"></span>
+            <span class="case-ray" style="--x: 30px; --w: 44px; --c: 255, 190, 84; --a: 0.9; --d: 5.5s"></span>
+            <span class="case-ray" style="--x: 58px; --w: 24px; --c: 226, 222, 110; --a: 0.8; --d: 6.5s"></span>
+            <span class="case-beam-dots"></span>
+          </div>
           <div class="case-logo" aria-hidden="true">
             <!-- Nested turns: the mouse (case.js), the slow sway, the opening tilt -->
             <div class="case-logo-turn">
