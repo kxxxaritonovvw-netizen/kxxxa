@@ -2,8 +2,15 @@
 // Only Chromium can run an SVG filter as a backdrop-filter; other browsers keep the plain blur from styles.css.
 const glass = document.querySelector('.pill-name');
 const isChromium = navigator.userAgentData?.brands.some((b) => b.brand === 'Chromium');
+// Set when the glass turned out too slow on this device; such visits start with the plain blur for a week
+const SLOW_KEY = 'glass-slow';
+const SLOW_FOR = 7 * 24 * 60 * 60 * 1000;
+let slowBefore = false;
+try {
+  slowBefore = Date.now() - Number(localStorage.getItem(SLOW_KEY) || 0) < SLOW_FOR;
+} catch {}
 
-if (glass && isChromium) {
+if (glass && isChromium && !slowBefore) {
   const DEPTH = 32; // px from the edge over which the glass bends the backdrop, a wide lens
   const STRENGTH = 42; // px the backdrop is pulled in at the very edge
   const OPEN_STRENGTH = 90; // stronger bend while the menu is open
@@ -158,4 +165,46 @@ if (glass && isChromium) {
   }).observe(glass, { attributes: true, attributeFilter: ['class'] });
 
   glass.classList.add('is-liquid');
+
+  // Some Chromium builds (Dia among them) run this filter so slowly that the page turns into a slideshow.
+  // While the glass is being redrawn, watch the frame rate; two slow seconds in a row switch it to the plain blur
+  const SLOW_FRAME = 34; // ms, a median above this is under 30 fps
+  let sampling = false;
+  let slowRuns = 0;
+  function watch(probe = false) {
+    if (sampling || document.visibilityState !== 'visible' || !glass.classList.contains('is-liquid')) return;
+    sampling = true;
+    const gaps = [];
+    let last = performance.now();
+    const until = last + 1000;
+    const tick = (now) => {
+      gaps.push(now - last);
+      last = now;
+      // The probe nudges the filter every frame, so it is redrawn even when nothing moves
+      if (probe) displacements[1].setAttribute('scale', STRENGTH + (gaps.length % 2) * 0.01);
+      if (now < until) return requestAnimationFrame(tick);
+      sampling = false;
+      if (probe) setOpenness(openness);
+      gaps.shift(); // the wait for the first frame is not a frame
+      gaps.sort((a, b) => a - b);
+      const slow = gaps.length > 0 && gaps[gaps.length >> 1] > SLOW_FRAME;
+      slowRuns = slow ? slowRuns + 1 : 0;
+      if (slowRuns >= 2) fallBack();
+      else if (slow) watch(probe);
+    };
+    requestAnimationFrame(tick);
+  }
+  function fallBack() {
+    glass.classList.remove('is-liquid');
+    removeEventListener('scroll', onScroll, true);
+    try {
+      localStorage.setItem(SLOW_KEY, String(Date.now()));
+    } catch {}
+  }
+  const onScroll = () => watch();
+  addEventListener('scroll', onScroll, { passive: true, capture: true }); // capture: the demo frame scrolls an inner box
+  glass.addEventListener('pointerenter', () => watch());
+  glass.addEventListener('click', () => watch());
+  // A first check once the page has settled, before anyone scrolls
+  addEventListener('load', () => (window.requestIdleCallback || setTimeout)(() => watch(true), { timeout: 2000 }));
 }
