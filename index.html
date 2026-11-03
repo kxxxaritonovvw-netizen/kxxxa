@@ -10,12 +10,9 @@
         document.documentElement.classList.add('demo');
       }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Cinzel is only used below the fold, so its stylesheet loads without blocking the first paint -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" /></noscript>
-    <link rel="stylesheet" href="styles.css?v=f23dae0e" />
+    <!-- The pig's mask is set in CSS, so the browser would find it late; CSS masks load with CORS, hence crossorigin -->
+    <link rel="preload" as="image" href="assets/pig-mask.avif?v=f682299f" type="image/avif" fetchpriority="high" crossorigin />
+    <link rel="stylesheet" href="styles.css?v=75e36e69" />
   </head>
   <body>
     <div class="page">
@@ -65,9 +62,9 @@
           <!-- Artwork keeps the Figma composition (1308×728) and is scaled to its width by layout.js -->
           <div class="visual">
             <div class="visual-stage">
-              <picture><source srcset="assets/phone.avif?v=765020df" type="image/avif" /><img class="phone" src="assets/phone.png?v=00d33ee0" alt="Экран профиля в мобильном приложении" decoding="async" /></picture>
-              <div class="pig" aria-hidden="true"><picture><source srcset="assets/pig.avif?v=c9f15f82" type="image/avif" /><img src="assets/pig.png?v=e4bfbe2a" alt="" decoding="async" /></picture></div>
-              <picture><source srcset="assets/cashback.avif?v=70f45863" type="image/avif" /><img class="cashback" src="assets/cashback.png?v=76b92630" alt="" decoding="async" /></picture>
+              <picture><source srcset="assets/phone.avif?v=8373d294" type="image/avif" /><img class="phone" src="assets/phone.webp?v=ccaba1f2" alt="Экран профиля в мобильном приложении" decoding="async" /></picture>
+              <div class="pig" aria-hidden="true"><picture><source srcset="assets/pig.avif?v=1e712023" type="image/avif" /><img src="assets/pig.webp?v=1a4161b0" alt="" decoding="async" /></picture></div>
+              <picture><source srcset="assets/cashback.avif?v=4f2e6df1" type="image/avif" /><img class="cashback" src="assets/cashback.webp?v=e4d5f20e" alt="" decoding="async" /></picture>
 
               <div class="rot tickets">
                 <div class="tickets-card">
@@ -84,7 +81,7 @@
                   </div>
                   <div class="tickets-foot">
                     <div class="trophy">
-                      <div class="rot trophy-inner"><picture><source srcset="assets/trophy.avif?v=b0be2d79" type="image/avif" /><img src="assets/trophy.png?v=d7983a4f" alt="" decoding="async" /></picture></div>
+                      <div class="rot trophy-inner"><picture><source srcset="assets/trophy.avif?v=e531f22b" type="image/avif" /><img src="assets/trophy.webp?v=a6971f89" alt="" decoding="async" /></picture></div>
                     </div>
                     <p class="tickets-note">Так держать! Ты в <span class="gradient">топ 3.4%</span>  по числу билетов!</p>
                   </div>

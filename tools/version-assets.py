@@ -2,13 +2,17 @@
 
 The host caches CSS, JS and images for a week, so a changed file must get a new URL
 for returning visitors to see it. Only files whose contents changed get a new stamp.
-Runs from the git pre-commit hook; can also be run by hand: python3 tools/version-assets.py
+Converts new images first (tools/optimize-images.py), so their files get stamped too.
+Run after every change, by hand or from a git pre-commit hook: python3 tools/version-assets.py
 """
 import hashlib
 import pathlib
 import re
+import subprocess
+import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+subprocess.run([sys.executable, str(ROOT / 'tools' / 'optimize-images.py')], check=True)
 HTML_REF = re.compile(r'((?:src|srcset|href)=")(?!https?:|//|#|data:|mailto:)([^"?#]+)(?:\?v=[0-9a-f]+)?(")')
 CSS_REF = re.compile(r'(url\()(?!https?:|//|data:)([^)?#]+)(?:\?v=[0-9a-f]+)?(\))')
 
