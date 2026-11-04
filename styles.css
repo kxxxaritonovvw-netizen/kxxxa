@@ -470,10 +470,12 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   padding-bottom: clamp(80px, 14.8cqw, 213px);
 }
 .case-hero {
-  /* The logo sits where the name pill is on the main page: 220px wide, so once tilted it is about
-     the pill's 44px tall, centred on the pill's centre line (42px down, 22px left of the middle) */
+  /* The logo sits where the name pill is on the main page, 220px wide and centred on the pill's centre
+     line (42px down, 22px left of the middle), level with the close button whatever its height.
+     The ratio is a division ("100 / 24"), so it is bracketed wherever it divides */
   --logo-w: 220px;
-  --logo-top: 16px;
+  --logo-mid: 42px;
+  --logo-top: calc(var(--logo-mid) - var(--logo-w) / (var(--logo-ratio)) / 2);
   --logo-x: calc(50% - 22px);
   --beam-w: clamp(260px, 34cqw, 480px);
   --tilt-ease: cubic-bezier(0.65, 0, 0.35, 1);
@@ -481,7 +483,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   position: relative;
   padding: clamp(330px, 26.7cqw, 384px) 0 calc(var(--overlap) + clamp(40px, 4.9cqw, 70px));
   perspective: 900px;
-  perspective-origin: var(--logo-x) var(--logo-top);
+  perspective-origin: var(--logo-x) var(--logo-mid);
 }
 
 /* Intro: two centred columns, a white line on the left and a softer white note on the right */
@@ -626,7 +628,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
    paces, so the colours keep drifting. They never turn: a turned bitmap shows its edge as a hard line */
 .case-beam {
   position: absolute;
-  inset: calc(var(--logo-top) + var(--logo-w) / var(--logo-ratio) / 2) 0 clamp(-560px, -38cqw, -240px);
+  inset: var(--logo-mid) 0 clamp(-560px, -38cqw, -240px);
   transform-origin: var(--logo-x) 0;
   -webkit-mask: linear-gradient(transparent, #000 20px);
   mask: linear-gradient(transparent, #000 20px);
@@ -656,7 +658,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .case-grain {
   position: absolute;
   inset: 0;
-  background: url(assets/grain.webp?v=9c6dc100) 0 0 / 64px 64px;
+  background: url(assets/grain.webp?v=8d921b38) 0 0 / 64px 64px;
   mix-blend-mode: overlay;
 }
 @keyframes case-glow { from { opacity: 0; } }

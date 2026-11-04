@@ -66,7 +66,7 @@ def render(top, left, right, path):
 
 # Grain: grey around the middle, so in overlay mode it leaves black black and only shades the light
 grain_rng = random.Random(1)
-grain = Image.frombytes('L', (128, 128), bytes(grain_rng.randint(112, 144) for _ in range(128 * 128)))
+grain = Image.frombytes('L', (128, 128), bytes(grain_rng.randint(120, 136) for _ in range(128 * 128)))
 grain.save(ROOT / 'assets' / 'grain.webp', 'WEBP', lossless=True, method=6)
 print(f'make-case-light: grain.webp, {(ROOT / "assets" / "grain.webp").stat().st_size // 1024} KB')
 
