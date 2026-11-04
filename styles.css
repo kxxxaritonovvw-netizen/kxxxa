@@ -608,6 +608,14 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   background-image: var(--light-c);
   animation: case-fan 11s ease-in-out infinite alternate, case-glow 5.5s ease-in-out 1.5s infinite alternate-reverse;
 }
+/* Fine grain over the light at screen resolution hides the steps of its dark gradient.
+   In overlay mode mid grey changes nothing, so black stays black and only the lit part is shaded */
+.case-grain {
+  position: absolute;
+  inset: 0;
+  background: url(assets/grain.webp?v=9c6dc100) 0 0 / 64px 64px;
+  mix-blend-mode: overlay;
+}
 @keyframes case-glow { from { opacity: 0; } }
 @keyframes case-fan {
   from { transform: rotate(-2.5deg); }
@@ -627,9 +635,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --light-a: url(assets/case-light-winline-a.webp?v=5edf7105);
-  --light-b: url(assets/case-light-winline-b.webp?v=1c43610c);
-  --light-c: url(assets/case-light-winline-c.webp?v=9933253a);
+  --light-a: url(assets/case-light-winline-a.webp?v=90505183);
+  --light-b: url(assets/case-light-winline-b.webp?v=73f4706a);
+  --light-c: url(assets/case-light-winline-c.webp?v=9e565934);
   --edge-hot: #ffe2b8;
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
@@ -647,9 +655,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --light-a: url(assets/case-light-chexx-a.webp?v=21767af1);
-  --light-b: url(assets/case-light-chexx-b.webp?v=fd996ab3);
-  --light-c: url(assets/case-light-chexx-c.webp?v=33362dfc);
+  --light-a: url(assets/case-light-chexx-a.webp?v=78246e1b);
+  --light-b: url(assets/case-light-chexx-b.webp?v=20582988);
+  --light-c: url(assets/case-light-chexx-c.webp?v=0b633119);
   --edge-hot: #f1ddff;
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
@@ -676,8 +684,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   box-shadow: inset 0 0 24px #201729, 0 2px 6px rgba(0, 0, 0, 0.16), 0 10px 32px rgba(0, 0, 0, 0.28);
-  transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1), box-shadow 0.3s cubic-bezier(0.65, 0, 0.35, 1), translate 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+  transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1), box-shadow 0.3s cubic-bezier(0.65, 0, 0.35, 1), translate 0.4s cubic-bezier(0.33, 1, 0.68, 1), transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
 }
+/* On a phone it flies up off the screen while the page scrolls down (case.js) */
+.case-close.is-away { transform: translateY(-80px); }
 /* The same glass rim as the pill */
 .case-close::before {
   content: "";
@@ -707,7 +717,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 .case-close:hover span, .case-close:focus-visible span, .case-close.is-magnet span { background-color: #000; }
 /* While the magnet holds it, the button follows the cursor at once instead of easing */
-.case-close.is-magnet { transition-property: background-color, box-shadow; }
+.case-close.is-magnet { transition-property: background-color, box-shadow, transform; }
 @container header (max-width: 440px) {
   .case-close { right: 16px; }
 }

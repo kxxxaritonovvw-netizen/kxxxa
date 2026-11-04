@@ -34,3 +34,31 @@ if (turn && matchMedia('(hover: hover) and (prefers-reduced-motion: no-preferenc
     if (!frame) frame = requestAnimationFrame(step);
   }, { passive: true });
 }
+
+// On a phone the close button flies up out of the way while the page scrolls down,
+// and comes back once it has been scrolled 40px up again (or near the top)
+const close = document.querySelector('.case-close');
+const main = document.querySelector('.main');
+if (close && main) {
+  const BACK = 40; // px of scrolling up that bring the button back
+  let lastY = 0;
+  let upFrom = null; // where the current scroll up started
+  // Capture catches the scroll of the page and of the demo frame's own scroller alike
+  document.addEventListener('scroll', (event) => {
+    const scroller = event.target === document ? document.scrollingElement : event.target;
+    if (!scroller.contains(main) && scroller !== main) return;
+    const y = scroller.scrollTop;
+    let away = close.classList.contains('is-away');
+    if (main.clientWidth > 640) {
+      away = false;
+    } else if (y > lastY) {
+      upFrom = null;
+      if (y > BACK) away = true;
+    } else if (y < lastY) {
+      upFrom ??= lastY;
+      if (upFrom - y >= BACK || y <= BACK) away = false;
+    }
+    close.classList.toggle('is-away', away);
+    lastY = y;
+  }, { capture: true, passive: true });
+}

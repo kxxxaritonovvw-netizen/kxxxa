@@ -5,7 +5,9 @@ lower down, one on each side, fading into black. Each case gets three bitmaps: t
 the same with the sides swapped, and a third pair; styles.css fades them into each other,
 so the colours drift across the light.
 It is baked into bitmaps because a blur this size, as a CSS or SVG filter, reruns on every repaint and
-makes the cursor stutter. Random dithering hides the steps of a dark gradient.
+makes the cursor stutter. The bitmaps stay smooth: dithering baked in here would be stretched into blotches
+on a phone, so the steps of the dark gradient are hidden by grain laid over it at screen resolution
+instead (assets/grain.webp, made here too).
 Run by hand after changing the numbers below: python3 tools/make-case-light.py
 """
 import math
@@ -16,7 +18,7 @@ from PIL import Image
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WIDTH, HEIGHT = 1400, 1100  # CSS px the bitmap is drawn at (styles.css, .case-light)
-SCALE = 0.25  # the light is soft, so a quarter-size bitmap holds every detail
+SCALE = 0.5  # half size: the light is soft, and stretching it less keeps its steps fine
 STRENGTH = 0.5  # brightness at the hottest point, 0…1
 # Per case and bitmap: the tint under the logo, then the colours of the left and right sides
 CASES = {
@@ -44,7 +46,6 @@ def mix(c1, c2, t):
 
 def render(top, left, right, path):
     w, h = round(WIDTH * SCALE), round(HEIGHT * SCALE)
-    rng = random.Random(1)
     data = bytearray()
     for y in range(h):
         v = (y + 0.5) / h  # 0 at the logo, 1 at the bottom
@@ -58,10 +59,16 @@ def render(top, left, right, path):
             # at the bitmap's edges, so the light melts into the background with no visible border
             light = STRENGTH * fall / (1 + (u / spread) ** 2) ** 1.5 * (1 - smoothstep(0.3, 1, abs(u)))
             colour = mix(top, mix(left, right, smoothstep(-0.35, 0.35, u)), lower)
-            data.extend(min(255, int(c * light + rng.random())) for c in colour)
+            data.extend(min(255, round(c * light)) for c in colour)
     Image.frombytes('RGB', (w, h), bytes(data)).save(path, 'WEBP', lossless=True, method=6)
     print(f'make-case-light: {path.name} {w}x{h}, {path.stat().st_size // 1024} KB')
 
+
+# Grain: grey around the middle, so in overlay mode it leaves black black and only shades the light
+grain_rng = random.Random(1)
+grain = Image.frombytes('L', (128, 128), bytes(grain_rng.randint(112, 144) for _ in range(128 * 128)))
+grain.save(ROOT / 'assets' / 'grain.webp', 'WEBP', lossless=True, method=6)
+print(f'make-case-light: grain.webp, {(ROOT / "assets" / "grain.webp").stat().st_size // 1024} KB')
 
 for name, variants in CASES.items():
     for key, (top, left, right) in variants.items():
