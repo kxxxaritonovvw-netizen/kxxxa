@@ -1,51 +1,37 @@
-"""Render the hero's background light into assets/glow.webp.
+"""Render the hero's background glow (the dark blurred shape from Figma) into assets/glow.webp.
 
-Soft light falls from the name pill down the page and spreads out: mint under the pill,
-violet to the left and peach to the right lower down, fading into black.
-It is baked into a bitmap because a blur this size, as an SVG or CSS filter, reruns on every repaint
-and makes the cursor stutter. Random dithering hides the steps of a dark gradient.
+The shape is only 13 shades above black, so a plain gradient shows steps; random dithering hides them.
+The blur is baked in because an SVG filter this size reruns on every repaint and makes the cursor stutter.
 Run by hand after changing the numbers below: python3 tools/make-glow.py
 """
-import math
 import pathlib
 import random
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-WIDTH, HEIGHT = 1800, 1400  # CSS px the bitmap is shown at (styles.css, .glow)
-SCALE = 0.25  # the light is soft, so a quarter-size bitmap holds every detail
-STRENGTH = 0.5  # brightness at the hottest point, 0…1
-MINT = (150, 222, 214)
-VIOLET = (164, 118, 226)
-PEACH = (238, 178, 136)
+SCALE = 0.25  # of Figma px; CSS stretches it back
+BLUR = 170  # Figma px
+COLOR = (0x0D, 0x0E, 0x11)
+PAD = 520  # Figma px around the shape, about three times the blur so it fades out before the edge
+SHAPE = [(200, 394.347), (510.275, 394.347), (344.785, 1499.96), (1414.97, 200), (413.472, 1872.97), (200, 1867.21)]
 
+# The shape's own box in Figma is 1214.969×1672.974 with the polygon 200px in; the bitmap adds PAD around it
+W, H = 1214.969 + 2 * PAD, 1672.974 + 2 * PAD
+size = (round(W * SCALE), round(H * SCALE))
+mask = Image.new('L', size, 0)
+ImageDraw.Draw(mask).polygon([((x - 200 + PAD) * SCALE, (y - 200 + PAD) * SCALE) for x, y in SHAPE], fill=255)
+# 256 levels of coverage are 20 times finer than the 13 shades of colour, plenty to dither from
+mask = mask.filter(ImageFilter.GaussianBlur(BLUR * SCALE))
 
-def smoothstep(a, b, x):
-    t = min(1.0, max(0.0, (x - a) / (b - a)))
-    return t * t * (3 - 2 * t)
-
-
-def mix(c1, c2, t):
-    return tuple(a + (b - a) * t for a, b in zip(c1, c2))
-
-
-w, h = round(WIDTH * SCALE), round(HEIGHT * SCALE)
+# Opaque over the page's black, each channel dithered to the nearest level by chance
 rng = random.Random(1)
-data = bytearray()
-for y in range(h):
-    v = (y + 0.5) / h  # 0 at the pill, 1 at the bottom
-    # The cone widens as the light falls; brightness rises from the source, then fades out
-    spread = 0.08 + 0.5 * v
-    fall = smoothstep(0.0, 0.5, v) * math.exp(-((v / 0.82) ** 3)) * (1 - smoothstep(0.7, 1, v))
-    lower = smoothstep(0.12, 0.5, v)
-    for x in range(w):
-        u = ((x + 0.5) / w) * 2 - 1  # -1 left, 1 right
-        # The edges of the bitmap fade to pure black, so it has no visible border
-        light = STRENGTH * fall * math.exp(-((u / spread) ** 2)) * (1 - smoothstep(0.65, 1, abs(u)))
-        colour = mix(MINT, mix(VIOLET, PEACH, smoothstep(-0.3, 0.3, u)), lower)
-        data.extend(min(255, int(c * light + rng.random())) for c in colour)
-
-image = Image.frombytes('RGB', (w, h), bytes(data))
+pixels = list(mask.getdata())
+bands = []
+for c in COLOR:
+    bands.append(bytes(min(255, int(v / 255 * c + rng.random())) for v in pixels))
+image = Image.merge('RGB', [Image.frombytes('L', size, b) for b in bands])
 image.save(ROOT / 'assets' / 'glow.webp', 'WEBP', lossless=True, method=6)
-print(f'make-glow: {w}x{h}, {(ROOT / "assets" / "glow.webp").stat().st_size // 1024} KB')
+# Where styles.css places the bitmap in .glow-shape
+print(f'make-glow: .glow-shape img {{ left: {-PAD / 1214.969:.2%}; top: {-PAD / 1672.974:.2%}; width: {W / 1214.969:.2%}; height: {H / 1672.974:.2%}; }}')
+print(f'make-glow: {size[0]}x{size[1]}, {(ROOT / "assets" / "glow.webp").stat().st_size // 1024} KB')
