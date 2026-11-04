@@ -36,6 +36,46 @@ pill.addEventListener('pointermove', (event) => {
   glowX = event.clientX;
 });
 
+// The pill names the section on screen: each titled section of the main page gets its title in the pill,
+// shown once the section's top passes 40% of the screen; above the first one the name stays
+const swap = pill.querySelector('.name-swap');
+const titled = [...document.querySelectorAll('.main > section[id]')].filter((section) => section.querySelector('h2'));
+if (titled.length) {
+  const demo = document.documentElement.classList.contains('demo');
+  const box = demo ? document.querySelector('.main') : null;
+  const titles = titled.map((section) => {
+    const title = document.createElement('span');
+    title.className = 'name name-section';
+    title.setAttribute('aria-hidden', 'true');
+    title.textContent = section.querySelector('h2').textContent;
+    swap.append(title);
+    return title;
+  });
+  let shown = -2;
+  let frame = 0;
+  const follow = () => {
+    frame = 0;
+    // Both rects are in the same (possibly zoomed) px
+    const view = box ? box.getBoundingClientRect() : { top: 0, height: innerHeight };
+    let current = -1;
+    titled.forEach((section, i) => {
+      if (section.getBoundingClientRect().top - view.top < view.height * 0.4) current = i;
+    });
+    if (current === shown) return;
+    shown = current;
+    titles.forEach((title, i) => {
+      title.classList.toggle('is-current', i === current);
+      title.classList.toggle('is-above', i < current);
+    });
+    pill.classList.toggle('has-section', current >= 0);
+  };
+  (box || window).addEventListener('scroll', () => {
+    if (!frame) frame = requestAnimationFrame(follow);
+  }, { passive: true });
+  addEventListener('resize', follow);
+  follow();
+}
+
 menu.querySelectorAll('a[href^="#"]:not([href="#"])').forEach((link) => {
   const target = document.querySelector(link.getAttribute('href'));
   if (!target) return;

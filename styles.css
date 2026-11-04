@@ -160,6 +160,15 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name.is-open .name-menu,
 .pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet) .name-menu,
 .pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible, .telegram.is-magnet) .name-tg { translate: 0 0; opacity: 1; filter: none; }
+/* Scrolling (menu.js): the title of the section on screen takes the name's place. Titles of sections above
+   wait above the pill and those below wait under it, so scrolling down rolls them up and scrolling up rolls
+   them down. Hovering an icon or opening the menu rolls the shown title up like the name */
+.name-section { translate: 0 44px; opacity: 0; filter: blur(4px); }
+.name-section.is-above,
+.pill-name.has-section p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+.name-section.is-current { translate: 0 0; opacity: 1; filter: none; }
+.pill-name.is-open .name-section.is-current,
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet, .telegram:hover, .telegram:focus-visible, .telegram.is-magnet) .name-section.is-current { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 /* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
 .pill-name::after {
   content: "";
