@@ -563,9 +563,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   75% { transform: translateX(calc(var(--u) * var(--swing))); }
 }
 
-/* Light from the logo, after huly.io: a fan of rays in the theme's colours falling onto the first card,
-   whose top edge lights up. Everything is plain gradients drawn once;
-   the reveal and the shimmer move only transform and opacity */
+/* Light from the logo: a soft cone that widens down onto the first card, whose top edge lights up.
+   Two bitmaps from tools/make-case-light.py, the second with the theme's colours on the other sides,
+   fade into each other while the light sways a little; only transform and opacity move */
 .case-beam {
   position: absolute;
   inset: calc(var(--logo-top) + var(--logo-w) / var(--logo-ratio) / 2) 0 clamp(-560px, -38cqw, -240px);
@@ -575,52 +575,25 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   animation: case-beam 4s cubic-bezier(0.4, 0, 0.2, 1) 1.4s backwards;
   pointer-events: none;
 }
-.case-beam > span { position: absolute; inset: 0; }
-/* A wide glow under the rays; a second one in the theme's other colour fades in and out over it */
-.case-beam-base::after {
-  content: "";
+.case-light {
+  /* Centred on the logo; the page clips what reaches past its sides */
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse calc(var(--beam-w) * 0.6) 55% at var(--logo-x) 0, rgb(var(--glow-2) / 0.38), rgb(var(--glow-2) / 0.12) 55%, transparent);
-  animation: case-glow 7s ease-in-out infinite alternate;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--logo-x) - 700px);
+  width: 1400px;
+  background: var(--light-a) 0 0 / 100% 100% no-repeat;
+  transform-origin: 50% 0;
+  animation: case-fan 11s ease-in-out infinite alternate;
+}
+.case-light-alt {
+  background-image: var(--light-b);
+  animation: case-fan 11s ease-in-out infinite alternate, case-glow 7s ease-in-out infinite alternate;
 }
 @keyframes case-glow { from { opacity: 0; } }
-.case-beam-base {
-  background:
-    radial-gradient(ellipse calc(var(--beam-w) * 0.5) 50% at var(--logo-x) 0, rgb(var(--glow) / 0.42), rgb(var(--glow) / 0.15) 55%, transparent),
-    radial-gradient(ellipse calc(var(--beam-w) * 1.4) 90% at var(--logo-x) 0, rgb(var(--glow-edge) / 0.2), rgb(var(--glow-edge) / 0.06) 55%, transparent);
-}
-/* Rays fanning out from the logo: soft angular bands of a conic gradient centred on it, in the theme's four
-   ray colours, fading out towards the first card. A second fan with the bands elsewhere and the colours
-   swapped turns the other way and fades in and out over the first, so the light shimmers between them */
-.case-beam .case-rays {
-  --fan: from 150deg at var(--logo-x) 0;
-  background: conic-gradient(var(--fan),
-    transparent 0deg,
-    rgb(var(--ray-1) / 0.3) 7deg, transparent 13deg,
-    rgb(var(--ray-2) / 0.5) 18deg, transparent 23deg,
-    rgb(var(--ray-3) / 0.65) 28deg, transparent 32deg,
-    rgb(var(--ray-4) / 0.5) 35.5deg, transparent 40deg,
-    rgb(var(--ray-2) / 0.4) 46deg, transparent 53deg,
-    rgb(var(--ray-1) / 0.25) 56deg, transparent 60deg);
-  transform-origin: var(--logo-x) 0;
-  -webkit-mask: linear-gradient(#000, rgba(0, 0, 0, 0.75) 30%, rgba(0, 0, 0, 0.4) 48%, transparent 65%);
-  mask: linear-gradient(#000, rgba(0, 0, 0, 0.75) 30%, rgba(0, 0, 0, 0.4) 48%, transparent 65%);
-  animation: case-fan 9s ease-in-out infinite alternate;
-}
-.case-beam .case-rays-alt {
-  background: conic-gradient(var(--fan),
-    transparent 0deg,
-    rgb(var(--ray-2) / 0.3) 10deg, transparent 16deg,
-    rgb(var(--ray-4) / 0.45) 21deg, transparent 25deg,
-    rgb(var(--ray-1) / 0.55) 30.5deg, transparent 34.5deg,
-    rgb(var(--ray-3) / 0.5) 39deg, transparent 44deg,
-    rgb(var(--ray-4) / 0.3) 50deg, transparent 57deg);
-  animation: case-fan 7s ease-in-out infinite alternate-reverse, case-glow 6s ease-in-out infinite alternate;
-}
 @keyframes case-fan {
-  from { transform: rotate(-2.5deg); }
-  to { transform: rotate(2.5deg); }
+  from { transform: rotate(-1.5deg); }
+  to { transform: rotate(1.5deg); }
 }
 @keyframes case-beam { from { opacity: 0; transform: scale(0.2); } }
 
@@ -636,11 +609,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --glow-2: 255 176 64;
-  --ray-1: 255 78 20;
-  --ray-2: 255 128 40;
-  --ray-3: 255 196 96;
-  --ray-4: 230 214 110;
+  --light-a: url(assets/case-light-winline-a.webp?v=b2bc4b64);
+  --light-b: url(assets/case-light-winline-b.webp?v=d9239294);
   --edge-hot: #ffe2b8;
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
@@ -658,11 +628,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --glow-2: 255 59 185;
-  --ray-1: 110 44 255;
-  --ray-2: 168 72 255;
-  --ray-3: 255 59 185;
-  --ray-4: 255 163 212;
+  --light-a: url(assets/case-light-chexx-a.webp?v=61792bc0);
+  --light-b: url(assets/case-light-chexx-b.webp?v=254c9d26);
   --edge-hot: #f1ddff;
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }

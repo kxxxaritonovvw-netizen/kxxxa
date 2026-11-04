@@ -10,7 +10,7 @@
         document.documentElement.classList.add('demo');
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=e5c0f6ae" />
+    <link rel="stylesheet" href="styles.css?v=96b69abe" />
   </head>
   <body>
     <div class="page">
@@ -27,11 +27,10 @@
         <!-- Chexx logo tilted to face down, shining violet light down the page.
              Everything here moves by transform and opacity only, so the animation never repaints -->
         <section class="case-hero" aria-label="Chexx">
-          <!-- Light from the logo: a base glow and shimmering rays -->
+          <!-- Soft light from the logo, in two versions that fade into each other -->
           <div class="case-beam" aria-hidden="true">
-            <span class="case-beam-base"></span>
-            <span class="case-rays"></span>
-            <span class="case-rays case-rays-alt"></span>
+            <span class="case-light"></span>
+            <span class="case-light case-light-alt"></span>
           </div>
           <div class="case-logo" aria-hidden="true">
             <!-- Nested turns: the mouse (case.js), the slow sway, the opening tilt -->
