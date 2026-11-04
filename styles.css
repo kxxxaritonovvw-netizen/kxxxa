@@ -33,6 +33,10 @@
 }
 
 * { box-sizing: border-box; }
+/* Selected text: a dark grey just off the black page instead of the system blue */
+::selection { background-color: #222329; }
+/* Text painted through background-clip has no colour of its own, so selected it takes a light one */
+.hero-title::selection, .hero-title span::selection, .gradient::selection { color: #cdbcd8; -webkit-text-fill-color: #cdbcd8; }
 html, body { margin: 0; background: var(--bg); color: var(--text); }
 p, h1, h2 { margin: 0; }
 a { color: inherit; text-decoration: none; }
@@ -156,10 +160,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .name-menu, .name-tg { translate: 0 44px; opacity: 0; filter: blur(4px); }
 /* Hovering an icon rolls the name up and its label in from below; "Menu" stays while the menu is open */
 .pill-name.is-open p.name,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet, .telegram:hover, .telegram:focus-visible, .telegram.is-magnet) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .telegram:hover, .telegram:focus-visible) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 .pill-name.is-open .name-menu,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet) .name-menu,
-.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible, .telegram.is-magnet) .name-tg { translate: 0 0; opacity: 1; filter: none; }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible) .name-menu,
+.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible) .name-tg { translate: 0 0; opacity: 1; filter: none; }
 /* Scrolling (menu.js): the title of the section on screen takes the name's place. Titles of sections above
    wait above the pill and those below wait under it, so scrolling down rolls them up and scrolling up rolls
    them down. Hovering an icon or opening the menu rolls the shown title up like the name */
@@ -168,7 +172,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name.has-section p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 .name-section.is-current { translate: 0 0; opacity: 1; filter: none; }
 .pill-name.is-open .name-section.is-current,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet, .telegram:hover, .telegram:focus-visible, .telegram.is-magnet) .name-section.is-current { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .telegram:hover, .telegram:focus-visible) .name-section.is-current { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 /* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
 .pill-name::after {
   content: "";
@@ -181,23 +185,16 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .pill-name.is-open::after,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet)::after { background-color: rgba(250, 163, 216, 0.05); }
-.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible, .telegram.is-magnet)::after { background-color: rgba(42, 171, 238, 0.05); }
-/* Burger and Telegram sit in round 36px containers that the cursor magnet pulls (cursor.js);
-   hovered or held, the container fills white and the icon turns black. The icons stay where they were in Figma */
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible)::after { background-color: rgba(250, 163, 216, 0.05); }
+.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible)::after { background-color: rgba(42, 171, 238, 0.05); }
+/* Burger and Telegram sit in round 36px boxes; the icons stay where they were in Figma */
 .burger, .telegram {
   position: absolute;
   top: 4px;
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: transparent;
-  transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1), translate 0.4s cubic-bezier(0.33, 1, 0.68, 1);
-  --fill: #fff;
 }
-.burger:hover, .burger.is-magnet, .telegram:hover, .telegram.is-magnet { background-color: var(--fill); }
-/* While the magnet holds it, the container follows the cursor at once instead of easing */
-.burger.is-magnet, .telegram.is-magnet { transition-property: background-color; }
 /* Burger: its lines start 12px from the pill's edge */
 .burger {
   left: 4px;
@@ -219,13 +216,12 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   position: absolute;
   inset: 0;
   background: #72747b;
-  transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1);
   -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
   mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
 }
-.burger:focus-visible span, .telegram:focus-visible::before { background-color: #eeeaf1; }
-.burger:hover span, .burger.is-magnet span,
-.telegram:hover::before, .telegram.is-magnet::before { background-color: #000; }
+.burger:hover span, .burger:focus-visible span,
+.telegram:hover::before, .telegram:focus-visible::before { background-color: #eeeaf1; }
 
 /* Narrow screens: no room for the Figma offset, centre the pill */
 @container header (max-width: 440px) {
@@ -287,7 +283,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   transition: opacity 0.3s var(--menu-ease) 0.22s, transform 0.3s var(--menu-ease) 0.22s;
 }
 
-.burger span { transition: transform 0.3s var(--menu-ease), opacity 0.2s var(--menu-ease), background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1); }
+.burger span { transition: transform 0.3s var(--menu-ease), opacity 0.2s var(--menu-ease), background-color 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
 .pill-name.is-open .burger span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .pill-name.is-open .burger span:nth-child(2) { opacity: 0; }
 .pill-name.is-open .burger span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
@@ -425,6 +421,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 
 /* Artwork pieces (artwork.js): hovered with a mouse, or tapped, a piece grows a little and a tooltip
    tells what it is. The pig's box is mostly transparent, so only an ellipse over its body reacts */
+/* The artwork is pictures, not text: it never shows a selection and its images cannot be dragged off */
+.visual { -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+.visual img { -webkit-user-drag: none; }
 .art { scale: 1; transition: scale 0.5s cubic-bezier(0.33, 1, 0.68, 1); }
 .art.is-active { scale: 1.05; }
 .pig { pointer-events: none; }
@@ -782,7 +781,8 @@ html.demo .screen { min-height: var(--demo-h); }
 
 /* Scroll rail (scrollbar.js) instead of the system scrollbar: a thin line on the right that fills from the top
    as the page scrolls. Each section with data-rail is a dot on it, lit and named once the fill reaches it.
-   While scrolling the line widens; hovered it widens more and shows every name, and a dot takes you there */
+   It is hidden until the page scrolls; while scrolling the line widens, hovered it widens more and shows
+   every name, and a dot takes you there */
 html:has(.rail) { scrollbar-width: none; }
 html:has(.rail)::-webkit-scrollbar { display: none; }
 .rail {
@@ -792,8 +792,12 @@ html:has(.rail)::-webkit-scrollbar { display: none; }
   bottom: 20px;
   right: 0;
   width: 32px;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.3s;
 }
 html.demo .rail { position: absolute; }
+/* Hidden at rest: it shows while the page scrolls (or under the mouse) and fades out after */
+.rail.is-scrolling, .rail:hover { opacity: 1; transition-delay: 0s; transition-duration: 0.2s; }
 .rail-line {
   position: absolute;
   top: 0;
@@ -853,6 +857,19 @@ html.demo .rail { position: absolute; }
 .rail-mark.is-reached span { color: var(--text); }
 .rail:hover .rail-mark span, .rail-mark.is-announced span { opacity: 1; translate: 0 -50%; }
 @media (hover: none) { .rail { pointer-events: none; } }
+
+/* Tap on a touch screen (bounce.js): a short hop up and a soft landing with a small rebound */
+.is-bouncing { animation: bounce 0.55s cubic-bezier(0.33, 1, 0.68, 1); }
+.art { --hop: -28px; }
+.burger, .telegram, .case-close { --hop: -5px; -webkit-tap-highlight-color: transparent; }
+@keyframes bounce {
+  0% { translate: 0 0; }
+  30% { translate: 0 var(--hop); }
+  60% { translate: 0 calc(var(--hop) * -0.12); }
+  80% { translate: 0 calc(var(--hop) * 0.2); }
+  100% { translate: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) { .is-bouncing { animation: none; } }
 
 /* Round cursor (cursor.js): a 6px light dot instead of the system pointer, for a mouse only */
 html.has-cursor, html.has-cursor * { cursor: none !important; }
