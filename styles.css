@@ -440,7 +440,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   text-wrap: balance;
 }
 .case-intro-title { color: var(--text); }
-.case-intro-text { max-width: 390px; justify-self: center; color: rgba(255, 255, 255, 0.8); }
+.case-intro-text { max-width: 390px; justify-self: center; color: rgba(255, 255, 255, 0.7); }
 
 /* Cards for the screens: one wide (885×508) and two halves (434×430) */
 .case-grid {
