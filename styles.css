@@ -299,7 +299,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .glow-shape { position: relative; flex: none; width: 1214.969px; height: 1672.974px; transform: rotate(20.45deg); }
-.glow-shape > img { position: absolute; left: -16.46%; top: -11.95%; width: 132.92%; height: 123.9%; }
+/* The blur is baked into a small bitmap: an SVG filter this size would rerun on every repaint */
+.glow-shape img { position: absolute; left: -16.46%; top: -11.95%; width: 132.92%; height: 123.9%; }
 
 /* Hero */
 /* Figma 1440: headline top at 229px, artwork top at 600px; spacing shrinks on narrower screens */
@@ -438,7 +439,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   perspective-origin: var(--logo-x) var(--logo-top);
 }
 
-/* Intro: two centred columns, a white line on the left and a grey note on the right */
+/* Intro: two centred columns, a white line on the left and a softer white note on the right */
 .case-intro {
   position: relative;
   display: grid;
@@ -452,7 +453,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   text-wrap: balance;
 }
 .case-intro-title { color: var(--text); }
-.case-intro-text { max-width: 390px; justify-self: center; color: #5f626b; }
+.case-intro-text { max-width: 390px; justify-self: center; color: rgba(255, 255, 255, 0.7); }
 
 /* Cards for the screens: one wide (885×508) and two halves (434×430) */
 .case-grid {
@@ -482,15 +483,17 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
   animation: case-fade 1.6s ease 2.6s backwards;
 }
+/* The line fades in and out along a long smooth ramp, with a soft oval glow around it instead of a box shadow,
+   so neither has hard ends */
 .case-card-wide::before {
-  top: -0.5px;
+  top: -14px;
   left: 50%;
-  width: min(560px, 70%);
-  height: 2px;
-  translate: -50% -0.5px;
-  border-radius: 1px;
-  background: linear-gradient(90deg, transparent, rgb(var(--glow) / 0.95) 22%, var(--edge-hot) 50%, rgb(var(--glow) / 0.95) 78%, transparent);
-  box-shadow: 0 0 10px 1px rgb(var(--glow) / 0.8), 0 0 36px 6px rgb(var(--glow-edge) / 0.4);
+  width: min(680px, 84%);
+  height: 28px;
+  translate: -50% 0;
+  background:
+    linear-gradient(90deg, transparent, rgb(var(--glow) / 0.06) 10%, rgb(var(--glow) / 0.22) 22%, rgb(var(--glow) / 0.5) 34%, rgb(var(--glow) / 0.8) 43%, var(--edge-hot) 50%, rgb(var(--glow) / 0.8) 57%, rgb(var(--glow) / 0.5) 66%, rgb(var(--glow) / 0.22) 78%, rgb(var(--glow) / 0.06) 90%, transparent) center / 100% 1.5px no-repeat,
+    radial-gradient(closest-side, rgb(var(--glow) / 0.4), rgb(var(--glow) / 0.14) 45%, rgb(var(--glow) / 0.04) 75%, transparent);
 }
 .case-card-wide::after {
   inset: 0;
@@ -573,9 +576,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   75% { transform: translateX(calc(var(--u) * var(--swing))); }
 }
 
-/* Light from the logo, after huly.io: a column of orange, amber and yellow-green rays over a fine dot
-   texture, falling onto the first card, whose top edge lights up. Everything is plain gradients drawn once;
-   the reveal and the shimmer move only transform and opacity */
+/* Light from the logo: a soft cone that widens down onto the first card, whose top edge lights up.
+   Two bitmaps from tools/make-case-light.py, the second with the theme's colours on the other sides,
+   fade into each other while the light sways a little; only transform and opacity move */
 .case-beam {
   position: absolute;
   inset: calc(var(--logo-top) + var(--logo-w) / var(--logo-ratio) / 2) 0 clamp(-560px, -38cqw, -240px);
@@ -585,58 +588,25 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   animation: case-beam 4s cubic-bezier(0.4, 0, 0.2, 1) 1.4s backwards;
   pointer-events: none;
 }
-.case-beam > span { position: absolute; inset: 0; }
-/* A wide glow under the rays; a second one in the theme's other colour fades in and out over it */
-.case-beam-base::after {
-  content: "";
+.case-light {
+  /* Centred on the logo; the page clips what reaches past its sides */
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse calc(var(--beam-w) * 0.6) 55% at var(--logo-x) 0, rgb(var(--glow-2) / 0.38), rgb(var(--glow-2) / 0.12) 55%, transparent);
-  animation: case-glow 7s ease-in-out infinite alternate;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--logo-x) - 700px);
+  width: 1400px;
+  background: var(--light-a) 0 0 / 100% 100% no-repeat;
+  transform-origin: 50% 0;
+  animation: case-fan 11s ease-in-out infinite alternate;
+}
+.case-light-alt {
+  background-image: var(--light-b);
+  animation: case-fan 11s ease-in-out infinite alternate, case-glow 7s ease-in-out infinite alternate;
 }
 @keyframes case-glow { from { opacity: 0; } }
-.case-beam-base {
-  background:
-    radial-gradient(ellipse calc(var(--beam-w) * 0.5) 50% at var(--logo-x) 0, rgb(var(--glow) / 0.42), rgb(var(--glow) / 0.15) 55%, transparent),
-    radial-gradient(ellipse calc(var(--beam-w) * 1.4) 90% at var(--logo-x) 0, rgb(var(--glow-edge) / 0.2), rgb(var(--glow-edge) / 0.06) 55%, transparent);
-}
-/* One ray: a soft vertical stripe --w wide, --x off the logo's centre, at strength --a, brightest just under
-   the logo and fading out further down. Each drifts and flickers on its own period --d, and inside it a band of
-   its two colours --c and --c2 flows down on period --f, so the light shimmers through them */
-.case-beam .case-ray {
-  left: calc(var(--logo-x) + var(--x) - var(--w) / 2);
-  right: auto;
-  width: var(--w);
-  overflow: hidden;
-  /* Soft sides, and strong down to the first card, then gone soon after */
-  -webkit-mask: linear-gradient(90deg, transparent, #000 50%, transparent), linear-gradient(#000, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.5) 48%, transparent 62%);
-  -webkit-mask-composite: source-in;
-  mask: linear-gradient(90deg, transparent, #000 50%, transparent), linear-gradient(#000, rgba(0, 0, 0, 0.8) 35%, rgba(0, 0, 0, 0.5) 48%, transparent 62%);
-  mask-composite: intersect;
-  animation: case-ray var(--d) ease-in-out infinite alternate;
-}
-/* Three copies of the colour band, so moving down by one keeps it seamless */
-.case-ray::before {
-  --c1: rgba(var(--c), var(--a));
-  --c3: rgba(var(--c2), var(--a));
-  content: "";
-  position: absolute;
-  inset: -200% 0 0;
-  background: linear-gradient(var(--c1), var(--c3) 16.67%, var(--c1) 33.33%, var(--c3) 50%, var(--c1) 66.67%, var(--c3) 83.33%, var(--c1));
-  animation: case-flow var(--f) linear infinite;
-}
-.case-beam .case-ray:nth-child(odd) { animation-direction: alternate-reverse; }
-@keyframes case-ray {
-  from { transform: translateX(-10px) scaleX(0.85); opacity: 0.7; }
-  50% { opacity: 1; }
-  to { transform: translateX(12px) scaleX(1.15); opacity: 0.8; }
-}
-@keyframes case-flow { to { transform: translateY(33.333%); } }
-/* Fine dots over the light, as on a screen up close */
-.case-beam-dots {
-  background: radial-gradient(circle, rgb(var(--dots) / 0.32) 0.7px, transparent 1.1px) 0 0 / 4px 4px;
-  -webkit-mask: radial-gradient(ellipse calc(var(--beam-w) * 0.55) 55% at var(--logo-x) 0, #000, transparent);
-  mask: radial-gradient(ellipse calc(var(--beam-w) * 0.55) 55% at var(--logo-x) 0, #000, transparent);
+@keyframes case-fan {
+  from { transform: rotate(-1.5deg); }
+  to { transform: rotate(1.5deg); }
 }
 @keyframes case-beam { from { opacity: 0; transform: scale(0.2); } }
 
@@ -652,8 +622,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --glow-2: 255 176 64;
-  --dots: 255 196 140;
+  --light-a: url(assets/case-light-winline-a.webp?v=b2bc4b64);
+  --light-b: url(assets/case-light-winline-b.webp?v=d9239294);
   --edge-hot: #ffe2b8;
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
@@ -671,8 +641,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --glow-2: 255 59 185;
-  --dots: 214 180 255;
+  --light-a: url(assets/case-light-chexx-a.webp?v=61792bc0);
+  --light-b: url(assets/case-light-chexx-b.webp?v=254c9d26);
   --edge-hot: #f1ddff;
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
