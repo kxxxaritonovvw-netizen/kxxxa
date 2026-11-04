@@ -623,8 +623,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 
 /* Light from the logo: a soft cone that widens down onto the first card, whose top edge lights up.
    Three bitmaps from tools/make-case-light.py in different colour pairs fade into each other at different
-   paces, so the colours keep drifting. They never turn: a turned bitmap shows its edge as a hard line.
-   On a phone, tilting it drives the colours and slides the light instead (case.js) */
+   paces, so the colours keep drifting. They never turn: a turned bitmap shows its edge as a hard line */
 .case-beam {
   position: absolute;
   inset: calc(var(--logo-top) + var(--logo-w) / var(--logo-ratio) / 2) 0 clamp(-560px, -38cqw, -240px);
@@ -643,7 +642,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   left: calc(var(--logo-x) - var(--light-w) / 2);
   width: var(--light-w);
   background: var(--light-a) 0 0 / 100% 100% no-repeat;
-  will-change: transform, opacity;
 }
 .case-light-b {
   background-image: var(--light-b);
@@ -661,8 +659,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   background: url(assets/grain.webp?v=9c6dc100) 0 0 / 64px 64px;
   mix-blend-mode: overlay;
 }
-/* While the phone's tilt drives the light, case.js sets the opacity itself */
-.case-beam.is-tilting .case-light { animation: none; }
 @keyframes case-glow { from { opacity: 0; } }
 @keyframes case-beam { from { opacity: 0; transform: scale(0.2); } }
 
