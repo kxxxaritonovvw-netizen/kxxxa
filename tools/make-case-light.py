@@ -17,18 +17,18 @@ from PIL import Image
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WIDTH, HEIGHT = 1400, 1100  # CSS px the bitmap is drawn at (styles.css, .case-light)
 SCALE = 0.25  # the light is soft, so a quarter-size bitmap holds every detail
-STRENGTH = 0.6  # brightness at the hottest point, 0…1
+STRENGTH = 0.5  # brightness at the hottest point, 0…1
 # Per case and bitmap: the tint under the logo, then the colours of the left and right sides
 CASES = {
     'winline': {
-        'a': ((255, 214, 160), (255, 92, 28), (255, 176, 64)),
-        'b': ((255, 214, 160), (255, 176, 64), (255, 92, 28)),
-        'c': ((255, 226, 186), (255, 58, 44), (255, 214, 110)),
+        'a': ((255, 206, 150), (255, 118, 42), (255, 158, 60)),
+        'b': ((255, 206, 150), (255, 158, 60), (255, 118, 42)),
+        'c': ((255, 214, 164), (255, 104, 52), (255, 178, 88)),
     },
     'chexx': {
-        'a': ((214, 198, 255), (128, 64, 255), (255, 72, 182)),
-        'b': ((214, 198, 255), (255, 72, 182), (128, 64, 255)),
-        'c': ((226, 214, 255), (84, 92, 255), (255, 128, 222)),
+        'a': ((208, 190, 255), (140, 78, 255), (196, 82, 244)),
+        'b': ((208, 190, 255), (196, 82, 244), (140, 78, 255)),
+        'c': ((216, 200, 255), (122, 92, 255), (218, 104, 232)),
     },
 }
 
@@ -48,14 +48,15 @@ def render(top, left, right, path):
     data = bytearray()
     for y in range(h):
         v = (y + 0.5) / h  # 0 at the logo, 1 at the bottom
-        # The cone widens as the light falls; brightness pools over the first card, then fades out
-        spread = 0.16 + 0.75 * v
-        fall = smoothstep(0.0, 0.3, v) * math.exp(-((v / 0.62) ** 3)) * (1 - smoothstep(0.75, 1, v))
-        lower = smoothstep(0.05, 0.32, v)
+        # Bright right under the logo, the cone spreads wide quickly and fades out well before the bottom
+        spread = 0.22 + 0.9 * v
+        fall = smoothstep(0.0, 0.12, v) * math.exp(-((v / 0.42) ** 2)) * (1 - smoothstep(0.75, 1, v))
+        lower = smoothstep(0.02, 0.25, v)
         for x in range(w):
             u = ((x + 0.5) / w) * 2 - 1  # -1 left, 1 right
-            # The edges of the bitmap fade to pure black, so it has no visible border
-            light = STRENGTH * fall * math.exp(-((u / spread) ** 2)) * (1 - smoothstep(0.5, 1, abs(u)))
+            # A long soft tail to the sides instead of a Gaussian's quick drop, reaching pure black
+            # at the bitmap's edges, so the light melts into the background with no visible border
+            light = STRENGTH * fall / (1 + (u / spread) ** 2) ** 1.5 * (1 - smoothstep(0.3, 1, abs(u)))
             colour = mix(top, mix(left, right, smoothstep(-0.35, 0.35, u)), lower)
             data.extend(min(255, int(c * light + rng.random())) for c in colour)
     Image.frombytes('RGB', (w, h), bytes(data)).save(path, 'WEBP', lossless=True, method=6)
