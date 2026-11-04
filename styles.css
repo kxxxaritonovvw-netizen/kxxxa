@@ -6,6 +6,14 @@
   font-display: swap;
   src: url(assets/fonts/cinzel-latin.woff2?v=f3c0a081) format("woff2");
 }
+/* PP Pangaia Medium (latin) for the hero title */
+@font-face {
+  font-family: "PP Pangaia";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(assets/fonts/pp-pangaia-medium.woff2?v=5320765f) format("woff2");
+}
 
 :root {
   --bg: #000;
@@ -15,6 +23,7 @@
   --font-ui: "Selecta", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --font-body: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   --font-display: "Cinzel", Georgia, serif;
+  --font-hero: "PP Pangaia", Georgia, serif;
   --font-condensed: "PF Din Text Comp Pro", "Arial Narrow", "Helvetica Neue", sans-serif;
   /* Menu open/close: quick start, long soft landing so overlapping steps blend */
   --menu-ease: cubic-bezier(0.32, 0.72, 0, 1);
@@ -147,10 +156,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .name-menu, .name-tg { translate: 0 44px; opacity: 0; filter: blur(4px); }
 /* Hovering an icon rolls the name up and its label in from below; "Menu" stays while the menu is open */
 .pill-name.is-open p.name,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .telegram:hover, .telegram:focus-visible) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet, .telegram:hover, .telegram:focus-visible, .telegram.is-magnet) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 .pill-name.is-open .name-menu,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible) .name-menu,
-.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible) .name-tg { translate: 0 0; opacity: 1; filter: none; }
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet) .name-menu,
+.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible, .telegram.is-magnet) .name-tg { translate: 0 0; opacity: 1; filter: none; }
 /* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
 .pill-name::after {
   content: "";
@@ -163,33 +172,38 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .pill-name.is-open::after,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible)::after { background-color: rgba(250, 163, 216, 0.05); }
-.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible)::after { background-color: rgba(42, 171, 238, 0.05); }
-/* Burger: a 28px box 8px from the top, bottom and left; its lines start 12px from the edge */
-.burger {
+.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .burger.is-magnet)::after { background-color: rgba(250, 163, 216, 0.05); }
+.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible, .telegram.is-magnet)::after { background-color: rgba(42, 171, 238, 0.05); }
+/* Burger and Telegram sit in round 32px containers that the cursor magnet pulls (cursor.js);
+   hovered or held, the container takes its --fill. The icons stay where they were in Figma */
+.burger, .telegram {
   position: absolute;
-  left: 8px;
-  top: 8px;
+  top: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: transparent;
+  transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1), translate 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+  --fill: rgba(238, 234, 241, 0.08);
+}
+.burger:hover, .burger.is-magnet, .telegram:hover, .telegram.is-magnet { background-color: var(--fill); }
+/* While the magnet holds it, the container follows the cursor at once instead of easing */
+.burger.is-magnet, .telegram.is-magnet { transition-property: background-color; }
+/* Burger: its lines start 12px from the pill's edge */
+.burger {
+  left: 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 28px;
-  height: 28px;
   padding: 0;
 }
 .burger span { width: 20px; height: 1.5px; background: #72747b; }
 /* The Telegram plane on its own, painted with the background colour so hover can recolour it.
-   The glyph fills its box almost edge to edge, so the box sits 13px in: the plane itself then
-   ends 15px from the pill's edge, and is centred vertically */
-.telegram {
-  position: absolute;
-  right: 13px;
-  top: 9px;
-  width: 26px;
-  height: 26px;
-}
+   The glyph fills 26px almost edge to edge and is centred in the container 10px in: the plane itself
+   then ends 15px from the pill's edge, and is centred vertically */
+.telegram { right: 10px; }
 /* The plane is drawn on an inner layer, so the mask doesn't cut off the focus ring */
 .telegram::before {
   content: "";
@@ -200,8 +214,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   -webkit-mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
   mask: url(assets/telegram.svg?v=681a7269) center / 26px no-repeat;
 }
-.burger:hover span, .burger:focus-visible span,
-.telegram:hover::before, .telegram:focus-visible::before { background-color: #eeeaf1; }
+.burger:hover span, .burger:focus-visible span, .burger.is-magnet span,
+.telegram:hover::before, .telegram:focus-visible::before, .telegram.is-magnet::before { background-color: #eeeaf1; }
 
 /* Narrow screens: no room for the Figma offset, centre the pill */
 @container header (max-width: 440px) {
@@ -251,9 +265,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   outline-offset: 2px;
 }
 .page :focus:not(:focus-visible) { outline: none; }
-.burger { border-radius: 10px; }
-.telegram { border-radius: 9px; }
-.telegram:focus-visible { outline-offset: 3px; }
 .menu-list a:focus-visible, .menu-links a:focus-visible { outline-offset: 0; }
 .menu-list li, .menu-links {
   opacity: 0;
@@ -294,14 +305,16 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 /* Figma 1440: headline top at 229px, artwork top at 600px; spacing shrinks on narrower screens */
 .hero { position: relative; padding-top: clamp(140px, 15.9cqw, 229px); }
 .hero-title {
-  max-width: 1061px;
+  width: fit-content;
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 16px;
-  font: 400 clamp(28px, 3.34cqw, 48px) / 1 var(--font-ui);
+  font: 500 clamp(36px, 4.45cqw, 64px) / 1 var(--font-hero);
   text-align: center;
   color: transparent;
+  /* Figma: a pink-violet sheen across a muted violet fill */
   background-image:
-    linear-gradient(-18.51deg, rgba(255, 255, 255, 0) 8.13%, rgba(237, 223, 248, 0.767) 23.2%, #a885c4 34.08%, #faa3d8 38.22%, rgba(255, 255, 255, 0) 79.2%),
+    linear-gradient(-33.33deg, rgba(255, 255, 255, 0) 8.13%, rgba(237, 223, 248, 0.767) 23.2%, #a885c4 34.08%, #faa3d8 38.22%, rgba(255, 255, 255, 0) 79.2%),
     linear-gradient(90deg, #81728b, #81728b);
   -webkit-background-clip: text;
   background-clip: text;
