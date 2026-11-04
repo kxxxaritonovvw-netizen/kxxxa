@@ -13,7 +13,7 @@
     <!-- The pig's mask is set in CSS, so the browser would find it late; CSS masks load with CORS, hence crossorigin -->
     <link rel="preload" as="image" href="assets/pig-mask.avif?v=f682299f" type="image/avif" fetchpriority="high" crossorigin />
     <link rel="preload" as="font" href="assets/fonts/pp-pangaia-medium.woff2?v=5320765f" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=be1c0647" />
+    <link rel="stylesheet" href="styles.css?v=714106bd" />
   </head>
   <body>
     <div class="page">
@@ -56,7 +56,7 @@
           <div class="glow-shape"><picture><source srcset="assets/glow.avif?v=b9305954" type="image/avif" /><img src="assets/glow.webp?v=36a501e1" alt="" decoding="async" /></picture></div>
         </div>
 
-        <section class="hero" id="home" aria-label="Главная">
+        <section class="hero" id="home" aria-label="Главная" data-rail="Главная">
           <h1 class="hero-title">
             <span>Designer building products</span>
             <span>with purpose and sweet</span>
@@ -66,11 +66,11 @@
           <!-- Artwork keeps the Figma composition (1308×728) and is scaled to its width by layout.js -->
           <div class="visual">
             <div class="visual-stage">
-              <picture><source srcset="assets/phone.avif?v=8373d294" type="image/avif" /><img class="phone" src="assets/phone.webp?v=ccaba1f2" alt="Экран профиля в мобильном приложении" decoding="async" /></picture>
-              <div class="pig" aria-hidden="true"><picture><source srcset="assets/pig.avif?v=1e712023" type="image/avif" /><img src="assets/pig.webp?v=1a4161b0" alt="" decoding="async" /></picture></div>
-              <picture><source srcset="assets/cashback.avif?v=4f2e6df1" type="image/avif" /><img class="cashback" src="assets/cashback.webp?v=e4d5f20e" alt="" decoding="async" /></picture>
+              <picture><source srcset="assets/phone.avif?v=8373d294" type="image/avif" /><img class="phone art" data-tip-title="Профиль игрока" data-tip-text="Баланс, бонусы и прогресс в одном экране: вся жизнь игрока в приложении" src="assets/phone.webp?v=ccaba1f2" alt="Экран профиля в мобильном приложении" decoding="async" /></picture>
+              <div class="pig art" aria-hidden="true"><span class="pig-hit" data-tip-title="Копилка" data-tip-text="3D-маскот, который копит кэшбэк и делает накопления осязаемыми"></span><picture><source srcset="assets/pig.avif?v=1e712023" type="image/avif" /><img src="assets/pig.webp?v=1a4161b0" alt="" decoding="async" /></picture></div>
+              <picture><source srcset="assets/cashback.avif?v=4f2e6df1" type="image/avif" /><img class="cashback art" data-tip-title="Кэшбэк" data-tip-text="Стикер-награда: возврат за активность, который хочется собрать" src="assets/cashback.webp?v=e4d5f20e" alt="" decoding="async" /></picture>
 
-              <div class="rot tickets">
+              <div class="rot tickets art" data-tip-title="Мои билеты" data-tip-text="Геймификация: билеты за активность и место игрока в общем рейтинге">
                 <div class="tickets-card">
                   <div class="tickets-head">
                     <p class="tickets-title">Мои билеты</p>
@@ -95,7 +95,7 @@
           </div>
         </section>
 
-        <section class="screen" id="work" aria-labelledby="work-title">
+        <section class="screen" id="work" aria-labelledby="work-title" data-rail="Работы">
           <h2 class="screen-title" id="work-title">Selected work</h2>
           <p class="screen-text">
             Product designer with <em>7 years</em> of experience. I&rsquo;ve built products in
@@ -105,14 +105,16 @@
           </p>
         </section>
 
-        <section class="screen" id="about" aria-labelledby="about-title">
+        <section class="screen" id="about" aria-labelledby="about-title" data-rail="Обо мне">
           <h2 class="screen-title" id="about-title">About &amp; contact</h2>
           <p class="screen-note">Здесь будет рассказ о себе и контакты</p>
         </section>
       </main>
     </div>
     <script src="layout.js?v=6ce77353"></script>
-    <script src="menu.js?v=085d380f"></script>
+    <script src="menu.js?v=56a2b055"></script>
+    <script src="scrollbar.js?v=9af47d17"></script>
+    <script src="artwork.js?v=7afb0b57"></script>
     <script src="cursor.js?v=b2760011"></script>
   </body>
 </html>
