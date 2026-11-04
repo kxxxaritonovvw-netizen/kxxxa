@@ -613,36 +613,41 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 
 /* Light from the logo: a soft cone that widens down onto the first card, whose top edge lights up.
-   Two bitmaps from tools/make-case-light.py, the second with the theme's colours on the other sides,
-   fade into each other while the light sways a little; only transform and opacity move */
+   Three bitmaps from tools/make-case-light.py in different colour pairs fade into each other at different
+   paces while each sways a little on its own, so the colours keep drifting; only transform and opacity move */
 .case-beam {
   position: absolute;
   inset: calc(var(--logo-top) + var(--logo-w) / var(--logo-ratio) / 2) 0 clamp(-560px, -38cqw, -240px);
   transform-origin: var(--logo-x) 0;
-  -webkit-mask: linear-gradient(transparent, #000 60px);
-  mask: linear-gradient(transparent, #000 60px);
+  -webkit-mask: linear-gradient(transparent, #000 20px);
+  mask: linear-gradient(transparent, #000 20px);
   animation: case-beam 4s cubic-bezier(0.4, 0, 0.2, 1) 1.4s backwards;
   pointer-events: none;
 }
 .case-light {
-  /* Centred on the logo; the page clips what reaches past its sides */
+  /* Centred on the logo and sized to the page, so on a phone too the light fades out well before the sides */
+  --light-w: clamp(720px, 160cqw, 2400px);
   position: absolute;
   top: 0;
   bottom: 0;
-  left: calc(var(--logo-x) - 700px);
-  width: 1400px;
+  left: calc(var(--logo-x) - var(--light-w) / 2);
+  width: var(--light-w);
   background: var(--light-a) 0 0 / 100% 100% no-repeat;
   transform-origin: 50% 0;
-  animation: case-fan 11s ease-in-out infinite alternate;
+  animation: case-fan 9s ease-in-out infinite alternate;
 }
-.case-light-alt {
+.case-light-b {
   background-image: var(--light-b);
-  animation: case-fan 11s ease-in-out infinite alternate, case-glow 7s ease-in-out infinite alternate;
+  animation: case-fan 7s ease-in-out infinite alternate-reverse, case-glow 4s ease-in-out infinite alternate;
+}
+.case-light-c {
+  background-image: var(--light-c);
+  animation: case-fan 11s ease-in-out infinite alternate, case-glow 5.5s ease-in-out 1.5s infinite alternate-reverse;
 }
 @keyframes case-glow { from { opacity: 0; } }
 @keyframes case-fan {
-  from { transform: rotate(-1.5deg); }
-  to { transform: rotate(1.5deg); }
+  from { transform: rotate(-2.5deg); }
+  to { transform: rotate(2.5deg); }
 }
 @keyframes case-beam { from { opacity: 0; transform: scale(0.2); } }
 
@@ -658,8 +663,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --light-a: url(assets/case-light-winline-a.webp?v=b2bc4b64);
-  --light-b: url(assets/case-light-winline-b.webp?v=d9239294);
+  --light-a: url(assets/case-light-winline-a.webp?v=5edf7105);
+  --light-b: url(assets/case-light-winline-b.webp?v=1c43610c);
+  --light-c: url(assets/case-light-winline-c.webp?v=9933253a);
   --edge-hot: #ffe2b8;
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
@@ -677,8 +683,9 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --light-a: url(assets/case-light-chexx-a.webp?v=61792bc0);
-  --light-b: url(assets/case-light-chexx-b.webp?v=254c9d26);
+  --light-a: url(assets/case-light-chexx-a.webp?v=21767af1);
+  --light-b: url(assets/case-light-chexx-b.webp?v=fd996ab3);
+  --light-c: url(assets/case-light-chexx-c.webp?v=33362dfc);
   --edge-hot: #f1ddff;
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
