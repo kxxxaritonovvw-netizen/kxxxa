@@ -12,7 +12,8 @@
     </script>
     <!-- The pig's mask is set in CSS, so the browser would find it late; CSS masks load with CORS, hence crossorigin -->
     <link rel="preload" as="image" href="assets/pig-mask.avif?v=f682299f" type="image/avif" fetchpriority="high" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=a0389bc5" />
+    <link rel="preload" as="font" href="assets/fonts/pp-pangaia-medium.woff2?v=5320765f" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="styles.css?v=cc38b095" />
   </head>
   <body>
     <div class="page">
@@ -21,7 +22,7 @@
           <div class="pill-name">
             <span class="pill-glow" aria-hidden="true"></span>
             <div class="pill-name-bar">
-              <button class="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu">
+              <button class="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu" data-magnet>
                 <span></span><span></span><span></span>
               </button>
               <div class="name-swap">
@@ -29,7 +30,7 @@
                 <span class="name name-menu" aria-hidden="true">Menu</span>
                 <span class="name name-tg" aria-hidden="true">t.me/kxaritonovvw</span>
               </div>
-              <a class="telegram" href="https://t.me/kxaritonovvw" target="_blank" rel="noopener" aria-label="Telegram"></a>
+              <a class="telegram" href="https://t.me/kxaritonovvw" target="_blank" rel="noopener" aria-label="Telegram" data-magnet></a>
             </div>
             <nav class="menu" id="menu" aria-label="Разделы" inert>
               <div class="menu-inner">
@@ -58,7 +59,8 @@
         <section class="hero" id="home" aria-label="Главная">
           <h1 class="hero-title">
             <span>Designer building products</span>
-            <span>with purpose and sweet over details</span>
+            <span>with purpose and sweet</span>
+            <span>over details</span>
           </h1>
 
           <!-- Artwork keeps the Figma composition (1308×728) and is scaled to its width by layout.js -->
