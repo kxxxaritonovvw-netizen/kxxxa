@@ -58,7 +58,11 @@ if (close && main) {
       upFrom ??= lastY;
       if (upFrom - y >= BACK || y <= BACK) away = false;
     }
-    close.classList.toggle('is-away', away);
+    // is-back plays the drop only when it returns, not when the page opens
+    if (away !== close.classList.contains('is-away')) {
+      close.classList.toggle('is-away', away);
+      close.classList.toggle('is-back', !away);
+    }
     lastY = y;
   }, { capture: true, passive: true });
 }

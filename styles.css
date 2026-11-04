@@ -723,10 +723,23 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   box-shadow: inset 0 0 24px #201729, 0 2px 6px rgba(0, 0, 0, 0.16), 0 10px 32px rgba(0, 0, 0, 0.28);
-  transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1), box-shadow 0.3s cubic-bezier(0.65, 0, 0.35, 1), translate 0.4s cubic-bezier(0.33, 1, 0.68, 1), transform 0.45s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1), box-shadow 0.3s cubic-bezier(0.65, 0, 0.35, 1), translate 0.4s cubic-bezier(0.33, 1, 0.68, 1);
 }
-/* On a phone it flies up off the screen while the page scrolls down (case.js) */
-.case-close.is-away { transform: translateY(-80px); }
+/* On a phone it is yanked up off the screen while the page scrolls down (case.js): it braces, squashed,
+   then shoots up stretching as it speeds away. Coming back it drops in and settles with a small bounce */
+.case-close.is-away { animation: case-close-yank 0.5s forwards; }
+.case-close.is-back { animation: case-close-drop 0.6s; }
+@keyframes case-close-yank {
+  0% { transform: none; animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1); }
+  24% { transform: translateY(5px) scale(1.1, 0.88); animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.3); }
+  100% { transform: translateY(-140px) scale(0.78, 1.4); }
+}
+@keyframes case-close-drop {
+  0% { transform: translateY(-140px) scale(0.85, 1.25); animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  58% { transform: translateY(4px) scale(1.08, 0.92); animation-timing-function: ease-in-out; }
+  80% { transform: translateY(-2px) scale(0.98, 1.03); animation-timing-function: ease-in-out; }
+  100% { transform: none; }
+}
 /* The same glass rim as the pill */
 .case-close::before {
   content: "";
@@ -756,7 +769,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 .case-close:hover span, .case-close:focus-visible span, .case-close.is-magnet span { background-color: #000; }
 /* While the magnet holds it, the button follows the cursor at once instead of easing */
-.case-close.is-magnet { transition-property: background-color, box-shadow, transform; }
+.case-close.is-magnet { transition-property: background-color, box-shadow; }
 @container header (max-width: 440px) {
   .case-close { right: 16px; }
 }
