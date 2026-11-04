@@ -527,8 +527,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
   animation: case-fade 1.6s ease 2.6s backwards;
 }
-/* The line fades in and out along a long smooth ramp, with a soft oval glow around it instead of a box shadow,
-   so neither has hard ends */
+/* A hairline that fades in and out along a long even ramp, warmest (not white) in the middle, with a faint
+   oval glow around it instead of a box shadow, so it reads as light catching the edge and has no hard ends */
 .case-card-wide::before {
   top: -14px;
   left: 50%;
@@ -536,8 +536,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   height: 28px;
   translate: -50% 0;
   background:
-    linear-gradient(90deg, transparent, rgb(var(--glow) / 0.06) 10%, rgb(var(--glow) / 0.22) 22%, rgb(var(--glow) / 0.5) 34%, rgb(var(--glow) / 0.8) 43%, var(--edge-hot) 50%, rgb(var(--glow) / 0.8) 57%, rgb(var(--glow) / 0.5) 66%, rgb(var(--glow) / 0.22) 78%, rgb(var(--glow) / 0.06) 90%, transparent) center / 100% 1.5px no-repeat,
-    radial-gradient(closest-side, rgb(var(--glow) / 0.4), rgb(var(--glow) / 0.14) 45%, rgb(var(--glow) / 0.04) 75%, transparent);
+    linear-gradient(90deg, transparent, rgb(var(--glow) / 0.04) 12%, rgb(var(--glow) / 0.12) 25%, rgb(var(--glow) / 0.24) 37%, rgb(var(--halo) / 0.4) 50%, rgb(var(--glow) / 0.24) 63%, rgb(var(--glow) / 0.12) 75%, rgb(var(--glow) / 0.04) 88%, transparent) center / 100% 1px no-repeat,
+    radial-gradient(closest-side, rgb(var(--glow) / 0.16), rgb(var(--glow) / 0.06) 45%, rgb(var(--glow) / 0.015) 75%, transparent);
 }
 .case-card-wide::after {
   inset: 0;
@@ -657,6 +657,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   inset: 0;
   background: url(assets/grain.webp?v=9c6dc100) 0 0 / 64px 64px;
   mix-blend-mode: overlay;
+  /* Kept faint: just enough to break up the steps */
+  opacity: 0.45;
 }
 @keyframes case-glow { from { opacity: 0; } }
 @keyframes case-beam { from { opacity: 0; transform: scale(0.2); } }
@@ -676,7 +678,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --light-a: url(assets/case-light-winline-a.webp?v=90505183);
   --light-b: url(assets/case-light-winline-b.webp?v=73f4706a);
   --light-c: url(assets/case-light-winline-c.webp?v=9e565934);
-  --edge-hot: #ffe2b8;
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
 /* The pill's outline is a plain rounded box, cheaper than a mask */
@@ -696,7 +697,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   --light-a: url(assets/case-light-chexx-a.webp?v=78246e1b);
   --light-b: url(assets/case-light-chexx-b.webp?v=20582988);
   --light-c: url(assets/case-light-chexx-c.webp?v=0b633119);
-  --edge-hot: #f1ddff;
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
 /* Letters, not a box: the thickness and the reflection follow the logo's outline */
