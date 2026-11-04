@@ -288,7 +288,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .glow-shape { position: relative; flex: none; width: 1214.969px; height: 1672.974px; transform: rotate(20.45deg); }
-.glow-shape > img { position: absolute; left: -16.46%; top: -11.95%; width: 132.92%; height: 123.9%; }
+/* The blur is baked into a small bitmap: an SVG filter this size would rerun on every repaint */
+.glow-shape img { position: absolute; left: -16.46%; top: -11.95%; width: 132.92%; height: 123.9%; }
 
 /* Hero */
 /* Figma 1440: headline top at 229px, artwork top at 600px; spacing shrinks on narrower screens */
