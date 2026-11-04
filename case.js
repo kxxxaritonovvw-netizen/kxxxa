@@ -62,3 +62,54 @@ if (close && main) {
     lastY = y;
   }, { capture: true, passive: true });
 }
+
+// On a phone, tilting it plays with the light: tilting sideways fades between two of its colourings
+// and slides it a little, tilting forward or back brings in the third. Angles count from how the phone
+// is held, which the base follows slowly, so holding it at any angle rests the light in the middle.
+// Safari asks for permission first, which it only allows from a tap; Chromium has the same call but
+// sends the events without it
+const beam = document.querySelector('.case-beam');
+if (beam && 'DeviceOrientationEvent' in window && matchMedia('(hover: none) and (prefers-reduced-motion: no-preference)').matches) {
+  const [base, sideLight, tipLight] = beam.querySelectorAll('.case-light');
+  const RANGE = 20; // degrees of tilt from the resting angle for the full effect
+  const EASE = 0.12;
+  const clamp = (v) => Math.max(-1, Math.min(1, v));
+  let rest = null;
+  let goalX = 0;
+  let goalY = 0;
+  let x = 0;
+  let y = 0;
+  let frame = 0;
+
+  const step = () => {
+    x += (goalX - x) * EASE;
+    y += (goalY - y) * EASE;
+    sideLight.style.opacity = (0.5 + x / 2).toFixed(3);
+    tipLight.style.opacity = (0.5 + y / 2).toFixed(3);
+    // Each layer slides a different amount, so the colours shift against each other
+    [base, sideLight, tipLight].forEach((el, i) => {
+      el.style.transform = `translateX(${(x * (2 + i * 2)).toFixed(2)}%)`;
+    });
+    frame = Math.abs(goalX - x) + Math.abs(goalY - y) > 0.002 ? requestAnimationFrame(step) : 0;
+  };
+
+  const onTilt = (event) => {
+    if (event.beta === null || event.gamma === null) return;
+    rest ??= { beta: event.beta, gamma: event.gamma };
+    rest.beta += (event.beta - rest.beta) * 0.004;
+    rest.gamma += (event.gamma - rest.gamma) * 0.004;
+    goalX = clamp((event.gamma - rest.gamma) / RANGE);
+    goalY = clamp((event.beta - rest.beta) / RANGE);
+    beam.classList.add('is-tilting');
+    if (!frame) frame = requestAnimationFrame(step);
+  };
+
+  addEventListener('deviceorientation', onTilt);
+  if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+    const ask = () => {
+      removeEventListener('touchend', ask);
+      DeviceOrientationEvent.requestPermission().catch(() => {});
+    };
+    addEventListener('touchend', ask);
+  }
+}
