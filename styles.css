@@ -33,6 +33,30 @@
 }
 
 * { box-sizing: border-box; }
+/* Cursors drawn after the hero font, PP Pangaia (tools/make-cursors.py): a light arrow with a calligraphic
+   concave edge, a pointing hand over anything clickable, and a serifed I over text. Bitmaps at 1x and 2x,
+   so they stay sharp on Retina; native cursors are drawn by the system and cost nothing per frame */
+html {
+  cursor: url(assets/cursor.png?v=b724744d) 3 2, default;
+  cursor: -webkit-image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
+  cursor: image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
+}
+p, h1, h2, li {
+  cursor: url(assets/cursor-text.png?v=7e6b2d09) 12 12, text;
+  cursor: -webkit-image-set(url(assets/cursor-text.png?v=7e6b2d09) 1x, url(assets/cursor-text@2x.png?v=d50c47e0) 2x) 12 12, text;
+  cursor: image-set(url(assets/cursor-text.png?v=7e6b2d09) 1x, url(assets/cursor-text@2x.png?v=d50c47e0) 2x) 12 12, text;
+}
+a, button, summary, label, a *, button * {
+  cursor: url(assets/cursor-pointer.png?v=815ea045) 9 2, pointer;
+  cursor: -webkit-image-set(url(assets/cursor-pointer.png?v=815ea045) 1x, url(assets/cursor-pointer@2x.png?v=19652194) 2x) 9 2, pointer;
+  cursor: image-set(url(assets/cursor-pointer.png?v=815ea045) 1x, url(assets/cursor-pointer@2x.png?v=19652194) 2x) 9 2, pointer;
+}
+/* The artwork's card text is part of the picture, not text to select */
+.visual, .visual * {
+  cursor: url(assets/cursor.png?v=b724744d) 3 2, default;
+  cursor: -webkit-image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
+  cursor: image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
+}
 /* Selected text: a dark grey just off the black page instead of the system blue */
 ::selection { background-color: #222329; }
 /* Text painted through background-clip has no colour of its own, so selected it takes a light one */
@@ -40,7 +64,7 @@
 html, body { margin: 0; background: var(--bg); color: var(--text); }
 p, h1, h2 { margin: 0; }
 a { color: inherit; text-decoration: none; }
-button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; }
 .page img { display: block; max-width: none; }
 /* AVIF with a PNG fallback; the wrapper adds no box of its own */
 .page picture { display: contents; }
@@ -459,7 +483,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 
 /* Inner page: black, with the case logo hanging like a lamp under the header.
    Every animation here runs on transform and opacity only, so it stays on the compositor:
-   no style recalculation or repaint per frame, nothing to slow the custom cursor down */
+   no style recalculation or repaint per frame, nothing to slow scrolling down */
 /* Layout (Figma, 1440): a top block 627px tall with the logo and a two-column intro at 384px;
    the cards (885px wide) start at 485px, over the block's lower part */
 .case {
@@ -707,8 +731,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   .case-hero * { animation: none !important; }
 }
 
-/* Close button on a case: a round button in the name pill's glass. Hovered (or pulled in by the cursor magnet,
-   cursor.js) it fills white and the cross turns black */
+/* Close button on a case: a round button in the name pill's glass. Hovered it fills white and the cross turns black */
 .case-close {
   position: absolute;
   top: 20px;
@@ -762,13 +785,11 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   transition: background-color 0.3s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .case-close span + span { rotate: -45deg; }
-.case-close:hover, .case-close:focus-visible, .case-close.is-magnet {
+.case-close:hover, .case-close:focus-visible {
   background-color: #fff;
   box-shadow: inset 0 0 0 transparent, 0 2px 6px rgba(0, 0, 0, 0.16), 0 10px 32px rgba(0, 0, 0, 0.28);
 }
-.case-close:hover span, .case-close:focus-visible span, .case-close.is-magnet span { background-color: #000; }
-/* While the magnet holds it, the button follows the cursor at once instead of easing */
-.case-close.is-magnet { transition-property: background-color, box-shadow; }
+.case-close:hover span, .case-close:focus-visible span { background-color: #000; }
 @container header (max-width: 440px) {
   .case-close { right: 16px; }
 }
@@ -888,22 +909,3 @@ html.demo .rail { position: absolute; }
 }
 @media (prefers-reduced-motion: reduce) { .is-bouncing { animation: none; } }
 
-/* Round cursor (cursor.js): a 6px light dot instead of the system pointer, for a mouse only */
-html.has-cursor, html.has-cursor * { cursor: none !important; }
-.cursor-dot {
-  position: fixed;
-  left: -3px;
-  top: -3px;
-  z-index: 1000;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #ededed;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  will-change: transform;
-}
-.cursor-dot.is-visible { opacity: 1; }
-/* Pulled into a magnet (cursor.js): the dot swells over it, then fades so the magnet's own fill shows */
-.cursor-dot.is-visible.is-held { opacity: 0; transition: opacity 0.25s ease 0.12s; }
