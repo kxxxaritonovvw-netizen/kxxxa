@@ -144,6 +144,11 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   );
 }
 
+/* On a case the logo sits right under the header at the top, so the fade comes in only once the page
+   is scrolled (case.js sets .is-on) and the logo has started to move away under it */
+.page:has(.main.case) .header-fade { opacity: 0; transition: opacity 0.4s ease; }
+.page:has(.main.case) .header-fade.is-on { opacity: 1; }
+
 .pill-name {
   position: absolute;
   top: 20px;
@@ -643,26 +648,11 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --tilt-ease: cubic-bezier(0.65, 0, 0.35, 1);
   --sway: case-sway 9s ease-in-out 2.2s infinite;
   position: relative;
-  padding: clamp(330px, 26.7cqw, 384px) 0 calc(var(--overlap) + clamp(40px, 4.9cqw, 70px));
+  /* The intro text is gone for now; the top padding keeps its 40px, so the card stays where the light lands */
+  padding: clamp(370px, calc(26.7cqw + 40px), 424px) 0 calc(var(--overlap) + clamp(40px, 4.9cqw, 70px));
   perspective: 900px;
   perspective-origin: var(--logo-x) var(--logo-mid);
 }
-
-/* Intro: two centred columns, a white line on the left and a softer white note on the right */
-.case-intro {
-  position: relative;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: start;
-  gap: 16px 32px;
-  width: var(--case-w);
-  margin: 0 auto;
-  font: 400 16px/20px var(--font-ui);
-  text-align: center;
-  text-wrap: balance;
-}
-.case-intro-title { color: var(--text); }
-.case-intro-text { max-width: 390px; justify-self: center; color: rgba(255, 255, 255, 0.7); }
 
 /* Cards for the screens: one wide (885×508) and two halves (434×430) */
 .case-grid {
@@ -728,8 +718,7 @@ picture.piece img { display: block; width: 100%; height: 100%; }
 }
 /* Phones: one column (the page width, so it also works in the demo frame) */
 @container (max-width: 640px) {
-  .case-intro, .case-grid { grid-template-columns: 1fr; }
-  .case-intro-text { max-width: none; }
+  .case-grid { grid-template-columns: 1fr; }
 }
 
 /* The logo: its face over a stack of metal copies of its outline that give it thickness.
@@ -807,7 +796,11 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   transform-origin: var(--logo-x) 70px;
   /* It starts with the logo's tilt (case-tilt, 0.4s + 1.8s): faint and small while the logo turns down,
      then, once it faces down, it keeps widening and brightening slowly to full */
-  animation: case-beam 5s cubic-bezier(0.45, 0, 0.3, 1) 0.4s backwards;
+  /* Two single sweeps with no stop between: it grows on a long ease-out, and its brightness creeps in
+     slowly while the logo turns, then rises */
+  animation:
+    case-beam-grow 5s cubic-bezier(0.22, 0.6, 0.3, 1) 0.4s backwards,
+    case-beam-fade 5s cubic-bezier(0.55, 0, 0.45, 1) 0.4s backwards;
   /* One layer for its whole life, so it is not redrawn (and does not flash) when the opening ends */
   will-change: transform, opacity;
   pointer-events: none;
@@ -844,10 +837,8 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   .case-grain { display: none; }
 }
 @keyframes case-glow { from { opacity: 0; } }
-@keyframes case-beam {
-  from { opacity: 0; transform: scale(0.3, 0.4); }
-  36% { opacity: 0.3; transform: scale(0.6, 0.7); }
-}
+@keyframes case-beam-grow { from { transform: scale(0.3, 0.4); } }
+@keyframes case-beam-fade { from { opacity: 0; } }
 
 /* Case themes: the logo and the colours of its metal and light. A colour given as "r g b" is used
    at several strengths. Winline is orange; Chexx is violet and pink */
@@ -897,6 +888,14 @@ picture.piece img { display: block; width: 100%; height: 100%; }
 .case-chexx .case-layer, .case-chexx .case-logo-gloss { -webkit-mask: url(assets/chexx-shape.svg?v=53995e2d) center / contain no-repeat; mask: url(assets/chexx-shape.svg?v=53995e2d) center / contain no-repeat; }
 .case-chexx .case-logo-metal { -webkit-mask: url(assets/chexx-mark.svg?v=e3079f4a) center / contain no-repeat; mask: url(assets/chexx-mark.svg?v=e3079f4a) center / contain no-repeat; }
 
+/* case.js holds the opening until the page has loaded and painted, so it does not start while the
+   phone is still busy loading and then jump ahead */
+.case-hero.is-waiting, .case-hero.is-waiting *, .is-waiting-page .case-card-wide::after, .is-waiting-page .case-edge { animation-play-state: paused; }
+/* Phones: half the metal layers, each twice as far from the next, so the logo is as thick with half
+   the layers to composite in 3D */
+@media (hover: none) {
+  .case-layer:nth-child(even) { display: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   .case-hero * { animation: none !important; }
 }

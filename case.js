@@ -1,3 +1,22 @@
+// The opening (the logo's tilt and its light) waits until the page has loaded and painted twice, so a
+// busy phone does not start it, drop its first frames and then jump ahead (styles.css, .is-waiting)
+{
+  const hero = document.querySelector('.case-hero');
+  if (hero) {
+    hero.classList.add('is-waiting');
+    document.documentElement.classList.add('is-waiting-page');
+    const start = () => requestAnimationFrame(() => requestAnimationFrame(() => {
+      hero.classList.remove('is-waiting');
+      document.documentElement.classList.remove('is-waiting-page');
+    }));
+    if (document.readyState === 'complete') start();
+    else {
+      addEventListener('load', start, { once: true });
+      setTimeout(start, 2500); // never wait longer than this
+    }
+  }
+}
+
 // Case logo: turns a little after the mouse, so the metal catches the light as it moves.
 // Only transforms are written, on three small elements, so a frame costs no style or paint work.
 const turn = document.querySelector('.case-logo-turn');
@@ -38,6 +57,7 @@ if (turn && matchMedia('(hover: hover) and (prefers-reduced-motion: no-preferenc
 // On a phone the close button flies up out of the way while the page scrolls down,
 // and comes back once it has been scrolled 40px up again (or near the top)
 const close = document.querySelector('.case-close');
+const fade = document.querySelector('.header-fade');
 const main = document.querySelector('.main');
 if (close && main) {
   const BACK = 40; // px of scrolling up that bring the button back
@@ -48,6 +68,7 @@ if (close && main) {
     const scroller = event.target === document ? document.scrollingElement : event.target;
     if (!scroller.contains(main) && scroller !== main) return;
     const y = scroller.scrollTop;
+    fade?.classList.toggle('is-on', y > 16);
     let away = close.classList.contains('is-away');
     if (main.clientWidth > 640) {
       away = false;
