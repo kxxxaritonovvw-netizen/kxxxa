@@ -19,7 +19,9 @@ from PIL import Image
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WIDTH, HEIGHT = 1400, 1100  # CSS px the bitmap is drawn at (styles.css, .case-light)
 SCALE = 0.5  # half size: the light is soft, and stretching it less keeps its steps fine
-STRENGTH = 0.5  # brightness at the hottest point, 0…1
+STRENGTH = 0.44  # brightness at the hottest point, 0…1
+ABOVE = 70  # CSS px the light starts above the logo's centre (styles.css, .case-beam)
+LOGO_V = ABOVE / 860  # where the logo's centre falls in the bitmap (the light is ~860px tall on a desktop)
 # Per case and bitmap: the tint under the logo, then the colours of the left and right sides
 CASES = {
     'winline': {
@@ -49,21 +51,24 @@ def render(top, left, right, path):
     data = bytearray()
     for y in range(h):
         v = (y + 0.5) / h  # 0 at the logo, 1 at the bottom
-        # The cone starts under the logo, a little narrower than it (the logo is about 0.14 wide here),
-        # and widens past the first card's sides (the card's top is at v ~ 0.57). Hottest right under
-        # the logo, then it thins out as it spreads and fades well before the bottom
-        spread = 0.1 + 1.05 * v
-        fall = (smoothstep(0.0, 0.015, v) * (0.4 + 0.6 * math.exp(-((v / 0.2) ** 2)))
-                * math.exp(-((v / 0.7) ** 2)) * (1 - smoothstep(0.7, 1, v)))
-        lower = smoothstep(0.02, 0.3, v)
+        # The bitmap starts ABOVE px above the logo's centre (styles.css, .case-beam), so the light also
+        # glows behind the logo, a little wider than it, and the logo sits on it with no edge to be seen.
+        # From there a cone widens past the first card's sides (its top is at v ~ 0.6), hottest at the
+        # logo, thinning out as it spreads and fading well before the bottom
+        d = v - LOGO_V  # below the logo's centre
+        below = max(d, 0.0)
+        spread = 0.14 + 1.3 * below
+        fall = (smoothstep(-LOGO_V, 0.03, d) * (0.45 + 0.55 * math.exp(-((below / 0.22) ** 2)))
+                * math.exp(-((below / 0.75) ** 2)) * (1 - smoothstep(0.72, 1, v)))
+        lower = smoothstep(0.04, 0.32, v)
         for x in range(w):
             u = ((x + 0.5) / w) * 2 - 1  # -1 left, 1 right
-            # The cone itself, soft at its sides, plus a faint wide halo around it that reaches pure
-            # black at the bitmap's edges, so the light melts into the background with no visible border
+            # A cone with long soft sides, plus a faint wide halo around it that reaches pure black
+            # at the bitmap's edges, so the light melts into the background with no visible border
             r = abs(u) / spread
-            cone = 1 - smoothstep(0.3, 1.15, r)
-            halo = 0.12 / (1 + (r / 1.6) ** 2) ** 1.5
-            light = STRENGTH * fall * (cone + halo) * (1 - smoothstep(0.4, 1, abs(u)))
+            cone = 1 - smoothstep(0.15, 1.4, r)
+            halo = 0.12 / (1 + (r / 2.2) ** 2) ** 1.5
+            light = STRENGTH * fall * (cone + halo) * (1 - smoothstep(0.3, 1, abs(u)))
             colour = mix(top, mix(left, right, smoothstep(-0.35, 0.35, u)), lower)
             data.extend(min(255, round(c * light)) for c in colour)
     Image.frombytes('RGB', (w, h), bytes(data)).save(path, 'WEBP', lossless=True, method=6)

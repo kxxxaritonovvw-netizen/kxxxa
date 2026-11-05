@@ -736,10 +736,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
    paces, so the colours keep drifting. They never turn: a turned bitmap shows its edge as a hard line */
 .case-beam {
   position: absolute;
-  inset: var(--logo-mid) 0 clamp(-560px, -38cqw, -240px);
-  transform-origin: var(--logo-x) 0;
-  -webkit-mask: linear-gradient(transparent, #000 20px);
-  mask: linear-gradient(transparent, #000 20px);
+  /* It starts 70px above the logo's centre (ABOVE in the script), so the logo sits on the light */
+  inset: calc(var(--logo-mid) - 70px) 0 clamp(-560px, -38cqw, -240px);
+  transform-origin: var(--logo-x) 70px;
   /* It opens out of the logo as the logo starts to tilt down (case-tilt), and spreads with it */
   animation: case-beam 2.6s cubic-bezier(0.3, 0, 0.2, 1) 0.4s backwards;
   pointer-events: none;
@@ -788,9 +787,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --light-a: url(assets/case-light-winline-a.webp?v=54e8b68e);
-  --light-b: url(assets/case-light-winline-b.webp?v=608ddd39);
-  --light-c: url(assets/case-light-winline-c.webp?v=3ed06912);
+  --light-a: url(assets/case-light-winline-a.webp?v=8440e92e);
+  --light-b: url(assets/case-light-winline-b.webp?v=c88cfde5);
+  --light-c: url(assets/case-light-winline-c.webp?v=91d0ac6f);
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
 /* The pill's outline is a plain rounded box, cheaper than a mask */
@@ -807,9 +806,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --light-a: url(assets/case-light-chexx-a.webp?v=731daaf5);
-  --light-b: url(assets/case-light-chexx-b.webp?v=240f063b);
-  --light-c: url(assets/case-light-chexx-c.webp?v=e1812184);
+  --light-a: url(assets/case-light-chexx-a.webp?v=3a66f2e4);
+  --light-b: url(assets/case-light-chexx-b.webp?v=af3a6326);
+  --light-c: url(assets/case-light-chexx-c.webp?v=1dabd034);
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
 /* Letters, not a box: the thickness and the reflection follow the logo's outline */
