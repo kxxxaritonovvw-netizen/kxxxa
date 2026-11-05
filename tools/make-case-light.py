@@ -49,15 +49,21 @@ def render(top, left, right, path):
     data = bytearray()
     for y in range(h):
         v = (y + 0.5) / h  # 0 at the logo, 1 at the bottom
-        # Bright right under the logo, the cone spreads wide quickly and fades out well before the bottom
-        spread = 0.22 + 0.9 * v
-        fall = smoothstep(0.0, 0.12, v) * math.exp(-((v / 0.42) ** 2)) * (1 - smoothstep(0.75, 1, v))
-        lower = smoothstep(0.02, 0.25, v)
+        # The cone starts under the logo, a little narrower than it (the logo is about 0.14 wide here),
+        # and widens past the first card's sides (the card's top is at v ~ 0.57). Hottest right under
+        # the logo, then it thins out as it spreads and fades well before the bottom
+        spread = 0.1 + 1.05 * v
+        fall = (smoothstep(0.0, 0.015, v) * (0.4 + 0.6 * math.exp(-((v / 0.2) ** 2)))
+                * math.exp(-((v / 0.7) ** 2)) * (1 - smoothstep(0.7, 1, v)))
+        lower = smoothstep(0.02, 0.3, v)
         for x in range(w):
             u = ((x + 0.5) / w) * 2 - 1  # -1 left, 1 right
-            # A long soft tail to the sides instead of a Gaussian's quick drop, reaching pure black
-            # at the bitmap's edges, so the light melts into the background with no visible border
-            light = STRENGTH * fall / (1 + (u / spread) ** 2) ** 1.5 * (1 - smoothstep(0.3, 1, abs(u)))
+            # The cone itself, soft at its sides, plus a faint wide halo around it that reaches pure
+            # black at the bitmap's edges, so the light melts into the background with no visible border
+            r = abs(u) / spread
+            cone = 1 - smoothstep(0.3, 1.15, r)
+            halo = 0.12 / (1 + (r / 1.6) ** 2) ** 1.5
+            light = STRENGTH * fall * (cone + halo) * (1 - smoothstep(0.4, 1, abs(u)))
             colour = mix(top, mix(left, right, smoothstep(-0.35, 0.35, u)), lower)
             data.extend(min(255, round(c * light)) for c in colour)
     Image.frombytes('RGB', (w, h), bytes(data)).save(path, 'WEBP', lossless=True, method=6)

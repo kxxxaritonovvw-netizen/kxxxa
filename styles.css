@@ -636,7 +636,7 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   content: "";
   position: absolute;
   pointer-events: none;
-  animation: case-fade 1.6s ease 2.6s backwards;
+  animation: case-fade 1.6s ease 1.9s backwards;
 }
 /* A hairline that fades in and out along a long even ramp, warmest (not white) in the middle, with a faint
    oval glow around it instead of a box shadow, so it reads as light catching the edge and has no hard ends */
@@ -740,7 +740,8 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   transform-origin: var(--logo-x) 0;
   -webkit-mask: linear-gradient(transparent, #000 20px);
   mask: linear-gradient(transparent, #000 20px);
-  animation: case-beam 4s cubic-bezier(0.4, 0, 0.2, 1) 1.4s backwards;
+  /* It opens out of the logo as the logo starts to tilt down (case-tilt), and spreads with it */
+  animation: case-beam 2.6s cubic-bezier(0.3, 0, 0.2, 1) 0.4s backwards;
   pointer-events: none;
 }
 .case-light {
@@ -770,7 +771,10 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   mix-blend-mode: overlay;
 }
 @keyframes case-glow { from { opacity: 0; } }
-@keyframes case-beam { from { opacity: 0; transform: scale(0.2); } }
+@keyframes case-beam {
+  from { opacity: 0; transform: scale(0.1, 0.18); }
+  30% { opacity: 1; }
+}
 
 /* Case themes: the logo and the colours of its metal and light. A colour given as "r g b" is used
    at several strengths. Winline is orange; Chexx is violet and pink */
@@ -784,9 +788,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --light-a: url(assets/case-light-winline-a.webp?v=90505183);
-  --light-b: url(assets/case-light-winline-b.webp?v=73f4706a);
-  --light-c: url(assets/case-light-winline-c.webp?v=9e565934);
+  --light-a: url(assets/case-light-winline-a.webp?v=54e8b68e);
+  --light-b: url(assets/case-light-winline-b.webp?v=608ddd39);
+  --light-c: url(assets/case-light-winline-c.webp?v=3ed06912);
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
 /* The pill's outline is a plain rounded box, cheaper than a mask */
@@ -803,9 +807,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --light-a: url(assets/case-light-chexx-a.webp?v=78246e1b);
-  --light-b: url(assets/case-light-chexx-b.webp?v=20582988);
-  --light-c: url(assets/case-light-chexx-c.webp?v=0b633119);
+  --light-a: url(assets/case-light-chexx-a.webp?v=731daaf5);
+  --light-b: url(assets/case-light-chexx-b.webp?v=240f063b);
+  --light-c: url(assets/case-light-chexx-c.webp?v=e1812184);
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
 /* Letters, not a box: the thickness and the reflection follow the logo's outline */
