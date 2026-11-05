@@ -108,20 +108,40 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 .header-inner { position: relative; }
 .header-inner > * { pointer-events: auto; }
-/* Under the name pill, from the top edge down to the pill's middle (20px + 44px / 2): content scrolling
-   up under it blurs and fades into black, both easing off towards the bottom of the strip */
-.header:has(.pill-name)::before {
-  content: "";
+/* Behind the name pill: content scrolling up under it blurs and darkens, most at the top edge, easing
+   off well below the pill. The blur is progressive: four layers, each blurrier one masked to a shorter
+   band from the top, so it thickens smoothly towards the edge instead of stopping at a line */
+.header-fade {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 42px;
-  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.35));
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  -webkit-mask: linear-gradient(#000 25%, transparent);
-  mask: linear-gradient(#000 25%, transparent);
+  height: 120px;
+  pointer-events: none;
+}
+.header-fade i {
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(var(--b));
+  backdrop-filter: blur(var(--b));
+  -webkit-mask: linear-gradient(#000 var(--from), transparent var(--to));
+  mask: linear-gradient(#000 var(--from), transparent var(--to));
+}
+.header-fade i:nth-child(1) { --b: 2px; --from: 30%; --to: 100%; }
+.header-fade i:nth-child(2) { --b: 5px; --from: 20%; --to: 80%; }
+.header-fade i:nth-child(3) { --b: 10px; --from: 10%; --to: 60%; }
+.header-fade i:nth-child(4) { --b: 20px; --from: 0%; --to: 40%; }
+/* The darkening: the background at 80% at the top edge down to nothing, in twelve steps along a cosine
+   so it starts and ends gently */
+.header-fade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.784) 9.1%, rgba(0, 0, 0, 0.737) 18.2%, rgba(0, 0, 0, 0.662) 27.3%,
+    rgba(0, 0, 0, 0.566) 36.4%, rgba(0, 0, 0, 0.457) 45.5%, rgba(0, 0, 0, 0.343) 54.5%, rgba(0, 0, 0, 0.234) 63.6%,
+    rgba(0, 0, 0, 0.138) 72.7%, rgba(0, 0, 0, 0.063) 81.8%, rgba(0, 0, 0, 0.016) 90.9%, rgba(0, 0, 0, 0) 100%
+  );
 }
 
 .pill-name {
