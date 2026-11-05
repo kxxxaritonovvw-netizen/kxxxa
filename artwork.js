@@ -70,4 +70,6 @@ if (pieces.length) {
     if (event.pointerType !== 'mouse') hide();
   });
   addEventListener('scroll', hide, { passive: true, capture: true });
+  // scenes.js: the artwork changed under the tooltip
+  document.addEventListener('artwork:hide', hide);
 }

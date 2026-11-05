@@ -13,7 +13,7 @@
     <!-- The pig's mask is set in CSS, so the browser would find it late; CSS masks load with CORS, hence crossorigin -->
     <link rel="preload" as="image" href="assets/pig-mask.avif?v=f682299f" type="image/avif" fetchpriority="high" crossorigin />
     <link rel="preload" as="font" href="assets/fonts/pp-pangaia-medium.woff2?v=5320765f" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=43358f34" />
+    <link rel="stylesheet" href="styles.css?v=69078b7c" />
   </head>
   <body>
     <div class="page">
@@ -66,30 +66,44 @@
           <!-- Artwork keeps the Figma composition (1308×728) and is scaled to its width by layout.js -->
           <div class="visual">
             <div class="visual-stage">
-              <picture><source srcset="assets/phone.avif?v=8373d294" type="image/avif" /><img class="phone art" data-tip-title="Профиль игрока" data-tip-text="Баланс, бонусы и прогресс в одном экране: вся жизнь игрока в приложении" src="assets/phone.webp?v=ccaba1f2" alt="Экран профиля в мобильном приложении" decoding="async" /></picture>
-              <div class="pig art" aria-hidden="true"><span class="pig-hit" data-tip-title="Копилка" data-tip-text="3D-маскот, который копит кэшбэк и делает накопления осязаемыми"></span><picture><source srcset="assets/pig.avif?v=1e712023" type="image/avif" /><img src="assets/pig.webp?v=1a4161b0" alt="" decoding="async" /></picture></div>
-              <picture><source srcset="assets/cashback.avif?v=4f2e6df1" type="image/avif" /><img class="cashback art" data-tip-title="Кэшбэк" data-tip-text="Стикер-награда: возврат за активность, который хочется собрать" src="assets/cashback.webp?v=e4d5f20e" alt="" decoding="async" /></picture>
-
-              <div class="rot tickets art" data-tip-title="Мои билеты" data-tip-text="Геймификация: билеты за активность и место игрока в общем рейтинге">
-                <div class="tickets-card">
-                  <div class="tickets-head">
-                    <p class="tickets-title">Мои билеты</p>
-                    <div class="tickets-badge">
-                      <span class="tickets-label">Накоплено</span>
-                      <span class="tickets-count">
-                        <img src="assets/ticket.svg?v=4473eccb" width="16" height="16" alt="" />
-                        <span>245</span>
-                        <img src="assets/chevron-right.svg?v=6117c3f4" width="16" height="16" alt="" />
-                      </span>
+              <div class="scene is-current">
+                <picture class="piece cinema art" style="--i: 0" data-tip-title="Онлайн-кинотеатр" data-tip-text="Витрина фильмов и подборок: от трейлера до просмотра в пару касаний"><source srcset="assets/hero-cinema.avif?v=fc468316" type="image/avif" /><img src="assets/hero-cinema.webp?v=dd2af254" width="668" height="462" alt="" decoding="async" /></picture>
+                <div class="piece pig art" style="--i: 1" aria-hidden="true"><span class="pig-hit" data-tip-title="Копилка" data-tip-text="3D-маскот, который копит кэшбэк и делает накопления осязаемыми"></span><picture><source srcset="assets/pig.avif?v=1e712023" type="image/avif" /><img src="assets/pig.webp?v=1a4161b0" alt="" decoding="async" /></picture></div>
+                <picture><source srcset="assets/cashback.avif?v=4f2e6df1" type="image/avif" /><img class="piece cashback art" style="--i: 2" data-tip-title="Кэшбэк" data-tip-text="Стикер-награда: возврат за активность, который хочется собрать" src="assets/cashback.webp?v=e4d5f20e" alt="" decoding="async" /></picture>
+                <div class="piece rot tickets art" style="--i: 3" data-tip-title="Мои билеты" data-tip-text="Геймификация: билеты за активность и место игрока в общем рейтинге">
+                  <div class="tickets-card">
+                    <div class="tickets-head">
+                      <p class="tickets-title">Мои билеты</p>
+                      <div class="tickets-badge">
+                        <span class="tickets-label">Накоплено</span>
+                        <span class="tickets-count">
+                          <img src="assets/ticket.svg?v=4473eccb" width="16" height="16" alt="" />
+                          <span>245</span>
+                          <img src="assets/chevron-right.svg?v=6117c3f4" width="16" height="16" alt="" />
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="tickets-foot">
-                    <div class="trophy">
-                      <div class="rot trophy-inner"><picture><source srcset="assets/trophy.avif?v=e531f22b" type="image/avif" /><img src="assets/trophy.webp?v=a6971f89" alt="" decoding="async" /></picture></div>
+                    <div class="tickets-foot">
+                      <div class="trophy">
+                        <div class="rot trophy-inner"><picture><source srcset="assets/trophy.avif?v=e531f22b" type="image/avif" /><img src="assets/trophy.webp?v=a6971f89" alt="" decoding="async" /></picture></div>
+                      </div>
+                      <p class="tickets-note">Так держать! Ты в <span class="gradient">топ 3.4%</span>  по числу билетов!</p>
                     </div>
-                    <p class="tickets-note">Так держать! Ты в <span class="gradient">топ 3.4%</span>  по числу билетов!</p>
                   </div>
                 </div>
+                <picture><source srcset="assets/phone.avif?v=8373d294" type="image/avif" /><img class="piece phone art" style="--i: 4" data-tip-title="Профиль игрока" data-tip-text="Баланс, бонусы и прогресс в одном экране: вся жизнь игрока в приложении" src="assets/phone.webp?v=ccaba1f2" alt="Экран профиля в мобильном приложении" decoding="async" /></picture>
+                <picture class="piece cv art" style="--i: 5" data-tip-title="Резюме" data-tip-text="Опыт, кейсы и контакты одним PDF"><source srcset="assets/hero-cv.avif?v=b63920ae" type="image/avif" /><img src="assets/hero-cv.webp?v=ab65c105" width="242" height="242" alt="" decoding="async" /></picture>
+              </div>
+              <div class="scene" aria-hidden="true">
+                <picture class="piece lesson art" style="--i: 0" data-tip-title="Онлайн-уроки" data-tip-text="Видеоурок с преподавателем, уровень ученика и маскот, который поддерживает по пути"><source data-srcset="assets/hero-lesson.avif?v=fe6754a0" type="image/avif" /><img data-src="assets/hero-lesson.webp?v=67fb8c07" width="659" height="566" alt="" decoding="async" /></picture>
+                <picture class="piece wallets art" style="--i: 1" data-tip-title="Криптокошелёк" data-tip-text="Баланс, переводы и доходные стратегии в одном приложении"><source data-srcset="assets/hero-wallets.avif?v=9c56458f" type="image/avif" /><img data-src="assets/hero-wallets.webp?v=28e243db" width="921" height="712" alt="" decoding="async" /></picture>
+                <picture class="piece raffle art" style="--i: 2" data-tip-title="Розыгрыш" data-tip-text="Таймер до конца раффла подогревает интерес"><source data-srcset="assets/hero-raffle.avif?v=fb1ff370" type="image/avif" /><img data-src="assets/hero-raffle.webp?v=53e9dc53" width="217" height="58" alt="" decoding="async" /></picture>
+              </div>
+              <div class="scene" aria-hidden="true">
+                <picture class="piece lucky-race art" style="--i: 0" data-tip-title="Lucky Race" data-tip-text="Лидерборд гонки: места игроков, ставки и призы"><source data-srcset="assets/hero-lucky-race.avif?v=df5988a9" type="image/avif" /><img data-src="assets/hero-lucky-race.webp?v=255d95d1" width="284" height="566" alt="" decoding="async" /></picture>
+                <picture class="piece casino art" style="--i: 1" data-tip-title="Промо CHEXX" data-tip-text="Ивент на 250 USDT: призовой фонд на 1000 победителей"><source data-srcset="assets/hero-casino.avif?v=a0aad473" type="image/avif" /><img data-src="assets/hero-casino.webp?v=7c591450" width="794" height="627" alt="" decoding="async" /></picture>
+                <picture class="piece race-banner art" style="--i: 2" data-tip-title="Хэллоуин-гонка" data-tip-text="Сезонный турнир с фондом 3000 USDT"><source data-srcset="assets/hero-race-banner.avif?v=d03ed94e" type="image/avif" /><img data-src="assets/hero-race-banner.webp?v=447b846e" width="648" height="195" alt="" decoding="async" /></picture>
+                <picture class="piece recipe art" style="--i: 3" data-tip-title="Рецепты" data-tip-text="Карточка рецепта: настроить под себя и сразу заказать ингредиенты"><source data-srcset="assets/hero-recipe.avif?v=90495864" type="image/avif" /><img data-src="assets/hero-recipe.webp?v=12181502" width="139" height="457" alt="" decoding="async" /></picture>
               </div>
             </div>
           </div>
@@ -114,7 +128,8 @@
     <script src="layout.js?v=6ce77353"></script>
     <script src="menu.js?v=56a2b055"></script>
     <script src="scrollbar.js?v=9af47d17"></script>
-    <script src="artwork.js?v=7afb0b57"></script>
+    <script src="scenes.js?v=e3954562"></script>
+    <script src="artwork.js?v=302f6fbd"></script>
     <script src="bounce.js?v=aaef8047"></script>
   </body>
 </html>
