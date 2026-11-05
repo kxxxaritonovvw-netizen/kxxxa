@@ -37,25 +37,25 @@
    concave edge, a pointing hand over anything clickable, and a serifed I over text. Bitmaps at 1x and 2x,
    so they stay sharp on Retina; native cursors are drawn by the system and cost nothing per frame */
 html {
-  cursor: url(assets/cursor.png?v=b724744d) 3 2, default;
-  cursor: -webkit-image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
-  cursor: image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
+  cursor: url(assets/cursor.png?v=8dfd3651) 2 1, default;
+  cursor: -webkit-image-set(url(assets/cursor.png?v=8dfd3651) 1x, url(assets/cursor@2x.png?v=c0057bf1) 2x) 2 1, default;
+  cursor: image-set(url(assets/cursor.png?v=8dfd3651) 1x, url(assets/cursor@2x.png?v=c0057bf1) 2x) 2 1, default;
 }
 p, h1, h2, li {
-  cursor: url(assets/cursor-text.png?v=7e6b2d09) 12 12, text;
-  cursor: -webkit-image-set(url(assets/cursor-text.png?v=7e6b2d09) 1x, url(assets/cursor-text@2x.png?v=d50c47e0) 2x) 12 12, text;
-  cursor: image-set(url(assets/cursor-text.png?v=7e6b2d09) 1x, url(assets/cursor-text@2x.png?v=d50c47e0) 2x) 12 12, text;
+  cursor: url(assets/cursor-text.png?v=ba255dce) 9 9, text;
+  cursor: -webkit-image-set(url(assets/cursor-text.png?v=ba255dce) 1x, url(assets/cursor-text@2x.png?v=7ded7c28) 2x) 9 9, text;
+  cursor: image-set(url(assets/cursor-text.png?v=ba255dce) 1x, url(assets/cursor-text@2x.png?v=7ded7c28) 2x) 9 9, text;
 }
 a, button, summary, label, a *, button * {
-  cursor: url(assets/cursor-pointer.png?v=815ea045) 9 2, pointer;
-  cursor: -webkit-image-set(url(assets/cursor-pointer.png?v=815ea045) 1x, url(assets/cursor-pointer@2x.png?v=19652194) 2x) 9 2, pointer;
-  cursor: image-set(url(assets/cursor-pointer.png?v=815ea045) 1x, url(assets/cursor-pointer@2x.png?v=19652194) 2x) 9 2, pointer;
+  cursor: url(assets/cursor-pointer.png?v=5eb78ed4) 7 1, pointer;
+  cursor: -webkit-image-set(url(assets/cursor-pointer.png?v=5eb78ed4) 1x, url(assets/cursor-pointer@2x.png?v=6ee95833) 2x) 7 1, pointer;
+  cursor: image-set(url(assets/cursor-pointer.png?v=5eb78ed4) 1x, url(assets/cursor-pointer@2x.png?v=6ee95833) 2x) 7 1, pointer;
 }
 /* The artwork's card text is part of the picture, not text to select */
 .visual, .visual * {
-  cursor: url(assets/cursor.png?v=b724744d) 3 2, default;
-  cursor: -webkit-image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
-  cursor: image-set(url(assets/cursor.png?v=b724744d) 1x, url(assets/cursor@2x.png?v=9179d5da) 2x) 3 2, default;
+  cursor: url(assets/cursor.png?v=8dfd3651) 2 1, default;
+  cursor: -webkit-image-set(url(assets/cursor.png?v=8dfd3651) 1x, url(assets/cursor@2x.png?v=c0057bf1) 2x) 2 1, default;
+  cursor: image-set(url(assets/cursor.png?v=8dfd3651) 1x, url(assets/cursor@2x.png?v=c0057bf1) 2x) 2 1, default;
 }
 /* Selected text: a dark grey just off the black page instead of the system blue */
 ::selection { background-color: #222329; }

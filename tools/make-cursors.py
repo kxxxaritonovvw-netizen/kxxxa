@@ -3,7 +3,8 @@
 Drawn after the hero font, PP Pangaia: a light arrow with a calligraphic concave edge and a thin dark outline,
 a pointing hand in the same light and outline over anything clickable, and an I with wedge serifs over text. Browsers draw an SVG cursor at 1x
 and stretch it on a Retina screen, so the cursors are bitmaps offered through image-set instead.
-Shapes are on a 24px grid; each size is drawn 8 times larger and scaled down for smooth edges.
+Shapes are drawn on a 24px grid and shrunk by SIZE to the size of the system cursor (an 18px image);
+each size is drawn 8 times larger and scaled down for smooth edges.
 python3 tools/make-cursors.py   (needs Pillow)
 """
 import math
@@ -13,6 +14,8 @@ from PIL import Image, ImageDraw
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 GRID = 24
+SIZE = 0.75  # the system arrow is about 15px tall; ours is 20 on the grid
+CANVAS = round(GRID * SIZE)
 SUPER = 8
 OUTLINE = (11, 11, 14, 255)
 
@@ -68,17 +71,19 @@ CURSORS = {
 
 
 def draw(shape, lines, fill, outline, scale):
-    size = GRID * scale * SUPER
+    k = SIZE * scale * SUPER
+    size = CANVAS * scale * SUPER
     image = Image.new('RGBA', (size, size), (0, 0, 0, 0))
     pen = ImageDraw.Draw(image)
-    points = [(x * scale * SUPER, y * scale * SUPER) for x, y in shape]
-    # The outline sits outside the shape: a thick dark line along the edge, then the fill over its inner half
+    points = [(x * k, y * k) for x, y in shape]
+    # The outline sits outside the shape: a thick dark line along the edge, then the fill over its inner half.
+    # It keeps its width as the shape shrinks, so the small cursor stays as clearly edged
     pen.line(points + points[:2], fill=OUTLINE, width=round(outline * 2 * scale * SUPER), joint='curve')
     pen.polygon(points, fill=OUTLINE)
     pen.polygon(points, fill=fill)
     for line in lines:
-        pen.line([(x * scale * SUPER, y * scale * SUPER) for x, y in line], fill=OUTLINE, width=round(0.8 * scale * SUPER))
-    return image.resize((GRID * scale, GRID * scale), Image.LANCZOS)
+        pen.line([(x * k, y * k) for x, y in line], fill=OUTLINE, width=round(0.7 * scale * SUPER))
+    return image.resize((CANVAS * scale, CANVAS * scale), Image.LANCZOS)
 
 
 for name, (shape, lines, fill, outline) in CURSORS.items():
