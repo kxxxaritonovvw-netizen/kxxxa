@@ -405,8 +405,8 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 /* Phones: the longread (.reel) takes the place of the scenes that take turns. Its pictures are laid out in
    three dense compositions like the desktop scenes, overlapping each other: each picture is placed by
    --x, --y and --w in hundredths of the page width (cqw), stacked by --z, in a group --h tall. Each one
-   rises out of the dark as it scrolls in: small, low and blurred at the bottom of the screen, settling at
-   full size by the time it is a third of the way up, then sinking back a little as it leaves at the top.
+   rises out of the dark as it scrolls in: small, low and see-through at the bottom of the screen, settling at
+   full size by the time it is a third of the way up, then drifting up a little as it leaves at the top.
    Scroll-driven where the browser can (Chrome, Safari 26), a one-off reveal (reel.js) elsewhere */
 .reel { display: none; }
 @container (max-width: 640px) {
@@ -433,21 +433,22 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   /* The second of a pair follows the first a beat later */
   .reel-late { animation-range: entry 20% exit 100%; }
 }
+/* Only transform and opacity, which the compositor runs on its own: a filter here would be redrawn on
+   every scrolled frame and stutters on phones. The pictures keep their full colour as they leave */
 @keyframes reel-rise {
-  0% { opacity: 0; transform: translateY(96px) scale(0.7); filter: blur(12px) brightness(0.4); }
-  22% { filter: none; }
+  0% { opacity: 0; transform: translateY(96px) scale(0.7); }
   40% { opacity: 1; transform: none; }
-  70% { opacity: 1; transform: none; }
-  100% { opacity: 0.3; transform: translateY(-32px) scale(0.92); }
+  70% { transform: none; }
+  100% { opacity: 1; transform: translateY(-24px) scale(0.95); }
 }
 /* Fallback: reel.js adds .is-in once a picture is a little way into the screen */
 @supports not (animation-timeline: view()) {
-  .reel-item { opacity: 0; transform: translateY(80px) scale(0.8); filter: blur(10px); transition: opacity 0.9s, transform 1.1s cubic-bezier(0.22, 1, 0.36, 1), filter 0.9s; }
-  .reel-item.is-in { opacity: 1; transform: none; filter: none; }
+  .reel-item { opacity: 0; transform: translateY(80px) scale(0.8); transition: opacity 0.9s, transform 1.1s cubic-bezier(0.22, 1, 0.36, 1); }
+  .reel-item.is-in { opacity: 1; transform: none; }
   .reel-late { transition-delay: 0.15s; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .reel-item { animation: none; opacity: 1; transform: none; filter: none; transition: none; }
+  .reel-item { animation: none; opacity: 1; transform: none; transition: none; }
 }
 
 /* Artwork: never narrower than 560px, so on phones it bleeds past the edges instead of shrinking away */
@@ -795,6 +796,8 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   /* It starts with the logo's tilt (case-tilt, 0.4s + 1.8s): faint and small while the logo turns down,
      then, once it faces down, it keeps widening and brightening slowly to full */
   animation: case-beam 5s cubic-bezier(0.45, 0, 0.3, 1) 0.4s backwards;
+  /* One layer for its whole life, so it is not redrawn (and does not flash) when the opening ends */
+  will-change: transform, opacity;
   pointer-events: none;
 }
 .case-light {
@@ -822,6 +825,11 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   inset: 0;
   background: url(assets/grain.webp?v=8d921b38) 0 0 / 64px 64px;
   mix-blend-mode: overlay;
+}
+/* Phones: no grain. Blending it over the moving light is redone on every frame, and iOS Safari can
+   lose the blend after the animation and show the grain as a grey veil */
+@media (hover: none) {
+  .case-grain { display: none; }
 }
 @keyframes case-glow { from { opacity: 0; } }
 @keyframes case-beam {
