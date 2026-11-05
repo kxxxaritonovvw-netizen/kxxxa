@@ -109,14 +109,14 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .header-inner { position: relative; }
 .header-inner > * { pointer-events: auto; }
 /* Behind the name pill: content scrolling up under it blurs and darkens, most at the top edge, easing
-   off well below the pill. The blur is progressive: four layers, each blurrier one masked to a shorter
+   off to nothing at the pill's bottom edge. The blur is progressive: four layers, each blurrier one masked to a shorter
    band from the top, so it thickens smoothly towards the edge instead of stopping at a line */
 .header-fade {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 170px;
+  height: 64px; /* down to the bottom edge of the pill (20px + 44px), not past it */
   pointer-events: none;
 }
 .header-fade i {
@@ -127,10 +127,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   -webkit-mask: linear-gradient(#000 var(--from), transparent var(--to));
   mask: linear-gradient(#000 var(--from), transparent var(--to));
 }
-.header-fade i:nth-child(1) { --b: 4px; --from: 40%; --to: 100%; }
-.header-fade i:nth-child(2) { --b: 8px; --from: 30%; --to: 85%; }
-.header-fade i:nth-child(3) { --b: 16px; --from: 15%; --to: 70%; }
-.header-fade i:nth-child(4) { --b: 32px; --from: 0%; --to: 50%; }
+.header-fade i:nth-child(1) { --b: 4px; --from: 50%; --to: 100%; }
+.header-fade i:nth-child(2) { --b: 8px; --from: 35%; --to: 90%; }
+.header-fade i:nth-child(3) { --b: 16px; --from: 20%; --to: 75%; }
+.header-fade i:nth-child(4) { --b: 32px; --from: 0%; --to: 55%; }
 /* The darkening: the background at 80% at the top edge down to nothing, in twelve steps that hold dark a
    little before easing off, gently at both ends */
 .header-fade::after {
@@ -219,10 +219,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .name-menu, .name-tg { translate: 0 44px; opacity: 0; filter: blur(4px); }
 /* Hovering an icon rolls the name up and its label in from below; "Menu" stays while the menu is open */
 .pill-name.is-open p.name,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .telegram:hover, .telegram:focus-visible) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+.pill-name:not(.is-open):has(.burger:focus-visible, .telegram:focus-visible) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 .pill-name.is-open .name-menu,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible) .name-menu,
-.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible) .name-tg { translate: 0 0; opacity: 1; filter: none; }
+.pill-name:not(.is-open):has(.burger:focus-visible) .name-menu,
+.pill-name:not(.is-open):has(.telegram:focus-visible) .name-tg { translate: 0 0; opacity: 1; filter: none; }
 /* Scrolling (menu.js): the title of the section on screen takes the name's place. Titles of sections above
    wait above the pill and those below wait under it, so scrolling down rolls them up and scrolling up rolls
    them down. Hovering an icon or opening the menu rolls the shown title up like the name */
@@ -231,7 +231,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 .pill-name.has-section p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 .name-section.is-current { translate: 0 0; opacity: 1; filter: none; }
 .pill-name.is-open .name-section.is-current,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible, .telegram:hover, .telegram:focus-visible) .name-section.is-current { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+.pill-name:not(.is-open):has(.burger:focus-visible, .telegram:focus-visible) .name-section.is-current { translate: 0 -44px; opacity: 0; filter: blur(4px); }
 /* ...and tints the pill: pink from the hero title for the menu, Telegram blue for Telegram */
 .pill-name::after {
   content: "";
@@ -244,8 +244,18 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   pointer-events: none;
 }
 .pill-name.is-open::after,
-.pill-name:not(.is-open):has(.burger:hover, .burger:focus-visible)::after { background-color: rgba(250, 163, 216, 0.05); }
-.pill-name:not(.is-open):has(.telegram:hover, .telegram:focus-visible)::after { background-color: rgba(42, 171, 238, 0.05); }
+.pill-name:not(.is-open):has(.burger:focus-visible)::after { background-color: rgba(250, 163, 216, 0.05); }
+.pill-name:not(.is-open):has(.telegram:focus-visible)::after { background-color: rgba(42, 171, 238, 0.05); }
+/* Hover only where there is a real pointer: on touch screens a tapped icon keeps :hover after the tap,
+   so closing the menu would leave "Menu" in the pill instead of rolling the name back */
+@media (hover: hover) {
+  .pill-name:not(.is-open):has(.burger:hover, .telegram:hover) p.name { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+  .pill-name:not(.is-open):has(.burger:hover) .name-menu,
+  .pill-name:not(.is-open):has(.telegram:hover) .name-tg { translate: 0 0; opacity: 1; filter: none; }
+  .pill-name:not(.is-open):has(.burger:hover, .telegram:hover) .name-section.is-current { translate: 0 -44px; opacity: 0; filter: blur(4px); }
+  .pill-name:not(.is-open):has(.burger:hover)::after { background-color: rgba(250, 163, 216, 0.05); }
+  .pill-name:not(.is-open):has(.telegram:hover)::after { background-color: rgba(42, 171, 238, 0.05); }
+}
 /* Burger and Telegram sit in round 36px boxes; the icons stay where they were in Figma */
 .burger, .telegram {
   position: absolute;
