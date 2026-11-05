@@ -13,7 +13,7 @@
     <!-- The pig's mask is set in CSS, so the browser would find it late; CSS masks load with CORS, hence crossorigin -->
     <link rel="preload" as="image" href="assets/pig-mask.avif?v=f682299f" type="image/avif" fetchpriority="high" crossorigin />
     <link rel="preload" as="font" href="assets/fonts/pp-pangaia-medium.woff2?v=5320765f" type="font/woff2" crossorigin />
-    <link rel="stylesheet" href="styles.css?v=b227198c" />
+    <link rel="stylesheet" href="styles.css?v=73a696b3" />
   </head>
   <body>
     <div class="page">
@@ -108,6 +108,29 @@
               </div>
             </div>
           </div>
+
+          <!-- Phones: instead of the scenes taking turns, all their pictures in three dense,
+               overlapping compositions down the page, each picture rising out of the dark as it scrolls in (styles.css, .reel) -->
+          <div class="reel">
+            <div class="reel-group" style="--h: 140">
+              <picture class="reel-item" style="--x: -6; --y: 0; --w: 84; --z: 1"><source srcset="assets/hero-cinema.avif?v=fc468316" type="image/avif" /><img src="assets/hero-cinema.webp?v=dd2af254" width="1336" height="925" alt="Онлайн-кинотеатр" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item reel-late" style="--x: 68; --y: 4; --w: 28; --z: 3"><source srcset="assets/hero-cv.avif?v=b63920ae" type="image/avif" /><img src="assets/hero-cv.webp?v=ab65c105" width="484" height="484" alt="Резюме" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item" style="--x: 0; --y: 32; --w: 58; --z: 2"><source srcset="assets/phone.avif?v=8373d294" type="image/avif" /><img src="assets/phone.webp?v=ccaba1f2" width="886" height="1319" alt="Экран профиля в мобильном приложении" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item reel-late" style="--x: 34; --y: 42; --w: 66; --z: 3"><source srcset="assets/pig.avif?v=1e712023" type="image/avif" /><img src="assets/pig.webp?v=1a4161b0" width="1024" height="1024" alt="Копилка" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item" style="--x: 22; --y: 92; --w: 72; --z: 4"><source srcset="assets/cashback.avif?v=4f2e6df1" type="image/avif" /><img src="assets/cashback.webp?v=e4d5f20e" width="1163" height="849" alt="Кэшбэк" loading="lazy" decoding="async" /></picture>
+            </div>
+            <div class="reel-group" style="--h: 122">
+              <picture class="reel-item" style="--x: 2; --y: 0; --w: 88; --z: 1"><source srcset="assets/hero-lesson.avif?v=fe6754a0" type="image/avif" /><img src="assets/hero-lesson.webp?v=67fb8c07" width="1318" height="1132" alt="Онлайн-уроки" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item reel-late" style="--x: 50; --y: 2; --w: 46; --z: 3"><source srcset="assets/hero-raffle.avif?v=fb1ff370" type="image/avif" /><img src="assets/hero-raffle.webp?v=53e9dc53" width="434" height="117" alt="Розыгрыш" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item" style="--x: 0; --y: 50; --w: 102; --z: 2"><source srcset="assets/hero-wallets.avif?v=9c56458f" type="image/avif" /><img src="assets/hero-wallets.webp?v=28e243db" width="1600" height="1237" alt="Криптокошелёк" loading="lazy" decoding="async" /></picture>
+            </div>
+            <div class="reel-group" style="--h: 162">
+              <picture class="reel-item" style="--x: 0; --y: 0; --w: 94; --z: 3"><source srcset="assets/hero-race-banner.avif?v=d03ed94e" type="image/avif" /><img src="assets/hero-race-banner.webp?v=447b846e" width="1296" height="390" alt="Хэллоуин-гонка" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item" style="--x: 4; --y: 16; --w: 50; --z: 2"><source srcset="assets/hero-lucky-race.avif?v=df5988a9" type="image/avif" /><img src="assets/hero-lucky-race.webp?v=255d95d1" width="569" height="1132" alt="Lucky Race" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item reel-late" style="--x: 58; --y: 22; --w: 32; --z: 1"><source srcset="assets/hero-recipe.avif?v=90495864" type="image/avif" /><img src="assets/hero-recipe.webp?v=12181502" width="278" height="915" alt="Рецепты" loading="lazy" decoding="async" /></picture>
+              <picture class="reel-item" style="--x: -4; --y: 80; --w: 102; --z: 3"><source srcset="assets/hero-casino.avif?v=a0aad473" type="image/avif" /><img src="assets/hero-casino.webp?v=7c591450" width="1589" height="1254" alt="Промо CHEXX" loading="lazy" decoding="async" /></picture>
+            </div>
+          </div>
         </section>
 
         <section class="screen" id="work" aria-labelledby="work-title">
@@ -130,6 +153,7 @@
     <script src="menu.js?v=cf2131d4"></script>
     <script src="scenes.js?v=e3954562"></script>
     <script src="artwork.js?v=302f6fbd"></script>
+    <script src="reel.js?v=86a33d1e"></script>
     <script src="bounce.js?v=aaef8047"></script>
   </body>
 </html>
