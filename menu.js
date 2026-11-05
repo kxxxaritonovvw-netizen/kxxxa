@@ -37,7 +37,7 @@ pill.addEventListener('pointermove', (event) => {
 });
 
 // The pill names the section on screen: each titled section of the main page gets its title in the pill,
-// shown once the section's top passes 40% of the screen; above the first one the name stays
+// shown once the title itself scrolls up to the pill's bottom edge and slips under it; above the first one the name stays
 const swap = pill.querySelector('.name-swap');
 const titled = [...document.querySelectorAll('.main > section[id]')].filter((section) => section.querySelector('h2'));
 if (titled.length) {
@@ -53,13 +53,14 @@ if (titled.length) {
   });
   let shown = -2;
   let frame = 0;
+  const headings = titled.map((section) => section.querySelector('h2'));
   const follow = () => {
     frame = 0;
     // Both rects are in the same (possibly zoomed) px
-    const view = box ? box.getBoundingClientRect() : { top: 0, height: innerHeight };
+    const edge = pill.getBoundingClientRect().bottom;
     let current = -1;
-    titled.forEach((section, i) => {
-      if (section.getBoundingClientRect().top - view.top < view.height * 0.4) current = i;
+    headings.forEach((heading, i) => {
+      if (heading.getBoundingClientRect().top <= edge) current = i;
     });
     if (current === shown) return;
     shown = current;

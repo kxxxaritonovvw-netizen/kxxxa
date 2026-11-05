@@ -886,6 +886,8 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   padding: clamp(120px, 12cqw, 220px) 16px;
 }
 html.demo .screen { min-height: var(--demo-h); }
+/* Extra room after the last section, so the page scrolls on and its title can slide under the name pill */
+.screen:last-child { padding-bottom: calc(clamp(120px, 12cqw, 220px) + 800px); }
 .screen-title {
   font: 400 clamp(32px, 4cqw, 56px) / 1 var(--font-display);
   text-align: center;
