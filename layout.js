@@ -23,3 +23,18 @@ if (root.classList.contains('demo')) {
   fitScreen();
   addEventListener('resize', fitScreen);
 }
+
+// Coming back to a page (Back, or closing a case) puts it where it was left. The browser does this for
+// the page itself; the demo frame scrolls its own .main, so its position is kept by hand
+const scroller = () => (root.classList.contains('demo') ? document.querySelector('.main') : null);
+const scrollKey = `scroll:${location.pathname}`;
+addEventListener('pagehide', () => {
+  const el = scroller();
+  if (el) try { sessionStorage.setItem(scrollKey, String(el.scrollTop)); } catch {}
+});
+if (performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
+  const el = scroller();
+  let y = null;
+  try { y = sessionStorage.getItem(scrollKey); } catch {}
+  if (el && y !== null) requestAnimationFrame(() => { el.scrollTop = Number(y); });
+}

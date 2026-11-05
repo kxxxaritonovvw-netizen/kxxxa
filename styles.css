@@ -145,6 +145,10 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 
 
+/* On a case the fade is only for the opening view: it goes as soon as the page scrolls (case.js) */
+.header-fade.is-off { opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s; }
+.header-fade { transition: opacity 0.3s ease; }
+
 .pill-name {
   position: absolute;
   top: 20px;
