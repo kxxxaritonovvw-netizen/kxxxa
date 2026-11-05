@@ -108,6 +108,21 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
 }
 .header-inner { position: relative; }
 .header-inner > * { pointer-events: auto; }
+/* Under the name pill, from the top edge down to the pill's middle (20px + 44px / 2): content scrolling
+   up under it blurs and fades into black, both easing off towards the bottom of the strip */
+.header:has(.pill-name)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 42px;
+  background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.35));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  -webkit-mask: linear-gradient(#000 25%, transparent);
+  mask: linear-gradient(#000 25%, transparent);
+}
 
 .pill-name {
   position: absolute;
