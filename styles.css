@@ -636,7 +636,7 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   content: "";
   position: absolute;
   pointer-events: none;
-  animation: case-fade 1.6s ease 1.9s backwards;
+  animation: case-fade 2s ease 3.4s backwards;
 }
 /* A hairline that fades in and out along a long even ramp, warmest (not white) in the middle, with a faint
    oval glow around it instead of a box shadow, so it reads as light catching the edge and has no hard ends */
@@ -739,8 +739,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   /* It starts 70px above the logo's centre (ABOVE in the script), so the logo sits on the light */
   inset: calc(var(--logo-mid) - 70px) 0 clamp(-560px, -38cqw, -240px);
   transform-origin: var(--logo-x) 70px;
-  /* It opens out of the logo as the logo starts to tilt down (case-tilt), and spreads with it */
-  animation: case-beam 2.6s cubic-bezier(0.3, 0, 0.2, 1) 0.4s backwards;
+  /* It starts with the logo's tilt (case-tilt, 0.4s + 1.8s): faint and small while the logo turns down,
+     then, once it faces down, it keeps widening and brightening slowly to full */
+  animation: case-beam 5s cubic-bezier(0.45, 0, 0.3, 1) 0.4s backwards;
   pointer-events: none;
 }
 .case-light {
@@ -771,8 +772,8 @@ picture.piece img { display: block; width: 100%; height: 100%; }
 }
 @keyframes case-glow { from { opacity: 0; } }
 @keyframes case-beam {
-  from { opacity: 0; transform: scale(0.1, 0.18); }
-  30% { opacity: 1; }
+  from { opacity: 0; transform: scale(0.3, 0.4); }
+  36% { opacity: 0.3; transform: scale(0.6, 0.7); }
 }
 
 /* Case themes: the logo and the colours of its metal and light. A colour given as "r g b" is used
@@ -787,9 +788,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --light-a: url(assets/case-light-winline-a.webp?v=1ef1523a);
-  --light-b: url(assets/case-light-winline-b.webp?v=2bd3532a);
-  --light-c: url(assets/case-light-winline-c.webp?v=f88b21d2);
+  --light-a: url(assets/case-light-winline-a.webp?v=5d031a9f);
+  --light-b: url(assets/case-light-winline-b.webp?v=0236ea71);
+  --light-c: url(assets/case-light-winline-c.webp?v=6bb6149a);
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
 /* The pill's outline is a plain rounded box, cheaper than a mask */
@@ -806,9 +807,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --light-a: url(assets/case-light-chexx-a.webp?v=e12131bf);
-  --light-b: url(assets/case-light-chexx-b.webp?v=33bcc728);
-  --light-c: url(assets/case-light-chexx-c.webp?v=e7e2b99e);
+  --light-a: url(assets/case-light-chexx-a.webp?v=338c659f);
+  --light-b: url(assets/case-light-chexx-b.webp?v=3a0a1c77);
+  --light-c: url(assets/case-light-chexx-c.webp?v=8b9fc402);
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
 /* Letters, not a box: the thickness and the reflection follow the logo's outline */

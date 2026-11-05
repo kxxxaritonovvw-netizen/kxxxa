@@ -19,7 +19,7 @@ from PIL import Image
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 WIDTH, HEIGHT = 1400, 1100  # CSS px the bitmap is drawn at (styles.css, .case-light)
 SCALE = 0.5  # half size: the light is soft, and stretching it less keeps its steps fine
-STRENGTH = 0.54  # brightness at the hottest point, 0…1
+STRENGTH = 0.66  # brightness at the hottest point, 0…1
 ABOVE = 70  # CSS px the light starts above the logo's centre (styles.css, .case-beam)
 LOGO_V = ABOVE / 860  # where the logo's centre falls in the bitmap (the light is ~860px tall on a desktop)
 # Per case and bitmap: the tint under the logo, then the colours of the left and right sides
