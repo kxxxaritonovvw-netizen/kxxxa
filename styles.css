@@ -685,30 +685,42 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   /* A little see-through, so the light behind it shows faintly */
   background: rgba(15, 16, 19, 0.88);
 }
-/* Where the light lands: a bright line along the top edge, and a warm glow spilling down inside */
-.case-card-wide::before, .case-card-wide::after {
+/* Where the light lands: a bright line along the top edge (.case-edge), and a warm glow spilling down inside */
+.case-card-wide::after {
   content: "";
   position: absolute;
+  inset: 0;
+  border-radius: inherit;
   pointer-events: none;
   animation: case-fade 2s ease 3.4s backwards;
+  /* A wide, slow fall-off, so the light melts into the card instead of ending in a dark rim */
+  background: radial-gradient(ellipse 52% 46% at 50% 0, rgb(var(--glow) / 0.24), rgb(var(--glow) / 0.15) 25%, rgb(var(--glow-edge) / 0.08) 50%, rgb(var(--glow-edge) / 0.03) 75%, transparent);
 }
-/* A hairline that fades in and out along a long even ramp, warmest (not white) in the middle, with a faint
-   oval glow around it instead of a box shadow, so it reads as light catching the edge and has no hard ends */
-.case-card-wide::before {
+/* A hairline that fades in and out along a long even ramp, warmest in the middle, with a faint oval glow
+   around it, so it reads as light catching the edge and has no hard ends. It comes in the light's three
+   colour pairs (--a-l / --a-r …, the side colours in tools/make-case-light.py), fading into each other on
+   the same clocks as .case-light-b and -c, so the line shimmers with the light behind it */
+.case-edge {
+  position: absolute;
   top: -14px;
   left: 50%;
   width: min(680px, 84%);
   height: 28px;
   translate: -50% 0;
+  pointer-events: none;
+  animation: case-fade 2s ease 3.4s backwards;
+}
+.case-edge i {
+  --l: var(--a-l);
+  --r: var(--a-r);
+  position: absolute;
+  inset: 0;
   background:
-    linear-gradient(90deg, transparent, rgb(var(--glow) / 0.04) 12%, rgb(var(--glow) / 0.12) 25%, rgb(var(--glow) / 0.24) 37%, rgb(var(--halo) / 0.4) 50%, rgb(var(--glow) / 0.24) 63%, rgb(var(--glow) / 0.12) 75%, rgb(var(--glow) / 0.04) 88%, transparent) center / 100% 1px no-repeat,
+    linear-gradient(90deg, transparent, rgb(var(--l) / 0.05) 12%, rgb(var(--l) / 0.16) 25%, rgb(var(--l) / 0.3) 37%, rgb(var(--halo) / 0.45) 50%, rgb(var(--r) / 0.3) 63%, rgb(var(--r) / 0.16) 75%, rgb(var(--r) / 0.05) 88%, transparent) center / 100% 1px no-repeat,
     radial-gradient(closest-side, rgb(var(--glow) / 0.16), rgb(var(--glow) / 0.06) 45%, rgb(var(--glow) / 0.015) 75%, transparent);
 }
-.case-card-wide::after {
-  inset: 0;
-  border-radius: inherit;
-  background: radial-gradient(ellipse 45% 40% at 50% 0, rgb(var(--glow) / 0.24), rgb(var(--glow-edge) / 0.07) 60%, transparent);
-}
+.case-edge .case-edge-b { --l: var(--a-r); --r: var(--a-l); animation: case-glow 2.6s ease-in-out infinite alternate; }
+.case-edge .case-edge-c { --l: var(--c-l); --r: var(--c-r); animation: case-glow 3.7s ease-in-out 1s infinite alternate-reverse; }
 
 /* Narrow screens centre the pill, so the logo follows */
 @container (max-width: 440px) {
@@ -812,11 +824,11 @@ picture.piece img { display: block; width: 100%; height: 100%; }
 }
 .case-light-b {
   background-image: var(--light-b);
-  animation: case-glow 4s ease-in-out infinite alternate;
+  animation: case-glow 2.6s ease-in-out infinite alternate;
 }
 .case-light-c {
   background-image: var(--light-c);
-  animation: case-glow 5.5s ease-in-out 1.5s infinite alternate-reverse;
+  animation: case-glow 3.7s ease-in-out 1s infinite alternate-reverse;
 }
 /* Fine grain over the light at screen resolution hides the steps of its dark gradient.
    In overlay mode mid grey changes nothing, so black stays black and only the lit part is shaded */
@@ -849,9 +861,13 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 255 196 110;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
-  --light-a: url(assets/case-light-winline-a.webp?v=5d031a9f);
-  --light-b: url(assets/case-light-winline-b.webp?v=0236ea71);
-  --light-c: url(assets/case-light-winline-c.webp?v=6bb6149a);
+  --a-l: 255 104 36;
+  --a-r: 255 170 64;
+  --c-l: 255 72 48;
+  --c-r: 255 200 100;
+  --light-a: url(assets/case-light-winline-a.webp?v=dbd14d17);
+  --light-b: url(assets/case-light-winline-b.webp?v=354f082c);
+  --light-c: url(assets/case-light-winline-c.webp?v=ecc20d6e);
 }
 .case-winline .case-logo-face, .case-winline .case-logo-halo { background-image: url(assets/winline.svg?v=46f1b8ae); }
 /* The pill's outline is a plain rounded box, cheaper than a mask */
@@ -868,9 +884,13 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   --halo: 196 140 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
-  --light-a: url(assets/case-light-chexx-a.webp?v=338c659f);
-  --light-b: url(assets/case-light-chexx-b.webp?v=3a0a1c77);
-  --light-c: url(assets/case-light-chexx-c.webp?v=8b9fc402);
+  --a-l: 140 78 255;
+  --a-r: 200 82 244;
+  --c-l: 96 96 255;
+  --c-r: 236 96 216;
+  --light-a: url(assets/case-light-chexx-a.webp?v=593dd051);
+  --light-b: url(assets/case-light-chexx-b.webp?v=eab7e5ca);
+  --light-c: url(assets/case-light-chexx-c.webp?v=f7274f14);
 }
 .case-chexx .case-logo-face, .case-chexx .case-logo-halo { background-image: url(assets/chexx.svg?v=4605c793); }
 /* Letters, not a box: the thickness and the reflection follow the logo's outline */
