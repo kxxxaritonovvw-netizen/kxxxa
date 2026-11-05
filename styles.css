@@ -116,7 +116,7 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   top: 0;
   left: 0;
   right: 0;
-  height: 120px;
+  height: 170px;
   pointer-events: none;
 }
 .header-fade i {
@@ -127,20 +127,20 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   -webkit-mask: linear-gradient(#000 var(--from), transparent var(--to));
   mask: linear-gradient(#000 var(--from), transparent var(--to));
 }
-.header-fade i:nth-child(1) { --b: 2px; --from: 30%; --to: 100%; }
-.header-fade i:nth-child(2) { --b: 5px; --from: 20%; --to: 80%; }
-.header-fade i:nth-child(3) { --b: 10px; --from: 10%; --to: 60%; }
-.header-fade i:nth-child(4) { --b: 20px; --from: 0%; --to: 40%; }
-/* The darkening: the background at 80% at the top edge down to nothing, in twelve steps along a cosine
-   so it starts and ends gently */
+.header-fade i:nth-child(1) { --b: 4px; --from: 40%; --to: 100%; }
+.header-fade i:nth-child(2) { --b: 8px; --from: 30%; --to: 85%; }
+.header-fade i:nth-child(3) { --b: 16px; --from: 15%; --to: 70%; }
+.header-fade i:nth-child(4) { --b: 32px; --from: 0%; --to: 50%; }
+/* The darkening: the background at 80% at the top edge down to nothing, in twelve steps that hold dark a
+   little before easing off, gently at both ends */
 .header-fade::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.784) 9.1%, rgba(0, 0, 0, 0.737) 18.2%, rgba(0, 0, 0, 0.662) 27.3%,
-    rgba(0, 0, 0, 0.566) 36.4%, rgba(0, 0, 0, 0.457) 45.5%, rgba(0, 0, 0, 0.343) 54.5%, rgba(0, 0, 0, 0.234) 63.6%,
-    rgba(0, 0, 0, 0.138) 72.7%, rgba(0, 0, 0, 0.063) 81.8%, rgba(0, 0, 0, 0.016) 90.9%, rgba(0, 0, 0, 0) 100%
+    rgba(0, 0, 0, 0.8) 0.0%, rgba(0, 0, 0, 0.8) 9.1%, rgba(0, 0, 0, 0.781) 18.2%, rgba(0, 0, 0, 0.723) 27.3%,
+    rgba(0, 0, 0, 0.634) 36.4%, rgba(0, 0, 0, 0.525) 45.5%, rgba(0, 0, 0, 0.406) 54.5%, rgba(0, 0, 0, 0.286) 63.6%,
+    rgba(0, 0, 0, 0.176) 72.7%, rgba(0, 0, 0, 0.085) 81.8%, rgba(0, 0, 0, 0.023) 90.9%, rgba(0, 0, 0, 0.0) 100.0%
   );
 }
 
