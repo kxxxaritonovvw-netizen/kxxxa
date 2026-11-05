@@ -402,28 +402,28 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   .hero-title span { display: inline; }
 }
 
-/* Phones: the longread (.reel) takes the place of the scenes that take turns. Pictures go down a six-column
-   grid, full width or two side by side, and each one rises out of the dark as it scrolls in: small, low and
-   blurred at the bottom of the screen, settling at full size by the time it is a third of the way up, then
-   sinking back a little as it leaves at the top. Scroll-driven where the browser can (Chrome, Safari 26),
-   a one-off reveal (reel.js) elsewhere */
+/* Phones: the longread (.reel) takes the place of the scenes that take turns. Its pictures are laid out in
+   three dense compositions like the desktop scenes, overlapping each other: each picture is placed by
+   --x, --y and --w in hundredths of the page width (cqw), stacked by --z, in a group --h tall. Each one
+   rises out of the dark as it scrolls in: small, low and blurred at the bottom of the screen, settling at
+   full size by the time it is a third of the way up, then sinking back a little as it leaves at the top.
+   Scroll-driven where the browser can (Chrome, Safari 26), a one-off reveal (reel.js) elsewhere */
 .reel { display: none; }
 @container (max-width: 640px) {
   .visual { display: none; }
-  .reel {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    align-items: center;
-    gap: 28px 12px;
-    padding: 56px 16px 0;
-  }
+  .reel { display: block; padding-top: 48px; }
 }
-/* .page picture is display: contents elsewhere; here the picture itself is the grid item that moves */
-.page .reel-item { display: block; grid-column: span var(--cols); }
+.reel-group { position: relative; height: calc(var(--h) * 1cqw); }
+/* .page picture is display: contents elsewhere; here the picture itself is the box that moves */
+.page .reel-item {
+  display: block;
+  position: absolute;
+  left: calc(var(--x) * 1cqw);
+  top: calc(var(--y) * 1cqw);
+  width: calc(var(--w) * 1cqw);
+  z-index: var(--z);
+}
 .reel-item img { display: block; width: 100%; height: auto; }
-/* A small piece nudged onto the one before it, so the pair reads as one composition */
-.reel-pull { margin-left: -40%; margin-top: 45%; }
-.page .reel-push { grid-column: 2 / span var(--cols); }
 @supports (animation-timeline: view()) {
   .reel-item {
     animation: reel-rise linear both;
