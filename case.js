@@ -57,7 +57,6 @@ if (turn && matchMedia('(hover: hover) and (prefers-reduced-motion: no-preferenc
 // On a phone the close button flies up out of the way while the page scrolls down,
 // and comes back once it has been scrolled 40px up again (or near the top)
 const close = document.querySelector('.case-close');
-const fade = document.querySelector('.header-fade');
 const main = document.querySelector('.main');
 if (close && main) {
   const BACK = 40; // px of scrolling up that bring the button back
@@ -68,7 +67,6 @@ if (close && main) {
     const scroller = event.target === document ? document.scrollingElement : event.target;
     if (!scroller.contains(main) && scroller !== main) return;
     const y = scroller.scrollTop;
-    fade?.classList.toggle('is-on', y > 16);
     let away = close.classList.contains('is-away');
     if (main.clientWidth > 640) {
       away = false;

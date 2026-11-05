@@ -144,10 +144,6 @@ html.demo .page { border-radius: calc(12px / var(--demo-scale)); }
   );
 }
 
-/* On a case the logo sits right under the header at the top, so the fade comes in only once the page
-   is scrolled (case.js sets .is-on) and the logo has started to move away under it */
-.page:has(.main.case) .header-fade { opacity: 0; transition: opacity 0.4s ease; }
-.page:has(.main.case) .header-fade.is-on { opacity: 1; }
 
 .pill-name {
   position: absolute;
@@ -650,8 +646,6 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   position: relative;
   /* The intro text is gone for now; the top padding keeps its 40px, so the card stays where the light lands */
   padding: clamp(370px, calc(26.7cqw + 40px), 424px) 0 calc(var(--overlap) + clamp(40px, 4.9cqw, 70px));
-  perspective: 900px;
-  perspective-origin: var(--logo-x) var(--logo-mid);
 }
 
 /* Cards for the screens: one wide (885×508) and two halves (434×430) */
@@ -730,6 +724,12 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   width: var(--logo-w);
   aspect-ratio: var(--logo-ratio);
   translate: -50% 0;
+  /* The logo stands in the name pill's place, so like the pill it sits over the header's blur fade
+     (z-index above .header), and the cards scroll under the fade. The perspective is set here rather
+     than on .case-hero, so the hero makes no stacking context of its own that would keep the logo under */
+  z-index: 11;
+  perspective: 900px;
+  perspective-origin: 50% 50%;
 }
 .case-logo, .case-logo-turn, .case-logo-sway, .case-logo-tilt { transform-style: preserve-3d; }
 .case-logo-turn, .case-logo-sway, .case-logo-tilt, .case-logo-tilt > span { position: absolute; inset: 0; }
