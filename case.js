@@ -99,3 +99,13 @@ if (close && main) {
     lastY = y;
   }, { capture: true, passive: true });
 }
+
+// A click or tap on the logo makes it hop up a little and land with a small rebound (styles.css, .is-bouncing;
+// bounce.js takes the class off when the hop ends)
+const logo = document.querySelector('.case-logo');
+logo?.addEventListener('click', () => {
+  const hop = logo.querySelector('.case-logo-turn');
+  hop.classList.remove('is-bouncing');
+  void hop.offsetWidth;
+  hop.classList.add('is-bouncing');
+});

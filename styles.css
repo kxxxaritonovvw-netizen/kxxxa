@@ -996,6 +996,9 @@ html.demo .screen { min-height: var(--demo-h); }
 .is-bouncing { animation: bounce 0.55s cubic-bezier(0.33, 1, 0.68, 1); }
 .art { --hop: -28px; }
 .burger, .telegram, .case-close { --hop: -5px; -webkit-tap-highlight-color: transparent; }
+/* The case logo hops on any click (case.js), on its mouse-turn layer, so the sway keeps running underneath */
+.case-logo { -webkit-tap-highlight-color: transparent; }
+.case-logo-turn { --hop: -10px; }
 @keyframes bounce {
   0% { translate: 0 0; }
   30% { translate: 0 var(--hop); }
