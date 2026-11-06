@@ -10,7 +10,7 @@
         document.documentElement.classList.add('demo');
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=2da474ec" />
+    <link rel="stylesheet" href="styles.css?v=9b9d67ac" />
     <!-- Yandex.Metrika counter. Not on the local preview, so working on the site does not count as visits -->
     <script type="text/javascript">
       if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
@@ -44,11 +44,14 @@
              Everything here moves by transform and opacity only, so the animation never repaints -->
         <section class="case-hero" aria-label="Winline">
           <!-- Soft light from the logo, in three colourings that fade into each other -->
-          <div class="case-beam" aria-hidden="true">
-            <span class="case-light"></span>
-            <span class="case-light case-light-b"></span>
-            <span class="case-light case-light-c"></span>
-            <span class="case-grain"></span>
+          <!-- Scrolling down draws the light back into the logo (styles.css, .case-beam-back) -->
+          <div class="case-beam-back" aria-hidden="true">
+            <div class="case-beam" aria-hidden="true">
+              <span class="case-light"></span>
+              <span class="case-light case-light-b"></span>
+              <span class="case-light case-light-c"></span>
+              <span class="case-grain"></span>
+            </div>
           </div>
           <div class="case-logo" aria-hidden="true">
             <!-- Nested turns: the mouse (case.js), the slow sway, the opening tilt -->

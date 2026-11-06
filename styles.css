@@ -841,6 +841,27 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   .case-grain { display: none; }
 }
 @keyframes case-glow { from { opacity: 0; } }
+/* Scrolling down draws the light back into the logo, the reverse of its opening: it shrinks towards the
+   logo and fades, and the card's edge and inner glow go with it; scrolling up lets it out again.
+   Scroll-driven, so it runs on the compositor (Chrome, Safari 26); elsewhere the light just scrolls away */
+.case-beam-back { position: absolute; inset: 0; pointer-events: none; transform-origin: var(--logo-x) var(--logo-mid); }
+@supports (animation-timeline: scroll()) {
+  .case-beam-back {
+    animation: case-light-back linear both;
+    animation-timeline: scroll();
+    animation-range: 0 560px;
+  }
+  /* The opening fade comes second, so it wins while it plays; after it, the scroll takes over */
+  .case-card-wide::after, .case-edge {
+    animation: case-edge-back linear both, case-fade 2s ease 3.4s backwards;
+    animation-timeline: scroll(), auto;
+    animation-range: 0 420px, normal;
+  }
+}
+@keyframes case-light-back {
+  to { transform: scale(0.14, 0.1); opacity: 0; }
+}
+@keyframes case-edge-back { to { opacity: 0; } }
 @keyframes case-beam-grow { from { transform: scale(0.3, 0.4); } }
 @keyframes case-beam-fade { from { opacity: 0; } }
 
