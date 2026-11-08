@@ -10,12 +10,28 @@
         document.documentElement.classList.add('demo');
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=2357d840" />
+    <link rel="stylesheet" href="styles.css?v=f56aa9a6" />
+    <!-- Yandex.Metrika counter. Not on the local preview, so working on the site does not count as visits -->
+    <script type="text/javascript">
+      if (!/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) {
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=114097231', 'ym');
+
+        ym(114097231, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+      }
+    </script>
+    <!-- /Yandex.Metrika counter -->
   </head>
   <body>
+    <noscript><div><img src="https://mc.yandex.ru/watch/114097231" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <div class="page">
       <!-- On a case its logo takes the name pill's place; the header only holds the close button -->
       <header class="header">
+        <div class="header-fade" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
         <div class="header-inner">
           <a class="case-close" href="./#work" aria-label="Закрыть кейс">
             <span aria-hidden="true"></span><span aria-hidden="true"></span>
@@ -28,11 +44,14 @@
              Everything here moves by transform and opacity only, so the animation never repaints -->
         <section class="case-hero" aria-label="Winline">
           <!-- Soft light from the logo, in three colourings that fade into each other -->
-          <div class="case-beam" aria-hidden="true">
-            <span class="case-light"></span>
-            <span class="case-light case-light-b"></span>
-            <span class="case-light case-light-c"></span>
-            <span class="case-grain"></span>
+          <!-- Scrolling down draws the light back into the logo (styles.css, .case-beam-back) -->
+          <div class="case-beam-back" aria-hidden="true">
+            <div class="case-beam" aria-hidden="true">
+              <span class="case-light"></span>
+              <span class="case-light case-light-b"></span>
+              <span class="case-light case-light-c"></span>
+              <span class="case-grain"></span>
+            </div>
           </div>
           <div class="case-logo" aria-hidden="true">
             <!-- Nested turns: the mouse (case.js), the slow sway, the opening tilt -->
@@ -68,14 +87,16 @@
 
         <!-- Screens of the product: one wide card, then two halves -->
         <section class="case-grid" aria-label="Интерфейсы">
-          <div class="case-card case-card-wide"></div>
+          <div class="case-card case-card-wide">
+            <span class="case-edge" aria-hidden="true"><i></i><i class="case-edge-b"></i><i class="case-edge-c"></i></span>
+          </div>
           <div class="case-card"></div>
           <div class="case-card"></div>
         </section>
       </main>
     </div>
-    <script src="layout.js?v=6ce77353"></script>
+    <script src="layout.js?v=08978c02"></script>
     <script src="bounce.js?v=aaef8047"></script>
-    <script src="case.js?v=bb16a80c"></script>
+    <script src="case.js?v=fe910e88"></script>
   </body>
 </html>

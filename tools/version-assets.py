@@ -42,3 +42,11 @@ pages = [('styles.css', CSS_REF)] + [(page.name, HTML_REF) for page in sorted(RO
 changed = [name for name, pattern in pages if stamp(ROOT / name, pattern)]
 for name in changed:
     print(f'version-assets: updated {name}')
+
+# Every page carries the Yandex.Metrika counter, so the whole site is counted: copy the block from index.html
+# (the script at the end of <head>, the <noscript> pixel at the start of <body>) into any new page
+METRIKA_ID = '114097231'
+for page in sorted(ROOT.glob('*.html')):
+    text = page.read_text()
+    if f'tag.js?id={METRIKA_ID}' not in text or f'watch/{METRIKA_ID}' not in text:
+        print(f'version-assets: WARNING {page.name} has no Yandex.Metrika counter, copy it from index.html')
