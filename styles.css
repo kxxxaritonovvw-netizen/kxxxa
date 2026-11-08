@@ -647,21 +647,35 @@ picture.piece img { display: block; width: 100%; height: 100%; }
   perspective-origin: var(--logo-x) var(--logo-mid);
 }
 
-/* Intro: two centred columns, a white line on the left and a softer white note on the right */
+/* Intro: the case's name large over a couple of paragraphs on the left; on the right what the product is
+   and its numbers, a value over its label */
 .case-intro {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
   align-items: start;
-  gap: 16px 32px;
+  gap: 40px 64px;
   width: var(--case-w);
   margin: 0 auto;
-  font: 400 16px/20px var(--font-ui);
-  text-align: center;
-  text-wrap: balance;
+  font: 400 18px/26px var(--font-ui);
+  text-align: left;
 }
-.case-intro-title { color: var(--text); }
-.case-intro-text { max-width: 390px; justify-self: center; color: rgba(255, 255, 255, 0.7); }
+.case-intro-title {
+  margin: 0 0 28px;
+  font: 300 clamp(48px, 5.6cqw, 80px) / 1 var(--font-ui);
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.case-intro-text { max-width: 520px; color: rgba(255, 255, 255, 0.7); text-wrap: pretty; }
+.case-intro-text + .case-intro-text { margin-top: 20px; }
+.case-intro-side { padding-top: 12px; }
+.case-intro-lead { display: block; margin: 0 0 40px; font: 500 22px/28px var(--font-ui); color: var(--text); }
+.case-intro-arrow { display: inline-block; margin-left: 4px; font-weight: 300; transition: translate 0.3s cubic-bezier(0.33, 1, 0.68, 1); }
+a.case-intro-lead:hover .case-intro-arrow { translate: 3px -3px; }
+.case-stats { display: grid; gap: 28px; margin: 0; }
+.case-stats div { display: flex; flex-direction: column-reverse; gap: 4px; }
+.case-stats dd { margin: 0; font: 500 22px/28px var(--font-ui); color: var(--text); }
+.case-stats dt { color: rgba(255, 255, 255, 0.7); }
 
 /* Cards for the screens: one wide (885×508) and two halves (434×430) */
 .case-grid {
@@ -717,6 +731,9 @@ picture.piece img { display: block; width: 100%; height: 100%; }
 @container (max-width: 640px) {
   .case-intro, .case-grid { grid-template-columns: 1fr; }
   .case-intro-text { max-width: none; }
+  .case-intro-side { padding-top: 0; }
+  .case-intro-lead { margin-bottom: 24px; }
+  .case-stats { grid-template-columns: 1fr 1fr; gap: 24px 16px; }
 }
 
 /* The logo: its face over a stack of metal copies of its outline that give it thickness.
