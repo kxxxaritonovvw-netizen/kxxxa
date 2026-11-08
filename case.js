@@ -109,3 +109,23 @@ logo?.addEventListener('click', () => {
   void hop.offsetWidth;
   hop.classList.add('is-bouncing');
 });
+
+// The light on the intro's letters (styles.css, .case-intro-title …): one gradient spans the hero, so each
+// line needs its offset in the hero to show its own part of it. Measured again when anything resizes
+const hero = document.querySelector('.case-hero');
+const litLines = hero ? [...hero.querySelectorAll('.case-intro-title, .case-intro-text, .case-intro-lead, .case-stats dt, .case-stats dd')] : [];
+if (litLines.length) {
+  const place = () => {
+    const box = hero.getBoundingClientRect();
+    const scale = hero.offsetWidth / box.width; // the demo frame scales the page
+    hero.style.setProperty('--hero-w', `${hero.offsetWidth}px`);
+    hero.style.setProperty('--hero-h', `${hero.offsetHeight}px`);
+    litLines.forEach((line) => {
+      const r = line.getBoundingClientRect();
+      line.style.setProperty('--ox', `${(r.left - box.left) * scale}px`);
+      line.style.setProperty('--oy', `${(r.top - box.top) * scale}px`);
+    });
+  };
+  new ResizeObserver(place).observe(hero);
+  document.fonts?.ready.then(place);
+}

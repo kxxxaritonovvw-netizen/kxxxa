@@ -681,6 +681,43 @@ a.case-intro-lead:hover .case-intro-arrow { translate: 3px -3px; }
 .case-stats dd { margin: 0; font: 500 22px/28px var(--font-ui); color: var(--text); }
 .case-stats dt { color: rgba(255, 255, 255, 0.7); }
 
+/* The light picks out the intro's letters: each line is painted with one gradient laid over the whole hero
+   (case.js gives each its offset in it, --ox / --oy), bright and tinted with the light's colour under the cone
+   and dim grey away from it, so the words in the light glow and the rest sink into the dark. --lit-in rises
+   with the light's opening and --lit-out falls as scrolling draws the light back into the logo */
+@property --lit-in { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --lit-out { syntax: "<number>"; inherits: true; initial-value: 1; }
+.case-intro {
+  animation: case-lit-in 5s cubic-bezier(0.55, 0, 0.45, 1) 0.4s backwards;
+}
+@keyframes case-lit-in { from { --lit-in: 0; } }
+@supports (animation-timeline: scroll()) {
+  .case-intro {
+    animation: case-lit-in 5s cubic-bezier(0.55, 0, 0.45, 1) 0.4s backwards, case-lit-out linear both;
+    animation-timeline: auto, scroll();
+    animation-range: normal, 0 560px;
+  }
+}
+@keyframes case-lit-out { to { --lit-out: 0; } }
+.case-intro-title, .case-intro-text, .case-intro-lead, .case-stats dt, .case-stats dd {
+  --near: 1;
+  --far: 0.42;
+  --lit: calc(var(--lit-in) * var(--lit-out));
+  color: transparent;
+  background: radial-gradient(
+    ellipse 46% 62% at var(--logo-x) 22%,
+    rgb(var(--text-lit) / calc(var(--far) + (var(--near) - var(--far)) * var(--lit))) 0%,
+    rgb(var(--text-lit) / calc(var(--far) + (var(--near) - var(--far)) * var(--lit) * 0.92)) 34%,
+    rgb(255 255 255 / calc(var(--far) + (var(--near) - var(--far)) * var(--lit) * 0.45)) 62%,
+    rgb(255 255 255 / var(--far)) 100%
+  ) calc(var(--ox, 0px) * -1) calc(var(--oy, 0px) * -1) / var(--hero-w, 100%) var(--hero-h, 100%) no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.case-intro-text, .case-stats dt { --near: 0.86; --far: 0.3; }
+.case-intro-arrow { color: transparent; }
+.case-intro ::selection { color: #fff; -webkit-text-fill-color: #fff; }
+
 /* Cards for the screens: one wide (885×508) and two halves (434×430) */
 .case-grid {
   position: relative;
@@ -908,6 +945,7 @@ a.case-intro-lead:hover .case-intro-arrow { translate: 3px -3px; }
   --wall-dark: #3a1200;
   --metal: linear-gradient(115deg, #6e2200, #ff6a13 14%, #ffd9b0 22%, #ff7a1f 30%, #a33a00 44%, #ff8a3d 58%, #fff0dc 64%, #ff6a13 72%, #5a1a00);
   --halo: 255 196 110;
+  --text-lit: 255 226 196;
   --glow: 255 112 36;
   --glow-edge: 214 70 24;
   --a-l: 255 104 36;
@@ -931,6 +969,7 @@ a.case-intro-lead:hover .case-intro-arrow { translate: 3px -3px; }
   --wall-dark: #14072e;
   --metal: linear-gradient(115deg, #5a0030, #ff045c 14%, #ffd1ea 22%, #ff3bb9 30%, #8a0048 44%, #ff5ccb 58%, #fff0fa 64%, #ff045c 72%, #40002a);
   --halo: 196 140 255;
+  --text-lit: 230 214 255;
   --glow: 150 72 255;
   --glow-edge: 110 36 214;
   --a-l: 140 78 255;
